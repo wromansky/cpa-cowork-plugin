@@ -1,0 +1,20 @@
+{
+  "skill_name": "cpa-app-deck",
+  "evals": [
+    {
+      "id": 1,
+      "shape": "direct",
+      "prompt": "Assemble the SOM deck for the 2026-09-24 cycle."
+    },
+    {
+      "id": 2,
+      "shape": "scheduled",
+      "prompt": "The SOM Review cycle is tomorrow (2026-09-24) and slides have been built for three positions. Build the deck."
+    },
+    {
+      "id": 3,
+      "shape": "dispatcher",
+      "prompt": "cpa-app-slide just finished the last position's committee slide for the 2026-09-24 cycle. Run cpa-app-deck now."
+    }
+  ]
+}

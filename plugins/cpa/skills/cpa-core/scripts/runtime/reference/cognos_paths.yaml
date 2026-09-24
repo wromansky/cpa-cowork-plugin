@@ -1,0 +1,28 @@
+# reference/cognos_paths.yaml - navigation for cpa-pull-cognos (A5, A6).
+# One entry per named report the pull navigates to. `url` and `report_name` are empty until the first
+# supervised session; A5 and A6 describe the reports but name none, so the names are hers to fill. A null url or
+# report_name stops the pull and names the entry; the skill never browses to a guessed location. Automation
+# never edits this file.
+# FIXTURE - confirm against her file: the entry keys follow the adapter dataset names (cognos.dept_financials,
+# cognos.crf); expected_columns and the row-count bounds are for you to fill from the real export.
+
+reports:
+  dept_financials:                            # A5
+    report_name: null                         # needs you: the departmental financial report's name in COGNOS
+    url: null                                 # needs you: paste the report's bookmark URL
+    filters:
+      - "fiscal period: <FYMM>"
+    expected_columns: []                      # needs you: the export's header spellings, in order
+    row_count_min: null                       # needs you: expected minimum data rows
+    row_count_max: null                       # needs you: expected maximum data rows
+    lands_as: "inbox/cognos/dept_financials_<FYMM>.xlsx"
+
+  crf:                                        # A6
+    report_name: null                         # needs you: the recruitment cost report's name in COGNOS
+    url: null                                 # needs you: paste the report's bookmark URL
+    filters:
+      - "fiscal year to date"
+    expected_columns: []
+    row_count_min: null
+    row_count_max: null
+    lands_as: "inbox/cognos/crf_<FYMM>.xlsx"

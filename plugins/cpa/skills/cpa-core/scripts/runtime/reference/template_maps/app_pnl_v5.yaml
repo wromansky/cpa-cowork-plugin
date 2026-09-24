@@ -1,0 +1,66 @@
+# FIXTURE - confirm against her file. Cell map for templates/APP_PnL_v5.xlsx (B4, U12).
+# Every address below describes the generated fixture template (tests/fixtures/gen_app_pnl_template.py), not her
+# real APP P&L v5. Swap step: copy her v5 to <workspace>/templates/, run
+#   python -m cpa app_pnl inspect --template <workspace>/templates/APP_PnL_v5.xlsx
+# which lists every unlocked (yellow) input cell with its row label; correct every address here, save the file as
+# <workspace>/reference/template_maps/app_pnl_v5.yaml, then set `fixture: false`. While `fixture: true`,
+# `app_pnl build` refuses any template whose marker cell does not start with FIXTURE, so these fixture addresses
+# can never be written into her file.
+#
+# Rules the code enforces against this map (never weakened by editing it): every `inputs`, `rates`,
+# `collection_rate` and `cpt_profile` cell must be UNLOCKED and carry `input_fill` (R111); `years.columns` must
+# list exactly three columns and the header cell right of the last one must be empty (R171); the `benchmarks` and
+# `m2` regions must be empty and locked in the template (the department never gets a benchmark cell, R046); no
+# locked cell may differ between the template and the output (R048/R232).
+
+fixture: true
+template: "APP_PnL_v5.xlsx"
+fixture_marker:
+  cell: "Assumptions!A1"
+  startswith: "FIXTURE"
+
+input_fill: "FFFF00"          # RGB of her yellow input cells (alpha ignored)
+pnl_sheet: "P&L"              # the tab that carries the three-year P&L, the benchmark rows and the M2 block
+label_column: "A"             # row labels on the P&L tab
+
+years:                        # R171: three years only
+  header_row: 4
+  columns: ["B", "C", "D"]
+
+inputs:                       # from staging/app/<position>/pnl_inputs.json
+  position_id: "Assumptions!C4"
+  base_salary: "Assumptions!C5"
+  supplements_total: "Assumptions!C6"   # non-fringe supplements only: TCC - base (hard rule 1)
+
+rates:                        # read through cpa.config.assumption; a null key stops the run (rule 15)
+  - {key: "rates.fringe_jhm_base_pct", cell: "Assumptions!C8", unit: "pct"}   # FIXTURE: which fringe rate an APP carries
+  - {key: "rates.deans_tax_pct", cell: "Assumptions!C9", unit: "pct"}
+  - {key: "rates.dom_clinical_tax_pct", cell: "Assumptions!C10", unit: "pct"}
+
+collection_rate:              # staging/app/<position>/collection_rate.json (A2); absent -> yellow MISSING placeholder
+  cell: "Assumptions!C11"
+  unit: "fraction"            # what her cell holds: fraction (0.62) or pct (62)
+
+cpt_profile:                  # MedVitals CPT Billing Profile (A7) pasted into these unlocked rows
+  sheet: "CPT Profile"
+  first_row: 2
+  last_row: 31                # more source rows than this stops the run (never truncated)
+  columns: {cpt: "A", description: "B", volume: "C", wrvu: "D", charge: "E"}
+  source:                     # the export: header row and header text per field
+    sheet: null               # null = first sheet
+    header_row: 1
+    headers: {cpt: "CPT Code", description: "Description", volume: "Volume", wrvu: "wRVU", charge: "Charge"}
+
+rows:                         # P&L rows read back after recalculation (row numbers on pnl_sheet)
+  jhu_contribution_margin: {row: 15, label: "JHU Contribution Margin"}
+  division_surplus: {row: 16, label: "Division Surplus"}
+  wrvus: {row: 10, label: "Work RVUs"}
+  charges: {row: 11, label: "Charges"}
+  collections: {row: 12, label: "Collections", basis: "gross"}   # FIXTURE: gross or net, as her row means it
+
+benchmarks:                   # SullivanCotter 2025 AMC rows written by the script (locked, template-empty)
+  region: "A18:E21"           # title row, header row, TCC row, Work RVUs row
+
+m2:                           # the M2 activity block (cpa.activity_block, 6x6)
+  anchor: "A23"
+  region: "A23:F28"

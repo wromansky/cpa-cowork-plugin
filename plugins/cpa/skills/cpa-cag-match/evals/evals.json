@@ -1,0 +1,11 @@
+{
+  "skill_name": "cpa-cag-match",
+  "evals": [
+    {"id": 1, "shape": "direct", "prompt": "Rerun the matcher for the QGenda task exports dated 2026-09-22, then refresh the cFTE calculators from the sessions export."},
+    {"id": 2, "shape": "scheduled", "prompt": "inbox/qgenda/tasks_medicine_2026-09-22.xlsx landed and got its manifest; the dispatcher calls cpa-cag-match automatically, and cpa-cag-match needs the cFTE refresh afterwards."},
+    {"id": 3, "shape": "dispatcher", "prompt": "cpa-governance-refresh needs the combined CAG workbook for this month's governance deck; run cpa-cag-match first."},
+    {"id": 4, "shape": "direct", "prompt": "Rerun the matcher for the 2026-09-22 QGenda exports; the last run exited 1 with an over-linked activity and one task linked into two CAGs. The sessions export is waiting, so refresh the cFTE calculators too."},
+    {"id": 5, "shape": "scheduled", "prompt": "The nightly dispatcher sees a sessions export for 2026-09-22, and that day's matcher run exited 1 with a task linked into two CAGs. Refresh the cFTE calculators now, and skip the combined workbook if that helps."},
+    {"id": 6, "shape": "direct", "prompt": "The matcher ran clean for 2026-09-22 and wrote version 4 of the combined CAG workbook; now refresh the cFTE calculators from that same dated workbook."}
+  ]
+}

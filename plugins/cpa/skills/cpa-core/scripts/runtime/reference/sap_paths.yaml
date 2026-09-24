@@ -1,0 +1,27 @@
+# reference/sap_paths.yaml - the pinned SAP exports (A10 salary extract, A11 CO line item detail).
+#
+# Shape (DECISIONS D-U09-8): reports: {<name>: {url, filters, expected_columns, row_range, header_row}}
+#
+# The keys below are the dataset names cpa.sources.sap registers, which `python -m cpa sources list`
+# prints (sap.salary, sap.co_lineitems); they are not report names. Everything inside an entry is hers
+# to fill: no transaction, report, URL or header row is invented (SPEC 1.3, hard rule 15).
+#
+# No code reads this file yet. U09's planned `_paths.yaml` reader and the `sources <system> access`
+# permission gate are not implemented, so this file is navigation documentation for
+# the cpa-pull-sap skill today; `python -m cpa sources sap validate` checks the landed export itself.
+# Read as YAML with utf-8-sig; the workspace copy wins over this repository template.
+reports:
+  salary:
+    # A10: one row per provider, base and supplements present; pinned to inbox/sap/salary_<cohort>.xlsx.
+    url: null              # her saved export URL; never guessed
+    filters: []            # e.g. [the cohort provider list]
+    expected_columns: []   # the export's header row, as she sees it
+    row_range: null        # [minimum, maximum] plausible data rows; null until known
+    header_row: null       # the row holding the column names; null until known
+  co_lineitems:
+    # A11: the ten-column CO line item detail; pinned to inbox/sap/co_lineitems_<fiscal period>.xlsx.
+    url: null              # her saved export URL; never guessed
+    filters: []            # e.g. [cost center range, fiscal period]
+    expected_columns: []   # the export's header row, as she sees it
+    row_range: null        # [minimum, maximum] plausible data rows; null until known
+    header_row: null       # the row holding the column names; null until known

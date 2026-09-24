@@ -1,0 +1,20 @@
+{
+  "skill_name": "cpa-verify",
+  "evals": [
+    {
+      "id": 1,
+      "shape": "direct",
+      "prompt": "I dropped CPA_Charge_Forecast_2703.xlsx in the chat. Can you verify it and tell me if the numbers tie out?"
+    },
+    {
+      "id": 2,
+      "shape": "scheduled",
+      "prompt": "The nightly healthcheck task is running. Verify every workbook written to outbox in the last run and report anything that is not CLEAN."
+    },
+    {
+      "id": 3,
+      "shape": "dispatcher",
+      "prompt": "cpa-charge-forecast just finished writing outbox/forecast/2703/CPA_Charge_Forecast_2703.xlsx and its verification result was not CLEAN. Run cpa-verify on it now."
+    }
+  ]
+}

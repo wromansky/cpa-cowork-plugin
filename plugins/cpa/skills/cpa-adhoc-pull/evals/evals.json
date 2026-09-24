@@ -1,0 +1,20 @@
+{
+  "skill_name": "cpa-adhoc-pull",
+  "evals": [
+    {
+      "id": 1,
+      "shape": "direct",
+      "prompt": "Can you pull the data for request req-045? She wants September wRVUs by department from Power BI."
+    },
+    {
+      "id": 2,
+      "shape": "scheduled",
+      "prompt": "The daily request-folder sweep is running. requests/req-045/brief.md asks for a data pull and the Power BI export has landed in inbox/. Build the summary."
+    },
+    {
+      "id": 3,
+      "shape": "dispatcher",
+      "prompt": "cpa-intake just filed requests/req-045/brief.md classifying it ADHOC_REQUEST, and its requested_output reads 'what were September wRVUs by department'. Run cpa-adhoc-pull now."
+    }
+  ]
+}

@@ -1,0 +1,83 @@
+# FIXTURE — confirm against her file. Cell map for templates/CPA_Charge_Forecast_Rebuild.xlsx (B13, U10).
+# Every address below describes the generated fixture workbook (tests/fixtures/gen_charge_forecast.py), not her
+# real workbook. Swap step: open her workbook, correct every address and the Prior-Year formula text below, set
+# inputs.fiscal_month_format to what her fiscal-month cell actually holds, then set `fixture: false`. While
+# `fixture: true`, `charge_forecast run` refuses any template that lacks the FIXTURE marker, so these fixture
+# addresses can never be written into her file.
+#
+# The five yellow input cells are NOT in this file: they are the assumptions key charge_forecast.input_cells
+# (DECISIONS D04, guide 5.4), null until she names them.
+
+fixture: true
+template: "CPA_Charge_Forecast_Rebuild.xlsx"
+fixture_marker:
+  cell: "Source & Notes!A1"
+  startswith: "FIXTURE"
+
+tabs:                       # inventory section J, in order
+  - "Forecast"
+  - "Paste MTD"
+  - "Daily Detail"
+  - "Curve Reference"
+  - "Workday Calendar"
+  - "Historical Data"
+  - "Source & Notes"
+
+inputs:
+  # What the fiscal-month input cell holds: month_start_date (first day of the month as a date),
+  # fiscal_month_int (1-12, 1 = July) or calendar_month_int (1-12, 1 = January).
+  fiscal_month_format: "month_start_date"
+
+export:                     # Tableau Charges by Day export (inventory section G)
+  sheet: null               # null = the first sheet
+  header_row: 1
+  columns:                  # header text in the export -> role; date and charges are required
+    date: "Date"
+    charges: "Charges"
+
+paste:
+  sheet: "Paste MTD"
+  header_row: 1             # the export header is pasted on this row, its data rows below it
+  clear_columns: "A:D"      # cleared (values only) before each paste; the export must fit inside them
+
+outputs:                    # read after recalculation
+  as_of: "Forecast!C11"
+  mtd_charges: "Forecast!C12"
+  workdays_elapsed: "Forecast!C13"
+  workday_fraction: "Forecast!C14"
+  base_forecast: "Forecast!C16"
+  p10_forecast: "Forecast!C17"
+  p90_forecast: "Forecast!C18"
+
+prior_year:                 # R041: never hard-coded; wired to a SUMIFS against Historical Data in the output copy
+  cell: "Forecast!C7"
+  formula: "=SUMIFS('Historical Data'!$B:$B,'Historical Data'!$A:$A,\">=\"&EDATE($C$4,-12),'Historical Data'!$A:$A,\"<\"&EDATE($C$4,-11))"
+
+workday_calendar:           # checked against reference/holidays_jhm.csv, never edited
+  sheet: "Workday Calendar"
+  first_row: 2
+  month_column: "A"         # first day of the month (a date)
+  workdays_column: "D"
+
+historical:                 # the month's daily rows are appended here once the month has closed
+  sheet: "Historical Data"
+  first_row: 2
+  date_column: "A"
+  charges_column: "B"
+
+notes:                      # one label row per run is appended in this column
+  sheet: "Source & Notes"
+  column: "A"
+
+curve:                      # inventory section K: one universal curve indexed on workday fraction (D14)
+  sheet: "Curve Reference"
+  universal: true
+  indexed_on: "workday_fraction"
+  first_row: 2
+  rows: 100
+
+# COVID months excluded from any future curve rebuild (inventory: "FY20 April through June"), as calendar months.
+curve_rebuild_exclusions:
+  - {year: 2020, month: 4}
+  - {year: 2020, month: 5}
+  - {year: 2020, month: 6}

@@ -1,0 +1,30 @@
+# reference/medvitals_paths.yaml - navigation for cpa-pull-medvitals (A7, A8).
+# One entry per named report the pull navigates to. `url` and `report_name` are empty until the first
+# supervised session; A8 describes its export only as a business plan file, so its name is hers to fill. A null
+# url or report_name stops the pull and names the entry; the skill never browses to a guessed location.
+# Automation never edits this file.
+# FIXTURE - confirm against her file: the entry keys follow the adapter dataset names (medvitals.cpt_profile,
+# medvitals.bp); expected_columns and the row-count bounds are for you to fill from the real export.
+
+reports:
+  cpt_profile:                                # A7
+    report_name: "CPT Billing Profile"
+    url: null                                 # needs you: paste the report's bookmark URL
+    filters:
+      - "division: <division>"
+      - "year to date"
+    expected_columns: []                      # needs you: the export's header spellings, in order
+    row_count_min: null                       # needs you: expected minimum data rows
+    row_count_max: null                       # needs you: expected maximum data rows
+    lands_as: "inbox/medvitals/cpt_profile_<division>_<date>.xlsx"
+
+  bp:                                         # A8
+    report_name: null                         # needs you: the business plan record's name in MedVitals
+    url: null                                 # needs you: paste the report's bookmark URL
+    per_record_id: true                       # one file per provider MedVitals record ID
+    filters:
+      - "record ID: <recordid>"
+    expected_columns: []
+    row_count_min: null
+    row_count_max: null
+    lands_as: "inbox/medvitals/bp_<recordid>.xlsx"

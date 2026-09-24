@@ -1,0 +1,94 @@
+# FIXTURE - confirm against her file. Deck refresh map for the Clinical Governance deck (B14, U15), read by
+# cpa/workflows/deck_refresh.py. Every slide title, shape name, tab, column, department and figure below describes
+# the generated fixture deck and workbook (tests/fixtures/gen_deck.py), not her real files.
+# Swap step: put last cycle's deck and workbook in templates/governance/ under the `base` names, correct every entry
+# here from her files, save this file as <workspace>/reference/template_maps/gov.yaml, set `fixture: false`, and
+# run the regression (last cycle's exports must reproduce last cycle's deck figures). While `fixture: true`, the
+# run refuses a base deck whose document subject (File > Info > Properties) does not start with FIXTURE, so these
+# fixture shape names can never be written into her deck.
+#
+# Rules the code enforces against this map (never weakened by editing it): the base deck's slide count and titles
+# must equal `slides` in order (slides are never added, removed or reordered, R067); every named shape must exist
+# on its slide; a chart's `categories` must equal the categories already in the chart; a board or dean deck must
+# end with a `kind: takeaway` slide (R145/R185). A figure is either `lookup` (the one export row whose department
+# equals `key`, after the crosswalk) or `sum` (the whole column); a figure the export cannot supply is flagged in
+# yellow on the slide, never estimated.
+# B14 sources are UNCONFIRMED (build list B14): this fixture reuses the Power BI productivity export only.
+# Access/scheduling (QGenda, Tableau) and quality/compliance sources are added once she confirms them from the deck.
+
+fixture: true
+deck: "GOV"
+audience: "committee"            # notes density and lint bar (cpa.pptx.notes / lint AUDIENCES)
+period_key: "date"               # output folder key: fymm, or the run date for the twice-monthly governance deck
+outbox: "governance"                  # outbox/<outbox>/<key>/ and templates/<outbox>/
+outputs:
+  deck: "Governance_{key}.pptx"
+  workbook: "Governance_{key}_workbook.xlsx"
+base:                          # last cycle's files in templates/<outbox>/ (rollover copies bog/fc outputs there)
+  deck: "Governance_deck.pptx"
+  workbook: "Governance_workbook.xlsx"
+
+inputs:                        # workbook data tab -> the export that refills it (paths under the workspace)
+  "Charges by Day":
+    path: "inbox/tableau/charges_by_day_{fymm}.*"
+    sheet: "Charges by Day"
+    columns: ["Date", "Charges", "Budget", "Prior Year"]
+    department_column: null
+    status: "actual"             # used only when the export's manifest carries no status
+  "Productivity":
+    path: "inbox/powerbi/dept_productivity_{fymm}.*"
+    sheet: "Productivity"
+    columns: ["Department", "wRVUs", "Encounters"]
+    department_column: "Department"
+    status: "actual"
+
+figures:
+  wrvus_dermatology:
+    label: "wRVUs, Dermatology"
+    lookup: {tab: "Productivity", key: "Dermatology", column: "wRVUs"}
+    format: "{:,.0f}"
+    source: "Power BI"
+  encounters_dermatology:
+    label: "Encounters, Dermatology"
+    lookup: {tab: "Productivity", key: "Dermatology", column: "Encounters"}
+    format: "{:,.0f}"
+    source: "Power BI"
+  wrvus_emergency_medicine:
+    label: "wRVUs, Emergency Medicine"
+    lookup: {tab: "Productivity", key: "Emergency Medicine", column: "wRVUs"}
+    format: "{:,.0f}"
+    source: "Power BI"
+  encounters_emergency_medicine:
+    label: "Encounters, Emergency Medicine"
+    lookup: {tab: "Productivity", key: "Emergency Medicine", column: "Encounters"}
+    format: "{:,.0f}"
+    source: "Power BI"
+  wrvus_gastroenterology:
+    label: "wRVUs, Gastroenterology"
+    lookup: {tab: "Productivity", key: "Gastroenterology", column: "wRVUs"}
+    format: "{:,.0f}"
+    source: "Power BI"
+  encounters_gastroenterology:
+    label: "Encounters, Gastroenterology"
+    lookup: {tab: "Productivity", key: "Gastroenterology", column: "Encounters"}
+    format: "{:,.0f}"
+    source: "Power BI"
+
+slides:                        # every slide of the deck, in order
+  - title: "Clinical Governance Update"
+    kind: "title"
+    texts:
+      - shape: "Period"
+        text: "{month_name}"
+  - title: "Department productivity"
+    tables:
+      - shape: "Productivity table"
+        cells:                   # row and col count from 0 (row 0 is the header row she keeps)
+          - {row: 1, col: 1, figure: wrvus_dermatology}
+          - {row: 1, col: 2, figure: encounters_dermatology}
+          - {row: 2, col: 1, figure: wrvus_emergency_medicine}
+          - {row: 2, col: 2, figure: encounters_emergency_medicine}
+          - {row: 3, col: 1, figure: wrvus_gastroenterology}
+          - {row: 3, col: 2, figure: encounters_gastroenterology}
+  - title: "Takeaway"
+    kind: "takeaway"             # narrative only: she writes it; the refresh never touches it

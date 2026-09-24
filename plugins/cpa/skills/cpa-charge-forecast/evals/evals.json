@@ -1,0 +1,20 @@
+{
+  "skill_name": "cpa-charge-forecast",
+  "evals": [
+    {
+      "id": 1,
+      "shape": "direct",
+      "prompt": "What's the month going to land at? Run the charge forecast."
+    },
+    {
+      "id": 2,
+      "shape": "scheduled",
+      "prompt": "A new file inbox/tableau/charges_by_day_2703.xlsx just landed. Run cpa-charge-forecast for it."
+    },
+    {
+      "id": 3,
+      "shape": "dispatcher",
+      "prompt": "cpa-monthly-pull just marked the Tableau Charges by Day export as pulled for FY27 M03. Run cpa-charge-forecast now that the export has landed."
+    }
+  ]
+}

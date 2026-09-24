@@ -1,0 +1,35 @@
+{
+  "skill_name": "cpa-monthly-pull",
+  "evals": [
+    {
+      "id": 1,
+      "shape": "direct",
+      "prompt": "Pull monthly - FY27 M03 closed on Friday and I'm here for the next hour."
+    },
+    {
+      "id": 2,
+      "shape": "scheduled",
+      "prompt": "Use the cpa-monthly-pull skill. Attempt the full monthly pull unattended. If any permission prompt appears, stop and report which domain."
+    },
+    {
+      "id": 3,
+      "shape": "dispatcher",
+      "prompt": "cpa-bog-refresh stopped because the COGNOS departmental financials export for 2703 has not landed, and the calling session invokes cpa-monthly-pull to run this month's export chain so the refresh can finish."
+    },
+    {
+      "id": 4,
+      "shape": "direct",
+      "prompt": "The COGNOS step landed the departmental financials export but the CRF export failed validation. Are we done with COGNOS for this month?"
+    },
+    {
+      "id": 5,
+      "shape": "direct",
+      "prompt": "The SAP step landed the salary extract and then the session ended before the CO line items. What does the state say, and what should the next run do?"
+    },
+    {
+      "id": 6,
+      "shape": "scheduled",
+      "prompt": "The unattended pull trial for 2703 is running: Tableau, Power BI and COGNOS are listed as pulled, MedVitals landed its CPT profile but not the business plan files, and SAP and QGenda have not started. Continue the chain."
+    }
+  ]
+}

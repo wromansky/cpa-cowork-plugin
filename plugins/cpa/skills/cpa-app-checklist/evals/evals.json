@@ -1,0 +1,20 @@
+{
+  "skill_name": "cpa-app-checklist",
+  "evals": [
+    {
+      "id": 1,
+      "shape": "direct",
+      "prompt": "I just added a new item to reference/checklist.yaml. Can you regenerate the checklist PDF?"
+    },
+    {
+      "id": 2,
+      "shape": "scheduled",
+      "prompt": "The quarterly reference-file review task is running. Check whether reference/checklist.yaml has changed since the last checklist PDF was built, and regenerate it if so."
+    },
+    {
+      "id": 3,
+      "shape": "dispatcher",
+      "prompt": "cpa-cycle-kickoff just registered a new SOM cycle and needs the current submission checklist PDF confirmed up to date before it drafts the call-for-submissions email. Run cpa-app-checklist now."
+    }
+  ]
+}

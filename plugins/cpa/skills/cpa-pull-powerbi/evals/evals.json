@@ -1,0 +1,20 @@
+{
+  "skill_name": "cpa-pull-powerbi",
+  "evals": [
+    {
+      "id": 1,
+      "shape": "direct",
+      "prompt": "Pull Power BI for 2703 - department productivity, all departments, fiscal year to date. The report name and URL are filled in."
+    },
+    {
+      "id": 2,
+      "shape": "scheduled",
+      "prompt": "Month start scheduled task: export the Power BI departmental productivity report for the fiscal month, write its manifest, and validate it."
+    },
+    {
+      "id": 3,
+      "shape": "dispatcher",
+      "prompt": "cpa-monthly-pull is running for 2703 and calls cpa-pull-powerbi for the departmental productivity export after Tableau."
+    }
+  ]
+}

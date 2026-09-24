@@ -1,0 +1,20 @@
+{
+  "skill_name": "cpa-cycle-kickoff",
+  "evals": [
+    {
+      "id": 1,
+      "shape": "direct",
+      "prompt": "Register the next SOM Review Committee cycle for 2026-11-12 with Cardiology, Neurology, and Dermatology expected to submit."
+    },
+    {
+      "id": 2,
+      "shape": "scheduled",
+      "prompt": "The daily calendar poll found a new SOM Review Committee invite for 2026-11-12. Register the cycle and draft the call-for-submissions email."
+    },
+    {
+      "id": 3,
+      "shape": "dispatcher",
+      "prompt": "cpa-dashboard flagged that a Board of Governors meeting on the calendar has no registered cycle. Run cpa-cycle-kickoff for it."
+    }
+  ]
+}

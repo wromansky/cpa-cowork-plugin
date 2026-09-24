@@ -1,0 +1,69 @@
+# CPA assumptions (reference/assumptions.yaml). Read only through cpa.config.assumption().
+# null = unconfirmed Hopkins fact: code stops and names the key when it needs one (never guesses).
+# "tool setting" = engineering default, not a Hopkins fact; change it if a threshold feels wrong.
+# Automation never edits this file; proposed values land in reference/proposed/ for you to paste in.
+# Later units add their own sections at the bottom (DECISIONS D18).
+
+fiscal:
+  year_start_month: 7            # confirmed: fiscal year starts July 1
+
+rates:
+  fringe_jhm_base_pct: null     # ask the analyst to supply an approved current rate locally
+  fringe_jhu_clinical_pct: null # needs confirmation from Finance
+  deans_tax_pct: null           # needs current confirmed rate
+  dom_clinical_tax_pct: null    # needs current confirmed rate
+
+brand:
+  navy: "#1F4E79"                # confirmed
+  dark_green: "#385723"          # confirmed (CAG task headers)
+  gold: null                     # needs you: eyedropper from last month's deck
+  ice_blue: null                 # needs you
+  flag_yellow: null              # needs you
+
+verification:
+  variance_threshold_pct: 5.0    # tool setting: C1 flags prior-version changes above this
+  tie_out_tolerance_abs: 0.01    # tool setting: C1 tie-out passes when |figure - source| <= this (U07)
+
+reconcile:
+  tolerance_abs: 1.0             # tool setting (DECISIONS D05)
+  tolerance_pct: 0.5             # tool setting (DECISIONS D05)
+
+tools:
+  libreoffice_path: null         # optional: full path to soffice if it is not found automatically
+
+cycles:
+  som_materials_lead_days: null  # needs you: business days before SOM Review Committee
+  bog_lead_days: null            # needs you
+  fc_lead_days: null             # needs you
+  gov_lead_days: null            # needs you
+
+review:
+  last_reviewed: null            # set to today's date (YYYY-MM-DD) after each quarterly check
+  quarterly_keys:                # `python -m cpa config check` lists any of these still null
+    - rates.fringe_jhu_clinical_pct
+    - rates.deans_tax_pct
+    - rates.dom_clinical_tax_pct
+    - cycles.som_materials_lead_days
+    - cycles.bog_lead_days
+    - cycles.fc_lead_days
+    - cycles.gov_lead_days
+
+charge_forecast:                 # U10 (DECISIONS D04, D18)
+  input_cells:                   # needs you: the five yellow input cells on the Forecast tab, as name: "Forecast!C4"
+    fiscal_month: null           # needs you: the fiscal-month cell (the script sets it)
+    total_workdays: null         # needs you: the total-workdays cell (the script sets it)
+    # add the other three yellow cells by name, e.g. budget: "Forecast!C6"; the run stops while any is null
+
+retention:                       # U23 (DECISIONS D18, D29). H-08-retention.
+  rules: null                    # needs you: retention rule shape (e.g. days-to-keep); archive never deletes even once set
+
+hygiene:                         # U23 (DECISIONS D18, D29)
+  effort_success_measures: null  # needs you: her success-measure baselines (hours saved, turnaround, capacity, errors reaching committee) to compare the E6 effort report against
+
+sources:                         # U09 sources (DECISIONS D18). ONE block only: never append a second `sources:`
+  sap:
+    salary_extract_format: null  # needs you: confirm the SAP salary extract layout (INV-269), e.g. "one row per provider: Provider ID, Base Salary, Supplements"; salary validate/load stop until set
+  epic:
+    patient_level_grain_recurs: null  # needs you: does any Epic pull recur at patient grain (Y.14, INV-764)? true or false; Epic validate refuses until set. Patient-level files are quarantined either way
+  powerbi:
+    dept_productivity_report_name: null  # needs you: Power BI report name/path for the departmental wRVU, collections, PB-visits export (INV-271/Y-05/H-01); dept_productivity validate/load stop until set

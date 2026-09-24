@@ -1,0 +1,40 @@
+{
+  "skill_name": "cpa-dispatcher",
+  "evals": [
+    {
+      "id": 1,
+      "shape": "direct",
+      "prompt": "Process the inbox - tell me what's ready to run and run it."
+    },
+    {
+      "id": 2,
+      "shape": "scheduled",
+      "prompt": "Use the cpa-dispatcher skill. Scan the inbox, run every workflow that is ready in dependency order, archive processed inputs, rebuild the dashboard, and notify me with what ran, what is in outbox, what is flagged, and what is waiting on inputs."
+    },
+    {
+      "id": 3,
+      "shape": "dispatcher",
+      "prompt": "cpa-monthly-pull has finished and this month's Tableau, Power BI, COGNOS and SAP exports are sitting in inbox/ with their manifests. The calling session invokes cpa-dispatcher to sweep the inbox and run the workflows those exports feed."
+    },
+    {
+      "id": 4,
+      "shape": "direct",
+      "prompt": "This pass, cpa-app-triage ended failed for the Alvarez position, and cpa-charge-forecast finished CLEAN. What runs next, and does anything move to archive?"
+    },
+    {
+      "id": 5,
+      "shape": "scheduled",
+      "prompt": "charges_by_day_2703.xlsx landed and the charge forecast is ready, but the BOG refresh still needs its department-productivity and departmental-financials exports, and the CRF forecast is ready too. Run this pass and archive what is finished."
+    },
+    {
+      "id": 6,
+      "shape": "scheduled",
+      "prompt": "cpa-budget-workbook exited 1 with formula errors on the Budget_Workbook_2703.xlsx it wrote, and the FC refresh is ready for the same fiscal month. Run the pass."
+    },
+    {
+      "id": 7,
+      "shape": "direct",
+      "prompt": "This pass, state ready returned cpa-app-slide for the Alvarez and Chen positions, both with their P&L under outbox/app/2026-10-15, and cpa-app-deck for cycle 2026-10-15. Alvarez's slide run ended failed and Chen's ended done. Run the pass, tell me the slide workflow's status for cycle 2026-10-15, and say whether the deck runs."
+    }
+  ]
+}

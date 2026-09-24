@@ -1,0 +1,20 @@
+{
+  "skill_name": "cpa-format",
+  "evals": [
+    {
+      "id": 1,
+      "shape": "direct",
+      "prompt": "Can you do a brand check on the deck I just built at outbox/app/2703/SOM_Review_2703.pptx for the dean audience?"
+    },
+    {
+      "id": 2,
+      "shape": "scheduled",
+      "prompt": "The weekly deck-drift check is running. Diff every deck in this week's outbox against last cycle's version and report what changed."
+    },
+    {
+      "id": 3,
+      "shape": "dispatcher",
+      "prompt": "cpa-app-deck just assembled outbox/app/2703/SOM_Review_2703.pptx and needs it lint-checked for the committee audience and speaker notes generated before it returns. Run cpa-format now."
+    }
+  ]
+}

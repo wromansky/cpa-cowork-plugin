@@ -1,0 +1,20 @@
+{
+  "skill_name": "cpa-rollover",
+  "evals": [
+    {
+      "id": 1,
+      "shape": "direct",
+      "prompt": "Roll the month. Today is the first business day of the new fiscal month."
+    },
+    {
+      "id": 2,
+      "shape": "scheduled",
+      "prompt": "The month-start scheduled task fired. Create this fiscal month's folders, copy templates forward, and register the month's fixed deadlines."
+    },
+    {
+      "id": 3,
+      "shape": "dispatcher",
+      "prompt": "The dispatcher detected it is the first business day of a new fiscal month and no rollover has run yet. Run cpa-rollover for the new period."
+    }
+  ]
+}

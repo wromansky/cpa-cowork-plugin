@@ -1,0 +1,20 @@
+{
+  "skill_name": "cpa-intake",
+  "evals": [
+    {
+      "id": 1,
+      "shape": "direct",
+      "prompt": "I just forwarded you an email from the Neurology administrator asking for a division P&L by Friday, and I saved it as inbox/mailbox_drop/neurology_pnl_request.eml. Handle this."
+    },
+    {
+      "id": 2,
+      "shape": "scheduled",
+      "prompt": "The CPA intake hourly task just fired in the 07:00-18:00 weekday window, and inbox/mailbox_drop holds this hour's .eml messages with no dispatcher running. Run the cpa-intake poll against inbox/mailbox_drop and report counts by class, anything classified OTHER, and any brief field written as not stated."
+    },
+    {
+      "id": 3,
+      "shape": "dispatcher",
+      "prompt": "cpa-dispatcher's 09:00 pass has no connector and asks cpa-intake to poll Outlook and chat from inside that pass. cpa-intake's own hourly task has already run: inbox/mailbox_drop's .eml files are processed, inbox/submissions/ holds the filed APP submission and requests/<id>/brief.md holds the ad hoc brief. State whether cpa-intake polls mail from the dispatcher pass, and name how its already-written outputs feed the rest of the pass."
+    }
+  ]
+}

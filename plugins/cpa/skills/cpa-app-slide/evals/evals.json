@@ -1,0 +1,20 @@
+{
+  "skill_name": "cpa-app-slide",
+  "evals": [
+    {
+      "id": 1,
+      "shape": "direct",
+      "prompt": "Build the committee slide for the Cardiology NP position. The business need is provider coverage for a growing outpatient panel."
+    },
+    {
+      "id": 2,
+      "shape": "scheduled",
+      "prompt": "It's the day before the SOM Review cycle. Build the Q&A slide for the Neurology PA, a returning position, using her latest answers."
+    },
+    {
+      "id": 3,
+      "shape": "dispatcher",
+      "prompt": "cpa-app-pnl just verified the Cardiology NP P&L CLEAN. Run cpa-app-slide for it now."
+    }
+  ]
+}

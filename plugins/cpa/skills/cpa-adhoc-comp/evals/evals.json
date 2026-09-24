@@ -1,0 +1,20 @@
+{
+  "skill_name": "cpa-adhoc-comp",
+  "evals": [
+    {
+      "id": 1,
+      "shape": "direct",
+      "prompt": "Can you benchmark this comp for request req-021? Two Dermatology providers, compare against SullivanCotter."
+    },
+    {
+      "id": 2,
+      "shape": "scheduled",
+      "prompt": "The daily request-folder sweep is running. requests/req-021/brief.md asks for a comp workbook and requests/req-021/comp_inputs.json has landed. Build it."
+    },
+    {
+      "id": 3,
+      "shape": "dispatcher",
+      "prompt": "cpa-intake just filed requests/req-021/brief.md classifying it ADHOC_REQUEST, and its requested_output reads 'compensation and SullivanCotter comparison'. The analyst has confirmed the survey points in comp_inputs.json. Run cpa-adhoc-comp now."
+    }
+  ]
+}

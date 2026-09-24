@@ -1,0 +1,24 @@
+# reference/qgenda_paths.yaml - the pinned QGenda task export (A13, build list 76).
+#
+# Shape (DECISIONS D-U09-8): reports: {<name>: {url, filters, expected_columns, row_range, header_row}}
+#
+# The key below is the dataset name cpa.sources.qgenda registers, which `python -m cpa sources list`
+# prints (qgenda.tasks); it is not a report name. Everything inside the entry is hers to fill: no
+# report, URL or header row is invented (SPEC 1.3, hard rule 15).
+#
+# QGenda's access method - API or browser export - is [UNCONFIRMED] (INV-157), and
+# reference/assumptions.yaml has no sources.qgenda.access_method key, so no script selects a pull
+# strategy. No code reads this file yet: U09's planned `_paths.yaml` reader and the
+# `sources <system> access` permission gate are not implemented. This file is
+# navigation documentation for the cpa-pull-qgenda skill today; `python -m cpa sources qgenda validate`
+# checks the landed export itself. Read as YAML with utf-8-sig; the workspace copy wins over this
+# repository template.
+reports:
+  tasks:
+    # A13: TaskKey, department, task name, division, activity, weekday and weekend credits, hospital
+    # tag; pinned to inbox/qgenda/tasks_<department>_<YYYY-MM-DD>.xlsx.
+    url: null              # her saved export URL; never guessed
+    filters: []            # e.g. [department, period or date range]
+    expected_columns: []   # the export's header row, as she sees it
+    row_range: null        # [minimum, maximum] plausible data rows; null until known
+    header_row: null       # the row holding the column names; null until known

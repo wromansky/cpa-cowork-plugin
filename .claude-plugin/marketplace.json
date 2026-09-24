@@ -1,0 +1,11 @@
+{
+  "name": "cpa-automation",
+  "owner": { "name": "Billy Romansky" },
+  "plugins": [
+    {
+      "name": "cpa",
+      "source": "./plugins/cpa",
+      "description": "CPA committee cycles, lookbacks, forecasts, intake, and verification for the JHM Clinical Practice Association."
+    }
+  ]
+}

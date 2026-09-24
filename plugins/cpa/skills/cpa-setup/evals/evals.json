@@ -1,0 +1,20 @@
+{
+  "skill_name": "cpa-setup",
+  "evals": [
+    {
+      "id": 1,
+      "shape": "direct",
+      "prompt": "Set up CPA in this session so I can start running workflows."
+    },
+    {
+      "id": 2,
+      "shape": "scheduled",
+      "prompt": "Scheduled task start: before running today's CPA workflows, confirm the CPA runtime is ready in this session; set it up if the runtime check reports missing packages."
+    },
+    {
+      "id": 3,
+      "shape": "dispatcher",
+      "prompt": "The cpa-core runtime check just exited nonzero: a pinned package is missing from this session's interpreter. Run cpa-setup, then re-run the check."
+    }
+  ]
+}

@@ -1,0 +1,3 @@
+# Keep text bytes identical across Linux and Windows checkouts. The bundled runtime
+# hashes these bytes; CRLF conversion would invalidate dependencies.json on Windows.
+* text=auto eol=lf

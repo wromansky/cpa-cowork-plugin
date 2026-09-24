@@ -1,0 +1,8 @@
+{
+  "skill_name": "cpa-crf",
+  "evals": [
+    {"id": 1, "shape": "direct", "prompt": "Build the CRF report for 2703 from inbox/cognos/crf_2703.xlsx, rolling last period's report forward."},
+    {"id": 2, "shape": "scheduled", "prompt": "inbox/cognos/crf_2703.xlsx just landed and got its manifest; the dispatcher calls cpa-crf automatically because cpa-crf is ready for that fiscal month."},
+    {"id": 3, "shape": "dispatcher", "prompt": "The month-end close checklist needs this period's CRF report before the dashboard can be built; run cpa-crf for 2703 first."}
+  ]
+}

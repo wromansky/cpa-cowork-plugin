@@ -1,0 +1,8 @@
+{
+  "skill_name": "cpa-lookback",
+  "evals": [
+    {"id": 1, "shape": "direct", "prompt": "Run the lookback for the GIM-2026 cohort. The cohort folder under staging/lookback has cohort.csv, and the Epic aggregate, the business plans and the salary extract are all in the inbox with their manifests."},
+    {"id": 2, "shape": "scheduled", "prompt": "The cohort folder staging/lookback/GIM-2026 is complete and every input carries its sidecar manifest; the watched-folder dispatcher calls cpa-lookback automatically."},
+    {"id": 3, "shape": "dispatcher", "prompt": "The clinical governance refresh needs this cohort's first-year plan versus actual workbook; run cpa-lookback for the GIM-2026 cohort first."}
+  ]
+}

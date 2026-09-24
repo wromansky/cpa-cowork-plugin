@@ -1,0 +1,40 @@
+# reference/tableau_paths.yaml - navigation for cpa-pull-tableau (A1-A3, guide 5.3).
+# One entry per named report the pull navigates to. `url` is empty until you paste the report's bookmark
+# URL in during the first supervised session; a null url stops the pull and names the report, because the
+# skill never browses to a guessed location. Automation never edits this file.
+# FIXTURE - confirm against her file: the report names come from the build list (A1-A3) and the guide 5.3
+# text; expected_columns and the row-count bounds are empty for you to fill from the real export.
+
+reports:
+  charges_by_day:                             # A1
+    report_name: "Charges by Day"
+    url: null                                 # needs you: paste the report's bookmark URL
+    filters:
+      - "fiscal month: <FYMM>"
+      - "exclude Imaging"
+    expected_columns: []                      # needs you: the export's header spellings, in order
+    row_count_min: null                       # needs you: expected minimum data rows
+    row_count_max: null                       # needs you: expected maximum data rows
+    lands_as: "inbox/tableau/charges_by_day_<FYMM>.xlsx"
+
+  pb_kpis:                                    # A2
+    report_name: "JHM PB KPIs Dashboard"
+    url: null                                 # needs you: paste the report's bookmark URL
+    filters:
+      - "bill area: <the position's bill area>"
+      - "12-month rolling window"
+    expected_columns: []
+    row_count_min: null
+    row_count_max: null
+    lands_as: "staging/app/<position>/collection_rate.json (the value and a screenshot, not an export)"
+
+  ambulatory_ops:                             # A3
+    report_name: "Ambulatory Operations Dashboard"
+    url: null                                 # needs you: paste the report's bookmark URL
+    filters:
+      - "department: <dept>"
+      - "period: <period>"
+    expected_columns: []
+    row_count_min: null
+    row_count_max: null
+    lands_as: "inbox/tableau/ambulatory_<dept>_<period>.xlsx"

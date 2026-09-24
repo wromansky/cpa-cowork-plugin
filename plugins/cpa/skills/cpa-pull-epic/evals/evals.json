@@ -1,0 +1,8 @@
+{
+  "skill_name": "cpa-pull-epic",
+  "evals": [
+    {"id": 1, "shape": "direct", "prompt": "Pull the Epic encounters for the GIM-2026 lookback cohort for fiscal period 2703. The cohort list is in staging/lookback/GIM-2026/cohort.csv and the report is pinned in reference/epic_paths.yaml."},
+    {"id": 2, "shape": "scheduled", "prompt": "The monthly pull window is open for fiscal period 2703; the scheduled task calls cpa-pull-epic for the governance aggregate report."},
+    {"id": 3, "shape": "dispatcher", "prompt": "cpa-lookback needs the Epic aggregate for the GIM-2026 cohort before it can assemble; run cpa-pull-epic first, then hand the landed file back."}
+  ]
+}

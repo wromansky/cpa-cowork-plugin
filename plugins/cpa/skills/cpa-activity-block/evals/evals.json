@@ -1,0 +1,20 @@
+{
+  "skill_name": "cpa-activity-block",
+  "evals": [
+    {
+      "id": 1,
+      "shape": "direct",
+      "prompt": "Add the M2 activity block to the P&L tab in outbox/app/2703/APP-2703-014/PnL.xlsx - I have wRVUs, cFTE, and net collections but no charges figure yet."
+    },
+    {
+      "id": 2,
+      "shape": "scheduled",
+      "prompt": "The overnight refresh task is running. Refresh the M2 block on every P&L tab written by cpa-app-pnl in the last run before cpa-verify checks them."
+    },
+    {
+      "id": 3,
+      "shape": "dispatcher",
+      "prompt": "cpa-app-pnl just finished writing the P&L figures onto the PnL tab of staging/app/APP-2703-014/PnL.xlsx and needs the M2 activity block added before it hands the workbook to cpa-verify. Run cpa-activity-block now."
+    }
+  ]
+}

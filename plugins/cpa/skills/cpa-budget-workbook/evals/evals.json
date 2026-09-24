@@ -1,0 +1,8 @@
+{
+  "skill_name": "cpa-budget-workbook",
+  "evals": [
+    {"id": 1, "shape": "direct", "prompt": "Rebuild the budget workbook for 2609 from inbox/sap/co_lineitems_2609.xlsx."},
+    {"id": 2, "shape": "scheduled", "prompt": "inbox/sap/co_lineitems_2609.xlsx just landed and got its manifest; the dispatcher calls cpa-budget-workbook automatically."},
+    {"id": 3, "shape": "dispatcher", "prompt": "cpa-fc-refresh needs this fiscal month's budget workbook before it can build the FC deck; run cpa-budget-workbook first."}
+  ]
+}

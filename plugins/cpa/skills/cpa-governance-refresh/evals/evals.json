@@ -1,0 +1,8 @@
+{
+  "skill_name": "cpa-governance-refresh",
+  "evals": [
+    {"id": 1, "shape": "direct", "prompt": "Refresh the governance deck."},
+    {"id": 2, "shape": "scheduled", "prompt": "The registered governance cycle is due today and this month's three exports already landed with manifests; the dispatcher calls cpa-governance-refresh automatically."},
+    {"id": 3, "shape": "dispatcher", "prompt": "cpa-dashboard flagged the governance cycle as due with inputs ready; run cpa-governance-refresh."}
+  ]
+}

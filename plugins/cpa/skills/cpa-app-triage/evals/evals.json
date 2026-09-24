@@ -1,0 +1,20 @@
+{
+  "skill_name": "cpa-app-triage",
+  "evals": [
+    {
+      "id": 1,
+      "shape": "direct",
+      "prompt": "Triage the Cardiology NP submission that just landed. Received today, SOM cycle is next Thursday."
+    },
+    {
+      "id": 2,
+      "shape": "scheduled",
+      "prompt": "A new folder inbox/submissions/Cardiology_NP_2026-09-22/ just appeared. Run cpa-app-triage on it."
+    },
+    {
+      "id": 3,
+      "shape": "dispatcher",
+      "prompt": "cpa-intake just classified an inbound email as an APP submission for Neurology. Run cpa-app-triage on the folder it points to."
+    }
+  ]
+}

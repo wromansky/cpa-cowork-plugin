@@ -1,0 +1,25 @@
+{
+  "skill_name": "cpa-pull-cognos",
+  "evals": [
+    {
+      "id": 1,
+      "shape": "direct",
+      "prompt": "Pull COGNOS for 2703 - the departmental financial report, fiscal period 2703. The report URL is filled in reference/cognos_paths.yaml."
+    },
+    {
+      "id": 2,
+      "shape": "scheduled",
+      "prompt": "Month-start scheduled task: export the COGNOS departmental financial report for the fiscal period, then validate it against last month's file."
+    },
+    {
+      "id": 3,
+      "shape": "dispatcher",
+      "prompt": "cpa-crf is ready for 2703 because inbox/cognos/crf_2703.xlsx landed; it calls cpa-pull-cognos for the recruitment cost report."
+    },
+    {
+      "id": 4,
+      "shape": "direct",
+      "prompt": "I'm signed in to COGNOS and the departmental financial report's URL and report name are filled in reference/cognos_paths.yaml. Export 2703 for me. I have never checked whether automated browser export is approved for COGNOS."
+    }
+  ]
+}

@@ -1,0 +1,146 @@
+# FIXTURE - confirm against her file. Deck refresh map for the Board of Governors deck (B1, U15), read by
+# cpa/workflows/deck_refresh.py. Every slide title, shape name, tab, column, department and figure below describes
+# the generated fixture deck and workbook (tests/fixtures/gen_deck.py), not her real files.
+# Swap step: put last cycle's deck and workbook in templates/bog/ under the `base` names, correct every entry
+# here from her files, save this file as <workspace>/reference/template_maps/bog.yaml, set `fixture: false`, and
+# run the regression (last cycle's exports must reproduce last cycle's deck figures). While `fixture: true`, the
+# run refuses a base deck whose document subject (File > Info > Properties) does not start with FIXTURE, so these
+# fixture shape names can never be written into her deck.
+#
+# Rules the code enforces against this map (never weakened by editing it): the base deck's slide count and titles
+# must equal `slides` in order (slides are never added, removed or reordered, R067); every named shape must exist
+# on its slide; a chart's `categories` must equal the categories already in the chart; a board or dean deck must
+# end with a `kind: takeaway` slide (R145/R185). A figure is either `lookup` (the one export row whose department
+# equals `key`, after the crosswalk) or `sum` (the whole column); a figure the export cannot supply is flagged in
+# yellow on the slide, never estimated.
+
+fixture: true
+deck: "BOG"
+audience: "board"            # notes density and lint bar (cpa.pptx.notes / lint AUDIENCES)
+period_key: "fymm"               # output folder key: fymm, or the run date for the twice-monthly governance deck
+outbox: "bog"                  # outbox/<outbox>/<key>/ and templates/<outbox>/
+outputs:
+  deck: "BOG_{key}.pptx"
+  workbook: "BOG_{key}_workbook.xlsx"
+base:                          # last cycle's files in templates/<outbox>/ (rollover copies bog/fc outputs there)
+  deck: "BOG_{prev_fymm}.pptx"
+  workbook: "BOG_{prev_fymm}_workbook.xlsx"
+
+inputs:                        # workbook data tab -> the export that refills it (paths under the workspace)
+  "Charges by Day":
+    path: "inbox/tableau/charges_by_day_{fymm}.*"
+    sheet: "Charges by Day"
+    columns: ["Date", "Charges", "Budget", "Prior Year"]
+    department_column: null
+    status: "actual"             # used only when the export's manifest carries no status
+  "Productivity":
+    path: "inbox/powerbi/dept_productivity_{fymm}.*"
+    sheet: "Productivity"
+    columns: ["Department", "wRVUs", "Encounters"]
+    department_column: "Department"
+    status: "actual"
+  "Financials":
+    path: "inbox/cognos/dept_financials_{fymm}.*"
+    sheet: "Financials"
+    columns: ["Department", "Net Revenue", "Expenses"]
+    department_column: "Department"
+    status: "actual"
+
+figures:
+  charges_total:
+    label: "Total charges"
+    sum: {tab: "Charges by Day", column: "Charges"}
+    format: "${:,.0f}"
+    source: "Tableau"
+  wrvus_dermatology:
+    label: "wRVUs, Dermatology"
+    lookup: {tab: "Productivity", key: "Dermatology", column: "wRVUs"}
+    format: "{:,.0f}"
+    source: "Power BI"
+  encounters_dermatology:
+    label: "Encounters, Dermatology"
+    lookup: {tab: "Productivity", key: "Dermatology", column: "Encounters"}
+    format: "{:,.0f}"
+    source: "Power BI"
+  wrvus_emergency_medicine:
+    label: "wRVUs, Emergency Medicine"
+    lookup: {tab: "Productivity", key: "Emergency Medicine", column: "wRVUs"}
+    format: "{:,.0f}"
+    source: "Power BI"
+  encounters_emergency_medicine:
+    label: "Encounters, Emergency Medicine"
+    lookup: {tab: "Productivity", key: "Emergency Medicine", column: "Encounters"}
+    format: "{:,.0f}"
+    source: "Power BI"
+  wrvus_gastroenterology:
+    label: "wRVUs, Gastroenterology"
+    lookup: {tab: "Productivity", key: "Gastroenterology", column: "wRVUs"}
+    format: "{:,.0f}"
+    source: "Power BI"
+  encounters_gastroenterology:
+    label: "Encounters, Gastroenterology"
+    lookup: {tab: "Productivity", key: "Gastroenterology", column: "Encounters"}
+    format: "{:,.0f}"
+    source: "Power BI"
+  net_revenue_dermatology:
+    label: "Net revenue, Dermatology"
+    lookup: {tab: "Financials", key: "Dermatology", column: "Net Revenue"}
+    format: "${:,.0f}"
+    source: "Cognos"
+  expenses_dermatology:
+    label: "Expenses, Dermatology"
+    lookup: {tab: "Financials", key: "Dermatology", column: "Expenses"}
+    format: "${:,.0f}"
+    source: "Cognos"
+  net_revenue_emergency_medicine:
+    label: "Net revenue, Emergency Medicine"
+    lookup: {tab: "Financials", key: "Emergency Medicine", column: "Net Revenue"}
+    format: "${:,.0f}"
+    source: "Cognos"
+  expenses_emergency_medicine:
+    label: "Expenses, Emergency Medicine"
+    lookup: {tab: "Financials", key: "Emergency Medicine", column: "Expenses"}
+    format: "${:,.0f}"
+    source: "Cognos"
+  net_revenue_gastroenterology:
+    label: "Net revenue, Gastroenterology"
+    lookup: {tab: "Financials", key: "Gastroenterology", column: "Net Revenue"}
+    format: "${:,.0f}"
+    source: "Cognos"
+  expenses_gastroenterology:
+    label: "Expenses, Gastroenterology"
+    lookup: {tab: "Financials", key: "Gastroenterology", column: "Expenses"}
+    format: "${:,.0f}"
+    source: "Cognos"
+
+slides:                        # every slide of the deck, in order
+  - title: "Board of Governors Financial Update"
+    kind: "title"
+    texts:
+      - shape: "Period"
+        text: "{month_name}"
+  - title: "Charges"
+    texts:
+      - shape: "Charges KPI"
+        text: "Total charges {charges_total}"
+  - title: "Department productivity"
+    tables:
+      - shape: "Productivity table"
+        cells:                   # row and col count from 0 (row 0 is the header row she keeps)
+          - {row: 1, col: 1, figure: wrvus_dermatology}
+          - {row: 1, col: 2, figure: encounters_dermatology}
+          - {row: 2, col: 1, figure: wrvus_emergency_medicine}
+          - {row: 2, col: 2, figure: encounters_emergency_medicine}
+          - {row: 3, col: 1, figure: wrvus_gastroenterology}
+          - {row: 3, col: 2, figure: encounters_gastroenterology}
+  - title: "Department financials"
+    charts:
+      - shape: "Financials chart"
+        categories: ["Dermatology", "Emergency Medicine", "Gastroenterology"]
+        series:
+          - name: "Net Revenue"
+            figures: [net_revenue_dermatology, net_revenue_emergency_medicine, net_revenue_gastroenterology]
+          - name: "Expenses"
+            figures: [expenses_dermatology, expenses_emergency_medicine, expenses_gastroenterology]
+  - title: "Takeaway"
+    kind: "takeaway"             # narrative only: she writes it; the refresh never touches it

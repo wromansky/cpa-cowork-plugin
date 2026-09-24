@@ -1,0 +1,25 @@
+{
+  "skill_name": "cpa-core",
+  "evals": [
+    {
+      "id": 1,
+      "shape": "direct",
+      "prompt": "Where does the CPA workspace live, and what are the hard rules I need to follow before you touch any workbook?"
+    },
+    {
+      "id": 2,
+      "shape": "scheduled",
+      "prompt": "It is the start of a new session with no prior context. Load cpa-core before doing any CPA analyst work this session."
+    },
+    {
+      "id": 3,
+      "shape": "dispatcher",
+      "prompt": "cpa-charge-forecast is about to run. Load cpa-core first so its workspace map, hard rules, and run-record convention are available."
+    },
+    {
+      "id": 4,
+      "shape": "direct",
+      "prompt": "You are running inside a Cowork session and no cpa command is installed. How do you run the cpa scripts, how do you know the bundled runtime is ready, and what does a missing dependency mean?"
+    }
+  ]
+}

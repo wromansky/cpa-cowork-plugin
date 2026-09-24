@@ -1,0 +1,8 @@
+{
+  "skill_name": "cpa-reconcile",
+  "evals": [
+    {"id": 1, "shape": "direct", "prompt": "Why don't dept_productivity.csv and dept_financials.csv tie out on wRVUs by department?"},
+    {"id": 2, "shape": "dispatcher", "prompt": "cpa-bog-refresh needs charges_by_day reconciled against dept_productivity before it refills the BOG data tabs; run that reconciliation."},
+    {"id": 3, "shape": "scheduled", "prompt": "The nightly ingest check calls cpa-reconcile to check this month's SAP export for paste errors and out-of-period dates before anything else runs."}
+  ]
+}

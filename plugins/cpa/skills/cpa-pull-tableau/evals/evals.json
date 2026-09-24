@@ -1,0 +1,25 @@
+{
+  "skill_name": "cpa-pull-tableau",
+  "evals": [
+    {
+      "id": 1,
+      "shape": "direct",
+      "prompt": "Pull charges from Tableau for 2703. The Charges by Day report's URL is filled in reference/tableau_paths.yaml and I'm signed in."
+    },
+    {
+      "id": 2,
+      "shape": "scheduled",
+      "prompt": "Day 2 after close, and the month-start scheduled task is running. Pull Tableau Charges by Day for the closed fiscal month and write the manifests."
+    },
+    {
+      "id": 3,
+      "shape": "dispatcher",
+      "prompt": "cpa-monthly-pull is running its pull chain for 2703 and calls cpa-pull-tableau for the Charges by Day export first."
+    },
+    {
+      "id": 4,
+      "shape": "direct",
+      "prompt": "I'm signed in to Tableau in Chrome and the Charges by Day URL is in reference/tableau_paths.yaml. Pull charges for 2703. Nobody has ever told me whether Hopkins allows Claude in Chrome to drive the browser for this system."
+    }
+  ]
+}

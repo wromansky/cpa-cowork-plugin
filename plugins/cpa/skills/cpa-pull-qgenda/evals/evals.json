@@ -1,0 +1,8 @@
+{
+  "skill_name": "cpa-pull-qgenda",
+  "evals": [
+    {"id": 1, "shape": "direct", "prompt": "Pull the QGenda tasks for the Hospitalists department as of 2026-09-23 so the CAG matcher has an updated task list."},
+    {"id": 2, "shape": "scheduled", "prompt": "The monthly pull window is open; the scheduled task calls cpa-pull-qgenda for the departments whose CAG work is active."},
+    {"id": 3, "shape": "dispatcher", "prompt": "cpa-cag-match is ready but the last QGenda task export is stale; run cpa-pull-qgenda for the department first, then rerun the matcher."}
+  ]
+}

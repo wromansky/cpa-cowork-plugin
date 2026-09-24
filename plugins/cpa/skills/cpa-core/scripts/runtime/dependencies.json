@@ -1,0 +1,189 @@
+{
+  "cpa_version": "0.2.0",
+  "files": {
+    "cpa/__init__.py": "132c05e2a4602cabae109f4d1863210bfe80537902e1680465773b60e5d38599",
+    "cpa/__main__.py": "938d9c1057e9d2800398ca92cde866c87fc12db341bc4f2a20c06477f76ee9b2",
+    "cpa/activity_block.py": "b8e445d18b14e51b421cf6bf81d86bea77ab2c57c2ef81f3c95d42feeea868da",
+    "cpa/benchmarks.py": "d16bc2d7d60202b88ec9bc4cd71d98df277f2f43be193169b03307a0773e37cf",
+    "cpa/bigxlsx.py": "a48b7776ef32a2c34f38d04f57c742940314e63c2f2f2b3f8b9c609b4d4a2f0f",
+    "cpa/cli.py": "56eb6e9dba0717c2cc68041b4b08b3221391b88bbca23569df735f26d3ec6b74",
+    "cpa/config.py": "e6be12231dffb53b9cfa1b0b54ffd3e4352ca4614f180f63e1e54974d926251c",
+    "cpa/crosswalk.py": "fa463d129dc0d7dbc8e84acbe76945e1de4fb62e0e24fdbe01ab04636607a71c",
+    "cpa/fsutil.py": "439b44dfc8b83ffac45ae5713c0a27e9a9f8b49079669f2037de9cf0cb400508",
+    "cpa/manifest.py": "1d91ee9d94afaebcdbe8f046c24a28f4a098ba291b935f1d3cbb8d2b58f71578",
+    "cpa/periods.py": "fabaee85b59abeca46f0cf9c6060b0c51588cbc98d88b02c1cf49d3803c92978",
+    "cpa/pptx/__init__.py": "64848b9ebcea70c3779712f3d015a77717cad1c893e287c819b8a74e64f0f7cf",
+    "cpa/pptx/brand.py": "41585e26152fcb2d931f47d75a2a973403e2aeaf068d3ff9a086699835bfcf1c",
+    "cpa/pptx/diff.py": "1588e29ac46971768b07ce9df3041a3459326b8e83475a84d73df1c58e155404",
+    "cpa/pptx/lint.py": "fb5782332f7376cb0768f834ab79dd640b14408c16ac86e2bbcd1bde09b11542",
+    "cpa/pptx/notes.py": "41ffd6684fae9ffbabac211d1e784028eb910eb84617af2c966ffe9c1e8d30da",
+    "cpa/recalc.py": "86a3d245ce6838d3f8ac3afd0f4931d9ba76c50db5fdba01c7112b0bcd648f98",
+    "cpa/reconcile.py": "ba52e09c07b8a7e4e13ffa480c3e81c93850640a0ec73b643517ae941df95ba5",
+    "cpa/setup.py": "fc7d1a5045375e0017d2d7082a450cf11f15ec30467adf6c5bc22f2339e04a25",
+    "cpa/sources/__init__.py": "41ca2b6364f389a1d766097f06fe91eb539f8745ab5ec7170b9e9c08e2e32292",
+    "cpa/sources/base.py": "d3be66248e1e9c69e405f93feb528a772aea2ce1044cf044b0a106a0b04b896b",
+    "cpa/sources/cognos.py": "1ee06ab8106a6b4e8359ecb3916d75803e62b16a5f98c1d46518e72a3cec6c72",
+    "cpa/sources/epic.py": "bc747d2fbe296adec0ce251067665e8d58b1f1aaac39084dbf39c0918c8cde9c",
+    "cpa/sources/medvitals.py": "7f461e4b693cec7e3b1d71bc2122532857df4c81f42b6561a719adb6bdafa01f",
+    "cpa/sources/powerbi.py": "c209ec05800cc4479be3d2de9341034c544fb9fc05058392b8c5d8353217ec7c",
+    "cpa/sources/qgenda.py": "4806e2c6e3342d2bc359a22022ced93076daac12e95727871c25903969fd2678",
+    "cpa/sources/sap.py": "8432aac4ec24c7913fa53d376c62e125149bc12833e2a85a8f36d52e571175a1",
+    "cpa/sources/tableau.py": "1427a9202ae3a13d181de7b6ccb4f0abc186c5c3a389918e916461b99a79718e",
+    "cpa/sources/workday.py": "40e0b31a9424e753807c6d0cff85a5ab3c0f78b999769b0c00164d4e437b5453",
+    "cpa/state.py": "a1c94ef638c07906005ac3938f65eb6e5286f0144a96396a2fbf92e9bc31d66d",
+    "cpa/verify.py": "cd43f748d68393f393e25670a1a7c11a071e423ec50f70372f7d3f582ba314c4",
+    "cpa/workflows/__init__.py": "267d9bf9676601e8379b13f4fc70af6e253a383e8ebae0a34db4cb8ad6f2ce27",
+    "cpa/workflows/adhoc.py": "520f1a445173884f9ff7fd80bf19d9dfec825a21aaae22c578ec317841c077a6",
+    "cpa/workflows/app_pnl.py": "ae2b22c727f5bf370a65754f1e16bcd84f85fd11a5b526ecb6fbb46ad9633ca5",
+    "cpa/workflows/app_slides.py": "303ad117d49166033b506edebc9d94267aaca6ad78e0a7d24017b0aa1db0c0eb",
+    "cpa/workflows/app_triage.py": "5194fab6812dae3d1fb2f2dd49d1bada1c62dae126083844b9be2e55f0bf0716",
+    "cpa/workflows/archive.py": "b9b7e511ba0fddd4fa6012e4ae61cbc7cab5dc7c7bbd0ab8ccf7d37ec86dcdf0",
+    "cpa/workflows/budget_workbook.py": "5982a5d2501e63932f0eab031db372f3a082fae96dedc1be234b9700929a3ba7",
+    "cpa/workflows/cag_match.py": "30b4a399d731facde49552c6449a4d720c5ad92effd8ff10dd6c6becb18738ae",
+    "cpa/workflows/cfte.py": "858e1ad821b18b98062a8d317fe6a5cbc2766e2b4f073862d0296b4217f9fa67",
+    "cpa/workflows/charge_forecast.py": "49ecbbcaf15e38e1edcb01bfa882cecfbb42a6297b37d3e044e2f744512e9073",
+    "cpa/workflows/checklist_pdf.py": "2550b282c2587308b6844e2f7ccfd4c1c89d05c7089d25072a59b7c9dcfb2575",
+    "cpa/workflows/consolidate.py": "8013dce445d34f15ee49db50b1cf2ba281c80af86147e1c143b9e08091924c7f",
+    "cpa/workflows/crf.py": "045ab19bc81165aee30b49224213bf906565acbc661753f62aa1fdf4a1418f2b",
+    "cpa/workflows/dashboard.py": "f06735e4bb0765f01c1850cd196c48676412a5158dad0de9b8b0ff0173f258c0",
+    "cpa/workflows/deck_refresh.py": "12679c3be0f7be0b400cf578f7db75690df1a0517f166eea59cc11a2f3773c60",
+    "cpa/workflows/healthcheck.py": "1800ac09a5103f90c37eb3eb82c907d3874d5b86d905fb56b6bfacccf1724c98",
+    "cpa/workflows/intake.py": "661335b5ac916a4ef6fa63e68055a96f8f1ae532622efa29de05dadb15a48a93",
+    "cpa/workflows/je_refund.py": "ddb0395c5d2ef5e96b510c432eed3e1263e2ef6b595e5dcb5a322c04e51c6a0e",
+    "cpa/workflows/lookback.py": "eb0a4c731aee047f989b49d1e5246d1a6d804124f7e4c77288cd354f756d02db",
+    "cpa/workflows/master_data.py": "67d33f9ed596aa87aed304b5fa66327996e955e423ea96c8c4a1099a8d444687",
+    "cpa/workflows/rollover.py": "6ca46331631cb09923f811b6b333624a6fa3692983994787192a5735e1381535",
+    "cpa/workflows/tracker.py": "94db491af0e3c816e17f4128dad290b9014b500f888f7282f654a7e6d02baf8b",
+    "reference/assumptions.yaml": "7ba12262adb788be3320119d6916067396d4fb09d8afe6644501854618d7a3cd",
+    "reference/checklist.yaml": "080b80c56b9f0a9542c0132e795142d9ca81607b14f660a3ad0201a7d7cb8284",
+    "reference/cognos_paths.yaml": "635f8206bcfddc3469e64b53327e9aca6444b44214887141cc8a30efb8b00b8f",
+    "reference/cu_per_session.csv": "0b53a32f69ec027bf59010aa250941af7d250cc17fe140b82ddef1243bd3243b",
+    "reference/dept_crosswalk.csv": "88f238269124f1eaefe062006e7b96de444b0c1bf4bb56258e3cb5fff75c87e7",
+    "reference/epic_paths.yaml": "9da3d6b76fdacfc8c755ae1ff33fd525355483e2962b69eea393fcd3bd38700f",
+    "reference/holidays_jhm.csv": "55a076a09d6558c191f87755c5fa674774a294a2e392e44751b21f31e6f31d9d",
+    "reference/medvitals_paths.yaml": "8dfe3ae02c5123624d3a09b2c43a84944d9082748ee1be9f575db8f6db45a5fb",
+    "reference/powerbi_paths.yaml": "42f8295cd7294b41fa3de2943e275fff54f29c80b731ac8be9a5ed9e134156d9",
+    "reference/qgenda_paths.yaml": "8e1b1b50b7cbc757451160d08f4b207671dcca1e071095dfa7e5592f862e75fc",
+    "reference/sap_paths.yaml": "50f356222c9ff28f306394fc315f4059812c3bdbb97d3377babdb043ad371878",
+    "reference/stakeholders.csv": "d7f7265a07d90a3cbe39d438b28219270c0293ddd8d9d1c4eb724def767b3812",
+    "reference/sullivancotter_specialty_map.csv": "e68b34e9597bc69d38263d16703ead09a9304b5c04108adfba4e4532d5cb9273",
+    "reference/tableau_paths.yaml": "bf7a77be42480dac0bfc852ef369c148f37ba8df7e18258d267466307b0f2455",
+    "reference/taskkey_register.csv": "51008d0366e83b5f47b734fd6b4db001defb50fa96c2f2fe8c39e9c5f87d32fc",
+    "reference/template_maps/app_pnl_v5.yaml": "24e5be3c8840809a686439430a82c31ddf03951a6724aafd85c728f80b3e80bc",
+    "reference/template_maps/bog.yaml": "f32120bf0dd6fa40b769851fe935622f37026d278bd2ad6ab79cf7204ae40a16",
+    "reference/template_maps/charge_forecast.yaml": "12bb2f7b2a051366216b67c018e1b2b985e49f543c1b7c00109e3fd1b5e9616e",
+    "reference/template_maps/fc.yaml": "ab1f98a1bb9ac063a7d0158ee04c8c5d12295296c07bb1c5d571b350b2e68267",
+    "reference/template_maps/gov.yaml": "3fcad42ebab6b8be68a88b2b1331cbb1c3e223acba6fa576e2ac70b769936c8d",
+    "reference/template_maps/je_refund.yaml": "aa93b571ce1e04688b29003f56157e6a98a0caf98ee511a7d012d2a559ef17be"
+  },
+  "imports": {
+    "PyYAML": "yaml",
+    "lxml": "lxml.etree",
+    "openpyxl": "openpyxl",
+    "pandas": "pandas",
+    "pypdf": "pypdf",
+    "python-dateutil": "dateutil",
+    "python-pptx": "pptx",
+    "pyxlsb": "pyxlsb",
+    "reportlab": "reportlab"
+  },
+  "project_dependencies": [
+    "openpyxl==3.1.5",
+    "python-pptx==1.0.2",
+    "lxml==6.1.3",
+    "reportlab==5.0.1",
+    "pandas==3.0.6",
+    "pyyaml==6.0.3",
+    "pyxlsb==1.0.10",
+    "pypdf==6.19.0",
+    "python-dateutil==2.9.0.post0"
+  ],
+  "python_minimum": "3.12",
+  "requirements": [
+    {
+      "marker": null,
+      "name": "charset-normalizer",
+      "version": "3.5.1"
+    },
+    {
+      "marker": null,
+      "name": "et_xmlfile",
+      "version": "2.0.0"
+    },
+    {
+      "marker": null,
+      "name": "lxml",
+      "version": "6.1.3"
+    },
+    {
+      "marker": null,
+      "name": "numpy",
+      "version": "2.5.3"
+    },
+    {
+      "marker": null,
+      "name": "openpyxl",
+      "version": "3.1.5"
+    },
+    {
+      "marker": null,
+      "name": "pandas",
+      "version": "3.0.6"
+    },
+    {
+      "marker": null,
+      "name": "pillow",
+      "version": "12.3.0"
+    },
+    {
+      "marker": null,
+      "name": "pypdf",
+      "version": "6.19.0"
+    },
+    {
+      "marker": null,
+      "name": "python-dateutil",
+      "version": "2.9.0.post0"
+    },
+    {
+      "marker": null,
+      "name": "python-pptx",
+      "version": "1.0.2"
+    },
+    {
+      "marker": null,
+      "name": "pyxlsb",
+      "version": "1.0.10"
+    },
+    {
+      "marker": null,
+      "name": "PyYAML",
+      "version": "6.0.3"
+    },
+    {
+      "marker": null,
+      "name": "reportlab",
+      "version": "5.0.1"
+    },
+    {
+      "marker": null,
+      "name": "six",
+      "version": "1.17.0"
+    },
+    {
+      "marker": null,
+      "name": "typing_extensions",
+      "version": "4.16.0"
+    },
+    {
+      "marker": "win32",
+      "name": "tzdata",
+      "version": "2026.4"
+    },
+    {
+      "marker": null,
+      "name": "xlsxwriter",
+      "version": "3.2.9"
+    }
+  ]
+}

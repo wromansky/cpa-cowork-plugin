@@ -1,0 +1,20 @@
+{
+  "skill_name": "cpa-dashboard",
+  "evals": [
+    {
+      "id": 1,
+      "shape": "direct",
+      "prompt": "What's due this week? Build today's dashboard."
+    },
+    {
+      "id": 2,
+      "shape": "scheduled",
+      "prompt": "It is 07:30 on a weekday. Build the dashboard and send the morning message."
+    },
+    {
+      "id": 3,
+      "shape": "dispatcher",
+      "prompt": "The dispatcher just finished its 09:00 run. Rebuild the dashboard so it reflects the workflows that ran."
+    }
+  ]
+}

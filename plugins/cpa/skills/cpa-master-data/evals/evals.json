@@ -1,0 +1,8 @@
+{
+  "skill_name": "cpa-master-data",
+  "evals": [
+    {"id": 1, "shape": "direct", "prompt": "Refresh master data from inbox/powerbi/dept_productivity_2609.xlsx."},
+    {"id": 2, "shape": "scheduled", "prompt": "inbox/powerbi/dept_productivity_2609.xlsx just landed and got its manifest; the dispatcher calls cpa-master-data automatically."},
+    {"id": 3, "shape": "dispatcher", "prompt": "cpa-bog-refresh's data tab needs current department productivity figures; run cpa-master-data first so Load and Trend agree."}
+  ]
+}

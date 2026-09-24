@@ -1,0 +1,20 @@
+{
+  "skill_name": "cpa-consolidate",
+  "evals": [
+    {
+      "id": 1,
+      "shape": "direct",
+      "prompt": "My Desktop, OneDrive and the network drive are full of copies of the same committee workbook. Consolidate my files and tell me which one is current."
+    },
+    {
+      "id": 2,
+      "shape": "scheduled",
+      "prompt": "It's Sunday 06:00. Run the weekly stray-file sweep over the folders the master tree covers; the move plan from Tuesday is already approved."
+    },
+    {
+      "id": 3,
+      "shape": "dispatcher",
+      "prompt": "The weekly sweep automation fires right after cpa-dispatcher's overnight pass. The plan she approved has not changed, so run cpa-consolidate for this week's sweep."
+    }
+  ]
+}

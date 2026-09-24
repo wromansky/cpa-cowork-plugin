@@ -1,0 +1,8 @@
+{
+  "skill_name": "cpa-bog-refresh",
+  "evals": [
+    {"id": 1, "shape": "direct", "prompt": "Refresh the BOG deck for 2609."},
+    {"id": 2, "shape": "scheduled", "prompt": "All three of this month's BOG exports just landed and got their manifests; the dispatcher calls cpa-bog-refresh automatically."},
+    {"id": 3, "shape": "dispatcher", "prompt": "cpa-dashboard flagged the BOG cycle as due in 3 business days with inputs ready; run cpa-bog-refresh."}
+  ]
+}

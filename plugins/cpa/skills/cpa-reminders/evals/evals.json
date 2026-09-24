@@ -1,0 +1,20 @@
+{
+  "skill_name": "cpa-reminders",
+  "evals": [
+    {
+      "id": 1,
+      "shape": "direct",
+      "prompt": "Who still owes materials for the November SOM cycle? Run dashboard outstanding as JSON, save its actual output through the workspace shell, run intake reminders, and draft a separate follow-up only for any confirmed unanswered note question. Do not draft for a submitted department or send anything."
+    },
+    {
+      "id": 2,
+      "shape": "scheduled",
+      "prompt": "It is Thursday 08:30. For every due open SOM cycle, capture dashboard outstanding --json to a UTF-8 staging JSON file using the supported shell pipeline, run intake reminders against it, and report skipped submitted departments. Do not send drafts."
+    },
+    {
+      "id": 3,
+      "shape": "dispatcher",
+      "prompt": "cpa-cycle-kickoff registered the November SOM cycle and its reminder date has arrived. Invoke cpa-reminders; use dashboard JSON plus intake reminders for submission drafts, and keep any note-grounded question follow-up in a different filename. Never send or draft for submitted departments."
+    }
+  ]
+}

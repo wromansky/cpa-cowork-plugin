@@ -1,0 +1,20 @@
+# reference/powerbi_paths.yaml - navigation for cpa-pull-powerbi (A4).
+# One entry per named report the pull navigates to. `url` is empty until you paste the report's bookmark
+# URL in during the first supervised session; a null url stops the pull and names the report, because the
+# skill never browses to a guessed location. The canonical report name is the [UNCONFIRMED] assumptions key
+# sources.powerbi.dept_productivity_report_name, which validation reads before any byte of the export;
+# `report_name` here is kept only as a readable label for the entry. Automation never edits this file.
+# FIXTURE - confirm against her file: A4 describes the export (departmental wRVUs, collections, PB visits, all
+# departments, fiscal YTD) but names no report; expected_columns and the row-count bounds are for you to fill.
+
+reports:
+  dept_productivity:                          # A4
+    report_name: null                         # label only; the report name the script reads is the assumptions key
+    url: null                                 # needs you: paste the report's bookmark URL
+    filters:
+      - "all departments"
+      - "fiscal year to date"
+    expected_columns: []                      # needs you: the export's header spellings, in order
+    row_count_min: null                       # needs you: expected minimum data rows
+    row_count_max: null                       # needs you: expected maximum data rows
+    lands_as: "inbox/powerbi/dept_productivity_<FYMM>.xlsx"

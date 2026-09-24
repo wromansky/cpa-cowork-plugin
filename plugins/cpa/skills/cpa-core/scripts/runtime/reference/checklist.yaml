@@ -1,0 +1,100 @@
+# APP submission checklist spec (reference/checklist.yaml), read by `cpa app_triage` (B3) and
+# `cpa checklist_pdf build` (B8). Loaded with PyYAML safe_load, encoding utf-8-sig (D03).
+#
+# FIXTURE — confirm against her file. `placeholder: true` below means these eight items are drawn
+# only from documented sources (Build List, the implementation guide, the work inventory) rather
+# than her actual APP submission checklist PDF. Swap step (docs/FIXTURE_SWAP.md): open her current
+# checklist, replace the `items` list below one for one with her real items (keep the `id`/`input`/
+# `satisfied_by`/`fix`/`source` shape), then delete the `placeholder: true` line. Until that happens,
+# `checklist_pdf build` refuses to produce a PDF without `--allow-placeholder`, and every triage run
+# is capped below COMPLETE and asks the analyst to confirm (never silently certified against a
+# checklist that is not hers).
+#
+# Keys:
+#   id           - lower-snake-case, unique; becomes the PDF field name prefix (<id>_done, <id>_text)
+#   section      - groups items on the checklist PDF and in triage.md
+#   text         - the label shown to the department (plain words, R188/R212)
+#   input        - "text" (department fills a value) or "checkbox" (department confirms a fact)
+#   satisfied_by - how cpa_triage checks the item automatically:
+#                    kind: identify -> field: one of department/division/position_title/requester
+#                    kind: pnl      -> exactly one workbook in the folder with a P&L-named tab
+#                    kind: text     -> pattern: a casefold phrase searched in the submission's documents
+#                    kind: audit    -> codes: audit_pnl finding codes whose presence means MISSING
+#   fix          - one plain sentence: what a correct entry looks like (shown as the PDF field tooltip
+#                  and in the return email; R110/R212)
+#   source       - where this item comes from (a build-list or guide line, or an inventory line);
+#                  never invented
+#
+# R046 (never give the department a cell to enter its own benchmark): no item below has
+# input: text with benchmark wording — `load_spec` refuses the file if one ever does.
+
+placeholder: true
+title: "APP Submission Checklist"
+instructions: >
+  Check each box once you have included that item, and fill in the text boxes. Attach this
+  checklist with your submission so we can confirm everything is here before the review.
+
+items:
+  - id: department
+    section: Identification
+    text: "Department name"
+    input: text
+    satisfied_by: {kind: identify, field: department}
+    fix: "Write the full department name (not an abbreviation)."
+    source: "guide 5.5 step 1 (identify department, division, position, requester)"
+
+  - id: division
+    section: Identification
+    text: "Division"
+    input: text
+    satisfied_by: {kind: identify, field: division}
+    fix: "Write the division within the department."
+    source: "guide 5.5 step 1"
+
+  - id: position_title
+    section: Identification
+    text: "Position title"
+    input: text
+    satisfied_by: {kind: identify, field: position_title}
+    fix: "Write the exact title of the position being requested."
+    source: "guide 5.5 step 1"
+
+  - id: requester
+    section: Identification
+    text: "Requester name"
+    input: text
+    satisfied_by: {kind: identify, field: requester}
+    fix: "Write the name of the person submitting this request."
+    source: "guide 5.5 step 1"
+
+  - id: business_plan
+    section: Documents
+    text: "Business plan document attached"
+    input: checkbox
+    satisfied_by: {kind: text, pattern: "business plan"}
+    fix: "Attach your department's business plan document for this position."
+    source: "Build List B3 inputs: business plan"
+
+  - id: business_need
+    section: Documents
+    text: "Business need narrative included"
+    input: checkbox
+    satisfied_by: {kind: text, pattern: "business need"}
+    fix: "Add one paragraph explaining why this position is needed now."
+    source: "Build List :119 business need narrative"
+
+  - id: pnl_v5
+    section: Documents
+    text: "APP P&L v5 workbook attached"
+    input: checkbox
+    satisfied_by: {kind: pnl}
+    fix: "Attach the completed APP P&L v5 workbook (.xlsx), directly in this submission folder."
+    source: "inventory: APP P&L v5 template"
+
+  - id: no_benchmarks_entered
+    section: "P&L integrity"
+    text: "No benchmark or percentile figures entered on the P&L"
+    input: checkbox
+    satisfied_by: {kind: audit, codes: [BENCHMARK_ENTERED_BY_DEPARTMENT]}
+    fix: "Leave the SullivanCotter and percentile rows blank; the analyst fills these in."
+    source: "R046: never give the department a benchmark entry cell"

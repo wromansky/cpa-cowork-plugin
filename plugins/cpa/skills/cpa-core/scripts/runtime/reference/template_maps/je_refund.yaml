@@ -1,0 +1,24 @@
+# FIXTURE - confirm against her file. Cell map for the B16 JE refund template (U21 "je" part).
+# Every address below describes the generated fixture template (tests/test_je_refund.py::make_je_template), not
+# her real JE template. Swap step (NFH-P6-03-je-template): save her template under templates\, correct every
+# address here (and which line is the debit / which is the credit -- do not assume "to" is always the debit side
+# on her layout), then run `je_refund draft` against a known past refund and compare with what she actually
+# posted. Hard rule 13: this workflow only ever fills cells; nothing here posts.
+
+sheet: "JE"
+cells:
+  je_id: "B2"
+  fymm: "B3"
+  reason: "B4"
+  reference: "B5"
+  note: "B6"
+lines:
+  - side: "to"          # the corrected cost center; debit
+    cc_cell: "A10"
+    debit_cell: "C10"
+    credit_cell: "D10"
+  - side: "from"         # the misposted cost center; credit
+    cc_cell: "A11"
+    debit_cell: "C11"
+    credit_cell: "D11"
+balance_cell: "D13"      # =SUM(debits)-SUM(credits); must recalculate to 0

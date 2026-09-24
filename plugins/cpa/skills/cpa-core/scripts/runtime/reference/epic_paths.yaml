@@ -1,0 +1,25 @@
+# reference/epic_paths.yaml - the pinned Epic aggregate reports (A9, build list 72).
+#
+# Shape (DECISIONS D-U09-8): reports: {<report token>: {url, filters, expected_columns, row_range, header_row}}
+#
+# The report token is the export's file name minus a trailing _<four-digit fiscal period>, so a file
+# named wrvu_by_provider_2703.xlsx pins the token wrvu_by_provider (cpa/sources/epic.py report_token).
+# Epic validation accepts ONLY the tokens listed here (R103, R199): an empty reports map makes every
+# Epic file fail validation with "no pinned Epic report list", which is the intended refusal until she
+# pins her own reports.
+#
+# `reports` is empty on purpose. No real report name, URL or column header is invented (SPEC 1.3,
+# hard rule 15). She fills this in during the first supervised export from her own bookmarks: the saved
+# URL per report, the filters she applies, the header row her export shows, and the plausible row range.
+# Read with utf-8-sig; the workspace copy wins over this repository template (cpa.config.reference_file).
+reports: {}
+
+# One entry, once she has the details (keep every value she gives you, add none of your own):
+#
+# reports:
+#   <report token>:
+#     url: null              # her saved report URL; never guessed
+#     filters: []            # e.g. [fiscal period, department or provider filter]
+#     expected_columns: []   # the export's header row, as she sees it
+#     row_range: null        # [minimum, maximum] plausible data rows; null until known
+#     header_row: null       # the row holding the column names; null until known

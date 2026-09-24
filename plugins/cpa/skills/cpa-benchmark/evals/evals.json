@@ -1,0 +1,20 @@
+{
+  "skill_name": "cpa-benchmark",
+  "evals": [
+    {
+      "id": 1,
+      "shape": "direct",
+      "prompt": "This physician's TCC is $410,000. What percentile is that for Cardiology, Interventional, Physician against the 2025 AMC survey?"
+    },
+    {
+      "id": 2,
+      "shape": "scheduled",
+      "prompt": "The nightly benchmark refresh task is running. Re-resolve the specialty and percentile for every position in staging/app whose sc_points.json changed since the last run."
+    },
+    {
+      "id": 3,
+      "shape": "dispatcher",
+      "prompt": "cpa-app-pnl needs the SullivanCotter TCC and Work RVU percentile rows for position APP-2703-014 before it can build the benchmark rows. Run cpa-benchmark now."
+    }
+  ]
+}
