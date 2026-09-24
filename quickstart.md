@@ -14,7 +14,8 @@ rates and all business data in your approved workspace, not in a public reposito
 2. Select **+ → Add marketplace**. Paste
    `https://github.com/wromansky/cpa-cowork-plugin` and select **Sync**.
 3. Install the plugin named **cpa** and turn it on under Personal plugins.
-4. Start a **new Cowork conversation** with the plugin enabled.
+4. Start a **new Cowork conversation** with the plugin enabled. For this release, confirm the
+   mounted bundle reports **0.2.3**; an older copy may still be present after an update.
 
 If the marketplace or **cpa** does not appear, stop and ask Billy for help. You should not need
 a terminal or a local software install.
@@ -25,7 +26,9 @@ Copy and send this message in Cowork:
 
 > Use the cpa-setup skill to set up CPA in this Cowork session. Check the packaged runtime,
 > provision only its approved pinned packages inside Cowork if needed, and show me the final
-> readiness report. Do not install software on my computer. If a skill, Python, or the bundle
+> readiness report, including the loaded launcher path, bundle version, and chosen interpreter.
+> Use the currently loaded skill, not an older plugin copy. Do not install software on my computer.
+> If a skill, Python, or the bundle
 > is missing, stop and tell me what failed; do not ask me to use PowerShell.
 
 Cowork should show a report for the **bundle**, **Python**, and **dependencies**; all three must

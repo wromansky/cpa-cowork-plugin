@@ -17,9 +17,10 @@ description: Provision the Cowork sandbox interpreter for the CPA runtime. Run w
 ## Steps
 1. Run the runtime check documented in cpa-core (pass `--check` to the bundled launcher) and
    record the JSON report and exit code. Use only the runtime provided inside this Cowork
-   session. If its default version is below the bundle minimum, use another compatible
-   session runtime already provided by Cowork if one exists; never use or install a runtime on
-   the analyst's Windows PC.
+   session. The launcher selects an already-available compatible interpreter when necessary.
+   Report its chosen executable, launcher path, and bundle version. Confirm the bundle version
+   matches the selected plugin's manifest; stop on a mismatch, not a fallback to an older copy.
+   Never use or install a runtime on the analyst's Windows PC.
 2. If the check exits 0, the runtime is ready for workflow skills; go to step 5.
 3. If the check fails on `dependencies` (missing or mismatched pinned packages), run
    `python -m cpa setup install` through the bundled launcher. It installs only exact pins into

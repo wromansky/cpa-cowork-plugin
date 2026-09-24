@@ -13,10 +13,13 @@ from __future__ import annotations
 import hashlib
 import importlib
 import importlib.metadata
+import importlib.machinery
 import json
 import platform
 import re
+import shutil
 import site
+import subprocess
 import sys
 from pathlib import Path
 
@@ -109,7 +112,10 @@ def _metadata_and_integrity():
         if path.is_symlink():
             errors.append(f"runtime contains a symlink: {path.relative_to(RUNTIME).as_posix()}")
         elif path.is_file() and path != METADATA:
-            present.add(path.relative_to(RUNTIME).as_posix())
+            relative = path.relative_to(RUNTIME)
+            if path.suffix == ".pyc" and "__pycache__" in relative.parts:
+                continue
+            present.add(relative.as_posix())
     declared = set(files)
     for extra in sorted(present - declared):
         errors.append(f"unlisted file in runtime bundle: {extra}")
@@ -127,14 +133,53 @@ def _metadata_and_integrity():
     return metadata, errors
 
 
+class _SourceOnlyLoader(importlib.machinery.SourceFileLoader):
+    def get_code(self, fullname):
+        return self.source_to_code(self.get_data(self.path), self.path)
+
+
+class _BundleSourceFinder:
+    def find_spec(self, fullname, path=None, target=None):
+        spec = importlib.machinery.PathFinder.find_spec(fullname, path)
+        if (spec and spec.origin and isinstance(spec.loader, importlib.machinery.SourceFileLoader)
+                and Path(spec.origin).resolve().is_relative_to(RUNTIME.resolve())):
+            spec.loader = _SourceOnlyLoader(fullname, spec.origin)
+            return spec
+        return None
+
+
+def _compatible_interpreter(minimum):
+    if sys.version_info[:3] >= _version_tuple(minimum):
+        return None
+    major, minor = _version_tuple(minimum)[:2]
+    names = [f"python{major}.{n}" for n in range(minor, max(minor + 1, 17))]
+    names += ["python3", "python"]
+    for name in names:
+        candidate = shutil.which(name)
+        if not candidate or Path(candidate).resolve() == Path(sys.executable).resolve():
+            continue
+        try:
+            probe = subprocess.run(
+                [candidate, "-I", "-c", "import platform; print(platform.python_version())"],
+                capture_output=True, text=True, encoding="utf-8", timeout=5,
+            )
+            if probe.returncode == 0 and _version_tuple(probe.stdout.strip()) >= _version_tuple(minimum):
+                return candidate
+        except (OSError, ValueError, subprocess.TimeoutExpired):
+            continue
+    return None
+
+
 def _environment():
     metadata, bundle_errors = _metadata_and_integrity()
     sys.path.insert(0, str(RUNTIME))
     if metadata is not None:
-        target = Path(site.getuserbase()) / "cpa-cowork" / str(metadata.get("cpa_version", "unknown"))
+        target = (Path(site.getuserbase()) / "cpa-cowork" / str(metadata.get("cpa_version", "unknown"))
+                  / sys.implementation.cache_tag)
         if str(target) not in sys.path:
             sys.path.insert(0, str(target))
     if metadata is not None and not bundle_errors:
+        sys.meta_path.insert(0, _BundleSourceFinder())
         try:
             import cpa
             origin = Path(cpa.__file__).resolve()
@@ -151,7 +196,8 @@ def _environment():
         except (TypeError, ValueError):
             bundle["available"] = False
             bundle["errors"].append(f"invalid Python minimum in dependency metadata: {minimum_text!r}")
-    python_report = {"version": platform.python_version(), "minimum": minimum_text, "available": python_ok}
+    python_report = {"version": platform.python_version(), "minimum": minimum_text,
+                     "available": python_ok, "executable": sys.executable}
 
     missing, mismatch, import_errors = [], [], []
     if metadata is not None:
@@ -194,11 +240,17 @@ def _environment():
             engine = {"available": False, "path": None,
                       "reason": f"engine probe unavailable: {type(exc).__name__}: {exc}"}
     return {"bundle": bundle, "python": python_report, "dependencies": dependencies,
-            "engine": engine, "bundle_version": metadata.get("cpa_version") if metadata else None}
+            "engine": engine, "launcher": str(Path(__file__).resolve()),
+            "bundle_version": metadata.get("cpa_version") if metadata else None}
 
 
 def main(argv=None):
     argv = list(sys.argv[1:] if argv is None else argv)
+    metadata, errors = _metadata_and_integrity()
+    if metadata is not None and not errors:
+        candidate = _compatible_interpreter(metadata["python_minimum"])
+        if candidate:
+            return subprocess.run([candidate, str(Path(__file__).resolve()), *argv]).returncode
     report = _environment()
     if argv == ["--check"]:
         print(json.dumps(report, indent=2, sort_keys=True))

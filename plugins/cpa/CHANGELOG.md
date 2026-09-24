@@ -8,7 +8,24 @@ The version lives in one place, `cpa/__init__.py` (`__version__`). `pyproject.to
 `plugin.json` version goes up. The first `## [x.y.z]` heading below must equal that version
 (`tests/test_portability.py::test_package_importable_and_version`). Add a new heading on every bump.
 
-## [0.2.2] - unreleased
+## [0.2.3]
+
+### Fixed
+
+- Ignore incidental `__pycache__/*.pyc` during bundle inventory checks, but load bundled modules
+  from verified source rather than cached bytecode. Unexpected source files still fail integrity.
+- Select an already-available compatible sandbox interpreter when the default is too old;
+  never download an interpreter. Report the chosen executable and absolute launcher path.
+- Resolve the currently loaded skill rather than an older coexisting plugin copy.
+- Separate dependency targets by plugin version and interpreter cache tag.
+
+### Validation
+
+- Billy's Cowork retest confirmed 0.2.2 installed all 16 pins on sandbox Python 3.12.3 and passed
+  readiness. This is setup evidence only: workspace access and workflows remain untested.
+- Automatic workbook recalculation remains unsupported. LibreOffice is excluded everywhere.
+
+## [0.2.2]
 
 ### Changed
 

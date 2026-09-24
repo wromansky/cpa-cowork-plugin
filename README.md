@@ -9,7 +9,11 @@ are shipped. The public bundle intentionally leaves all JHM rates unfilled; they
 be supplied from approved sources in the analyst's own workspace, never guessed or
 posted to this repository.
 
-**Version 0.2.2:** LibreOffice is excluded everywhere, including Cowork sandboxes. No engine
+**Version 0.2.3:** Setup selects a compatible interpreter already present in Cowork, tolerates
+incidental bytecode caches while importing verified source only, and reports the loaded launcher
+path. After updating, start a fresh session and confirm the mounted bundle reports 0.2.3.
+
+LibreOffice is excluded everywhere, including Cowork sandboxes. No engine
 is discovered or executed. Automatic workbook recalculation is unsupported; workflows needing
 recalculated results must stop. No replacement backend is implemented.
 

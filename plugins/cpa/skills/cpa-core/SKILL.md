@@ -32,6 +32,13 @@ run the bundled launcher that ships beside this file, with the same arguments.
   reuse a path from an earlier session; resolve it again and use the absolute path you resolved.
 - Run the launcher with the sandbox's interpreter for `.py` scripts, not as a standalone executable.
   Pass its resolved absolute path as a single argument, including when the path contains spaces.
+  If the default runtime is too old, the launcher probes already-available interpreters on the
+  sandbox PATH and delegates to a qualifying one; it never downloads an interpreter.
+- Multiple installed copies may coexist (for example, an older plugin directory and a suffixed
+  update directory). Use only the launcher beside the skill actually loaded for this session,
+  never the first search result. Report `launcher`, `bundle_version`, and `python.executable`
+  from the check. If the version differs from the selected plugin's manifest, stop and reload
+  the updated plugin in a fresh session; do not mix files or guess another installation path.
 - Readiness: pass `--check` to the launcher for a JSON report of the bundle, runtime version,
   dependencies, and recalculation engine. Required-check failures block execution. A `dependencies`
   failure is fixable in-session by the `cpa-setup` skill; a `bundle` or version failure is not. Engine

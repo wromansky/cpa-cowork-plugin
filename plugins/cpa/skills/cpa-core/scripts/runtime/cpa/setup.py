@@ -143,7 +143,7 @@ def _pip_available() -> bool:
 
 def install_target(version: str) -> Path:
     """Versioned, user-owned package directory for the Cowork session runtime."""
-    return Path(site.getuserbase()) / "cpa-cowork" / version
+    return Path(site.getuserbase()) / "cpa-cowork" / version / sys.implementation.cache_tag
 
 
 def _add_install_target(version: str) -> Path:
