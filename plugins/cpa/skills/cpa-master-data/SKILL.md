@@ -57,9 +57,8 @@ description: Refresh the departmental master data workbook's Load tab from the P
   report the exact message; do not write a run record claiming success.
 - Load and Trend Department do not reconcile within tolerance -> report every listed difference from
   `staging/master_data/<fymm>_diff.csv`; never pick a side or average the two.
-- `recalc_note` says the Trend Department recalc was skipped (LibreOffice not found) -> rerun with
-  `--no-recalc` once she confirms it is unavailable, and carry the skip in the run record `--warning`;
-  never claim the workbook was recalculated when it was not.
+- Automatic recalculation is unsupported. Carry `recalc_note` in the run record warning and stop
+  before relying on formula results. Never use an external engine or claim recalculation succeeded.
 
 ## Never
 - Never resolve a Load-vs-Trend difference silently; every difference is listed, never picked or

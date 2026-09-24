@@ -71,7 +71,7 @@ description: Build this period's CRF commitment report from the COGNOS CRF expor
   never enter a value for it in `assumptions.yaml`, and never drop the row to get past it.
 - The total does not tie to the export -> report both figures and the rows between them; never adjust a row
   to make the report tie.
-- LibreOffice is unavailable for the recalc step -> say so in the run record warning; never claim a
+- Automatic recalculation is unsupported -> say so in the run record warning; never claim a
   recalculated workbook.
 
 ## Never

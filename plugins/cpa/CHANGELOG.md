@@ -8,6 +8,15 @@ The version lives in one place, `cpa/__init__.py` (`__version__`). `pyproject.to
 `plugin.json` version goes up. The first `## [x.y.z]` heading below must equal that version
 (`tests/test_portability.py::test_package_importable_and_version`). Add a new heading on every bump.
 
+## [0.2.2] - unreleased
+
+### Changed
+
+- Removed LibreOffice discovery and execution on all platforms, including Cowork sandboxes.
+- Automatic recalculation reports unsupported; verification cannot claim CLEAN without it.
+- Removed installation advice and updated skill instructions to stop recalculation-dependent
+  workflows. No replacement backend is implemented.
+
 ## [0.2.1] - unreleased
 
 ### Fixed

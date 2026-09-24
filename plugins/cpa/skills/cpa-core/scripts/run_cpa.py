@@ -1,7 +1,7 @@
 """Run the bundled CPA CLI without installing packages or depending on the repository.
 
 Interface: `python run_cpa.py --check` prints JSON bundle-integrity, Python, exact pinned runtime
-requirements (including import viability), and optional LibreOffice availability. Exit 1 means
+requirements (including import viability), and unsupported recalculation status. Exit 1 means
 bundle, Python, or dependency validation failed; an unavailable optional engine is reported but
 is not claimed validated. Normal usage is `python run_cpa.py <cpa CLI arguments>`; the launcher
 uses sibling runtime/cpa and runtime/reference, preserves the caller's working directory, and
@@ -187,10 +187,9 @@ def _environment():
     engine = {"available": False, "path": None, "reason": "not checked because bundled runtime is invalid"}
     if bundle["available"]:
         try:
-            from cpa.recalc import find_soffice
-            found = find_soffice()
-            engine = {"available": bool(found), "path": str(found) if found else None,
-                      "reason": None if found else "LibreOffice not found; recalculation cannot be validated"}
+            from cpa.recalc import UNSUPPORTED_REASON
+            engine = {"available": False, "path": None, "status": "unsupported",
+                      "reason": UNSUPPORTED_REASON}
         except Exception as exc:
             engine = {"available": False, "path": None,
                       "reason": f"engine probe unavailable: {type(exc).__name__}: {exc}"}

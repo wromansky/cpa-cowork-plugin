@@ -10,7 +10,7 @@ Hard rules enforced: none here. D03: importing cpa never touches the filesystem,
 holds data only - no logic, no imports, no file access.
 """
 
-__version__: str = "0.2.1"  # single source: pyproject reads it (dynamic version); plugin.json and CHANGELOG are test-guarded
+__version__: str = "0.2.2"  # single source: pyproject reads it (dynamic version); plugin.json and CHANGELOG are test-guarded
 
 # Build List 0.1: one inbox folder per source system.
 INBOX_SYSTEMS: tuple[str, ...] = (
@@ -45,7 +45,8 @@ WORKSPACE_SUBDIRS: tuple[tuple[str, ...], ...] = (
     ("logs", "runs"),  # one JSON run record per skill run
 )
 
-# D07: soffice executable names in shutil.which order, and the default Windows install directory as
+# Retired D07 constants retained for compatibility tests only; no runtime discovery uses these.
+# Historical executable names in shutil.which order, and the default Windows install directory as
 # path parts (Path(*SOFFICE_WINDOWS_DIR) on her machine). U07's cpa.recalc.find_soffice and the
 # tests/conftest.py fallback both read these; no other file spells the directory.
 SOFFICE_NAMES: tuple[str, ...] = ("soffice", "soffice.com", "soffice.exe")

@@ -96,7 +96,7 @@ description: Rerun the CAG-to-QGenda task matcher and refresh the cFTE calculato
   the blank counts show what is not covered.
 - No combined workbook exists under `outbox/cag` at all -> the cFTE refresh runs with a blank CAG column;
   say so. Never rely on a missing file to sidestep a flagged workbook, and never paste CAGs in by hand.
-- LibreOffice is unavailable for the recalc step -> say so in the run record warning; never claim a
+- Automatic recalculation is unsupported -> say so in the run record warning; never claim a
   recalculated workbook.
 
 ## Never

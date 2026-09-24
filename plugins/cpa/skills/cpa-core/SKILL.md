@@ -15,6 +15,12 @@ Folders under the workspace root: `inbox/<system>`, `staging/<workflow>/<run>`, 
 
 Nothing leaves `outbox` by automation. The analyst reviews and sends every artifact.
 
+## Recalculation limitation
+LibreOffice is excluded everywhere, including the Cowork sandbox. Never discover, install, invoke,
+or delegate to it through another skill. No replacement backend is implemented. Recalculation
+reports unsupported; never claim CLEAN, verified formula values, or a delivery-ready workbook
+when recalculation is required. Stop those workflows and report the blocker.
+
 ## Running in a Cowork session
 Outside a checked-out developer repository there is no editable install of `cpa`, so a bare
 `python -m cpa ...` step cannot assume the package is importable. Every `python -m cpa <args>` step in these skills means:

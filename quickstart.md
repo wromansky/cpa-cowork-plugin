@@ -28,11 +28,10 @@ Copy and send this message in Cowork:
 > readiness report. Do not install software on my computer. If a skill, Python, or the bundle
 > is missing, stop and tell me what failed; do not ask me to use PowerShell.
 
-Cowork should show a report for the **bundle**, **Python**, **dependencies**, and **engine**. The
-first three must be ready before a workflow runs. If the engine is unavailable, **do not run a
-workbook workflow that needs recalculation**; send the report to Billy. Do not try to fix it by
-installing LibreOffice on your computer. A successful setup report is not proof that a workbook
-has been recalculated.
+Cowork should show a report for the **bundle**, **Python**, and **dependencies**; all three must
+be ready. Automatic workbook recalculation is **unsupported**. LibreOffice is not used anywhere,
+including inside Cowork. Do not run a workflow requiring recalculation until a supported path
+is verified. A successful setup report does not mean workbook calculations have been verified.
 
 ## 3. Check the workspace before putting files in it
 

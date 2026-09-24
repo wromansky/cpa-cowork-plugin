@@ -506,7 +506,7 @@ def _recalc_outputs(path: Path, tmap: dict, issues: list) -> tuple[dict[str, Any
         rc = recalc.recalc(path, work)
         if not rc.recalculated or rc.output is None:
             code = "NOT_RECALCULATED" if rc.status == recalc.NOT_RECALCULATED else "RECALC_FAILED"
-            issues.append(_issue(code, "", "", "recalculated by LibreOffice", rc.reason or rc.status))
+            issues.append(_issue(code, "", "", "verified recalculation", rc.reason or rc.status))
             return {}, rc.reason or rc.status
         for e in rc.errors:
             issues.append(_issue("FORMULA_ERROR", e.sheet, e.cell, "a value (zero formula errors)", e.value))
@@ -558,7 +558,7 @@ def _line(label: str, values: dict[str, Any], ex: ExportFacts, reason: str, out_
     frac = values.get("workday_fraction")
     if None in (base, p10, p90, frac):
         line = (f"{label} forecast: not calculated ({reason or 'outputs unreadable'}); open {out_name} in Excel "
-                "to read it, or install LibreOffice and run again.")
+                "for analyst review. Automatic recalculation is unsupported; do not treat cached outputs as verified.")
     else:
         line = (f"{label} forecast: base {_money(base)}, range {_money(p10)}–{_money(p90)}, "
                 f"at {_pct(frac)}% of workdays.")

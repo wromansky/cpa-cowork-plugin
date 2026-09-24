@@ -20,7 +20,7 @@ description: Attach or refresh the Verification tab on any CPA workbook. Run aut
 ## Steps
 1. Read `CPA_WORKSPACE` from `cpa-core`.
 2. Run `python -m cpa verify <workbook> [--prior <prior>] [--sources <dir>]`.
-   The command recalculates via LibreOffice, reads every reported figure (tagged cells from the
+   Automatic recalculation is unsupported; the command flags NOT_RECALCULATED, reads reported figures (tagged cells from the
    template map, or every numeric cell on output tabs), builds one row per figure with value,
    source file, source cell or row, as-of date, status label, recalculation check, tie-out to the
    source total, variance vs. the prior version, and a threshold flag; checks the M2 block on any

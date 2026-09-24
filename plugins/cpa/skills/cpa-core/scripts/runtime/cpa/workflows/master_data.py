@@ -5,7 +5,7 @@ silently.
 
 Build-list item B20 (CPA_Cowork_Build_List.md:241, guide:655): Inputs the A4 Power BI export and the
 existing master data workbook; refreshes the workbook's `Load` sheet from the export; optionally recalcs
-the workbook (`cpa.recalc`, skipped with a note rather than failing when LibreOffice is absent -- recalc
+the workbook (`cpa.recalc`, currently unsupported and recorded in a note -- recalc
 is a convenience here, not this module's contract); runs C5 `reconcile.compare` between `Load` and
 `Trend Department`; runs C4 `crosswalk.normalize` on the department column of both. Acceptance (R076,
 R131): Load and Trend reconcile within tolerance, or every difference is listed -- `compare()` already
@@ -325,11 +325,9 @@ def run(
     if recalc:
         from cpa import recalc as recalc_mod
 
-        soffice = recalc_mod.find_soffice()
-        if soffice is None:
-            recalc_note = "soffice not found; Trend Department recalc skipped"
-        else:
-            recalc_mod.recalc_in_place(workbook_path, soffice=soffice)
+        result = recalc_mod.recalc_in_place(workbook_path)
+        if not result.recalculated:
+            recalc_note = result.reason
 
     tol = tolerance or reconcile_mod.tolerance_from_assumptions()
     result = reconcile_mod.compare(load_df, trend_df, keys, measures, tol, crosswalk_version=cw.version)
@@ -424,7 +422,7 @@ def register(subparsers: argparse._SubParsersAction) -> None:
     p.add_argument("--tolerance-pct", type=float, default=None)
     p.add_argument("--period-start", default=None, help="YYYY-MM-DD; with --period-end, checks a date column in Trend.")
     p.add_argument("--period-end", default=None, help="YYYY-MM-DD")
-    p.add_argument("--no-recalc", action="store_true", help="Skip the LibreOffice recalc step.")
+    p.add_argument("--no-recalc", action="store_true", help="Skip the unsupported automatic recalculation request.")
     p.add_argument("--out", default=None, type=Path, help="Write every listed difference/one-sided row here (CSV).")
     p.add_argument("--json", action="store_true", help="Print the full result as JSON.")
     p.set_defaults(func=_cmd_refresh)

@@ -39,8 +39,9 @@ description: Provision the Cowork sandbox interpreter for the CPA runtime. Run w
 
 ## Verify
 - The final runtime check exits 0 with no missing or mismatched pins.
-- `engine.available` is reported separately: an unavailable engine with exit 0 is a normal
-  result and does not block setup.
+- The legacy `engine` report says unsupported. LibreOffice is excluded everywhere; never probe
+  or invoke it, including through another skill. Setup can finish, but workflows requiring
+  recalculated figures must stop until an approved backend is implemented.
 
 ## If something is wrong
 - `python -m cpa setup install` exits nonzero (pip failed, timed out, or the re-check still

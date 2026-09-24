@@ -9,6 +9,10 @@ are shipped. The public bundle intentionally leaves all JHM rates unfilled; they
 be supplied from approved sources in the analyst's own workspace, never guessed or
 posted to this repository.
 
+**Version 0.2.2:** LibreOffice is excluded everywhere, including Cowork sandboxes. No engine
+is discovered or executed. Automatic workbook recalculation is unsupported; workflows needing
+recalculated results must stop. No replacement backend is implemented.
+
 Local fixture tests and bundle-integrity checks do **not** prove that the plugin works
 inside Cowork on the analyst's machine. The first run must be watched; do not schedule
 live system pulls or rely on workbook recalculation until validated there.

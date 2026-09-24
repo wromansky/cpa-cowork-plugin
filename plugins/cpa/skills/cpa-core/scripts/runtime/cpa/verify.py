@@ -672,10 +672,10 @@ def _collect(result: VerifyResult, path: Path, rc: recalc.RecalcResult, *, large
     issues = result.issues
     recalculated = rc.recalculated
     if rc.status == recalc.NOT_RECALCULATED:
-        issues.append(Issue("NOT_RECALCULATED", VERIFICATION_SHEET, SUMMARY_CELL, "recalculated by LibreOffice",
+        issues.append(Issue("NOT_RECALCULATED", VERIFICATION_SHEET, SUMMARY_CELL, "verified recalculation",
                             rc.reason))
     elif not recalculated:
-        issues.append(Issue("RECALC_FAILED", VERIFICATION_SHEET, SUMMARY_CELL, "recalculated by LibreOffice",
+        issues.append(Issue("RECALC_FAILED", VERIFICATION_SHEET, SUMMARY_CELL, "verified recalculation",
                             rc.reason))
     values_path = rc.output if recalculated and rc.output else path
     errors = rc.errors if recalculated else recalc.scan_errors(path)

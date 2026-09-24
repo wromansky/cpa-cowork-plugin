@@ -71,7 +71,7 @@ description: Draft a ready-to-post JE refund from a located SAP misposting. Run 
   recreate the draft by hand.
 - No manifest on the cost structure export and no `--as-of` given -> stop and ask her for the as-of date;
   never default it.
-- The workbook cannot be recalculated because LibreOffice is not found -> say so in the run record warning;
+- Automatic workbook recalculation is unsupported -> say so in the run record warning;
   never claim the balance cell was recalculated or that the draft is post-checked.
 
 ## Never

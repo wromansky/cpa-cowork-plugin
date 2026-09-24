@@ -97,7 +97,7 @@ description: Assemble a provider lookback cohort from its business plans, clinic
   in `assumptions.yaml` and never suggest one.
 - The deck stops on framing or on a number that differs from its cell -> she rewrites the narrative as
   retention support; never reword it to get past the check.
-- LibreOffice is unavailable for the recalc step -> say so in the run record warning; never claim a
+- Automatic recalculation is unsupported -> say so in the run record warning; never claim a
   recalculated workbook or a clean verification.
 
 ## Never
