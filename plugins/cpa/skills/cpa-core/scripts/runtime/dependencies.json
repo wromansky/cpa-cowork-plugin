@@ -1,7 +1,7 @@
 {
-  "cpa_version": "0.2.0",
+  "cpa_version": "0.2.1",
   "files": {
-    "cpa/__init__.py": "132c05e2a4602cabae109f4d1863210bfe80537902e1680465773b60e5d38599",
+    "cpa/__init__.py": "c753b108eb2a942f1223d3223e4e7f092706a321b6e31ec52923e709db9ab326",
     "cpa/__main__.py": "938d9c1057e9d2800398ca92cde866c87fc12db341bc4f2a20c06477f76ee9b2",
     "cpa/activity_block.py": "b8e445d18b14e51b421cf6bf81d86bea77ab2c57c2ef81f3c95d42feeea868da",
     "cpa/benchmarks.py": "d16bc2d7d60202b88ec9bc4cd71d98df277f2f43be193169b03307a0773e37cf",
@@ -19,7 +19,7 @@
     "cpa/pptx/notes.py": "41ffd6684fae9ffbabac211d1e784028eb910eb84617af2c966ffe9c1e8d30da",
     "cpa/recalc.py": "86a3d245ce6838d3f8ac3afd0f4931d9ba76c50db5fdba01c7112b0bcd648f98",
     "cpa/reconcile.py": "ba52e09c07b8a7e4e13ffa480c3e81c93850640a0ec73b643517ae941df95ba5",
-    "cpa/setup.py": "fc7d1a5045375e0017d2d7082a450cf11f15ec30467adf6c5bc22f2339e04a25",
+    "cpa/setup.py": "573d372933fac738d588700a1c43b805257d68d87a39522299ddd4544d5958fd",
     "cpa/sources/__init__.py": "41ca2b6364f389a1d766097f06fe91eb539f8745ab5ec7170b9e9c08e2e32292",
     "cpa/sources/base.py": "d3be66248e1e9c69e405f93feb528a772aea2ce1044cf044b0a106a0b04b896b",
     "cpa/sources/cognos.py": "1ee06ab8106a6b4e8359ecb3916d75803e62b16a5f98c1d46518e72a3cec6c72",

@@ -26,9 +26,9 @@ run the bundled launcher that ships beside this file, with the same arguments.
   reuse a path from an earlier session; resolve it again and use the absolute path you resolved.
 - Run the launcher with the sandbox's interpreter for `.py` scripts, not as a standalone executable.
   Pass its resolved absolute path as a single argument, including when the path contains spaces.
-- Readiness: pass `--check` to the launcher for a JSON report of the bundle, Python, dependencies,
-  and recalculation engine. Required-check failures block execution. A `dependencies` failure is
-  fixable in-session by the `cpa-setup` skill; a `bundle` or `python` failure is not. Engine
+- Readiness: pass `--check` to the launcher for a JSON report of the bundle, runtime version,
+  dependencies, and recalculation engine. Required-check failures block execution. A `dependencies`
+  failure is fixable in-session by the `cpa-setup` skill; a `bundle` or version failure is not. Engine
   availability is reported separately; exit 0 alone does not establish that recalculation is
   available. Run this once per session before the first `cpa` command, and report both the exit
   code and the full report.
@@ -44,8 +44,9 @@ run the bundled launcher that ships beside this file, with the same arguments.
 - Bundled is not installed: the launcher ships the `cpa` source, not its dependencies. If the
   check reports a missing or mismatched package, run the `cpa-setup` skill: it runs
   `python -m cpa setup install`, which installs exactly the pinned versions the payload declares
-  into this session's interpreter, and re-runs the check. No other skill installs, upgrades or
-  removes a package; never use `pip`, `pipx`, `uv` or `winget` outside `cpa-setup`.
+  into a versioned user-owned package directory inside the Cowork sandbox, never OS-managed
+  locations or the analyst's Windows PC, then re-runs the check with that target visible. No other skill installs,
+  upgrades or removes a package; never use `pip`, `pipx`, `uv` or `winget` outside `cpa-setup`.
 - The local developer setup (a checked-out repository on Windows, its virtualenv, its editable install)
   is not analyst setup and is never a step in a skill.
 - This launcher is the documented interface between these skills and a packaged runtime; it is not yet

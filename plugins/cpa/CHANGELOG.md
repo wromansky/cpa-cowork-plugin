@@ -8,6 +8,14 @@ The version lives in one place, `cpa/__init__.py` (`__version__`). `pyproject.to
 `plugin.json` version goes up. The first `## [x.y.z]` heading below must equal that version
 (`tests/test_portability.py::test_package_importable_and_version`). Add a new heading on every bump.
 
+## [0.2.1] - unreleased
+
+### Fixed
+
+- `cpa-setup` can now run while the runtime packages are missing and installs exact pins into a
+  versioned Cowork-sandbox package target, avoiding PEP 668 host-package restrictions. The analyst
+  does not need Python or pip installed on her Windows PC.
+
 ## [0.2.0] - unreleased
 
 ### Added

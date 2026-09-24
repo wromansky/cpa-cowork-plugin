@@ -1,6 +1,6 @@
 {
   "name": "cpa",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Automates CPA analyst workflows: browser export, committee deck refresh, APP P&L and slides, lookbacks, charge forecast, request intake, verification.",
   "author": { "name": "Billy Romansky" },
   "skills": "./skills",

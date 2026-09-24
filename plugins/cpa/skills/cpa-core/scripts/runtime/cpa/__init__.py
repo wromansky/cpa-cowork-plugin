@@ -10,7 +10,7 @@ Hard rules enforced: none here. D03: importing cpa never touches the filesystem,
 holds data only - no logic, no imports, no file access.
 """
 
-__version__: str = "0.2.0"  # single source: pyproject reads it (dynamic version); plugin.json and CHANGELOG are test-guarded
+__version__: str = "0.2.1"  # single source: pyproject reads it (dynamic version); plugin.json and CHANGELOG are test-guarded
 
 # Build List 0.1: one inbox folder per source system.
 INBOX_SYSTEMS: tuple[str, ...] = (

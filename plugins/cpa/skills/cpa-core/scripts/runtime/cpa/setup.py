@@ -2,9 +2,9 @@
 
 `python -m cpa setup check` reports, as JSON, whether the interpreter running this module can
 import every exact-pinned package declared by the payload's dependencies.json; `python -m cpa
-setup install` installs the missing or mismatched pins into the current interpreter's user site
-through pip (list-argument subprocess, never a shell, bounded timeout) and re-verifies honestly
-afterwards. This is the only place in the product that installs packages: no workflow skill
+setup install` installs missing or mismatched pins into a versioned, user-owned package target
+inside the Cowork sandbox through pip (list-argument subprocess, never a shell, bounded timeout)
+and re-verifies honestly afterwards. It never writes to system Python or the analyst's computer. This is the only place in the product that installs packages: no workflow skill
 installs, upgrades or removes anything. In a repository checkout (no dependencies.json beside
 cpa/) both commands are no-ops that name scripts/bootstrap.* as the developer path.
 
@@ -21,6 +21,8 @@ import importlib.metadata
 import importlib.util
 import json
 import platform
+import re
+import site
 import subprocess
 import sys
 from collections.abc import Sequence
@@ -70,6 +72,9 @@ def load_metadata(path: Path) -> dict:
         data = json.load(stream)
     if not isinstance(data, dict) or not isinstance(data.get("requirements"), list):
         raise ValueError("dependencies.json must be a JSON object with a 'requirements' list")
+    version = data.get("cpa_version")
+    if not isinstance(version, str) or not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9.!+_-]*", version):
+        raise ValueError("dependencies.json must contain a safe cpa_version")
     for entry in data["requirements"]:
         if not isinstance(entry, dict):
             raise ValueError(f"requirement entry is not an object: {entry!r}")
@@ -136,21 +141,33 @@ def _pip_available() -> bool:
     return importlib.util.find_spec("pip") is not None
 
 
-def _pip_argv(pins: Sequence[str]) -> list[str]:
-    """The full pip command as a list: this interpreter, -m pip install --user, exact pins.
+def install_target(version: str) -> Path:
+    """Versioned, user-owned package directory for the Cowork session runtime."""
+    return Path(site.getuserbase()) / "cpa-cowork" / version
 
-    List arguments only (D13); --user keeps the install inside the user site of the session
-    interpreter, never a system location."""
+
+def _add_install_target(version: str) -> Path:
+    """Expose this payload's isolated packages to imports and metadata discovery."""
+    target = install_target(version)
+    value = str(target)
+    if value not in sys.path:
+        sys.path.insert(0, value)
+        importlib.invalidate_caches()
+    return target
+
+
+def _pip_argv(pins: Sequence[str], version: str) -> list[str]:
+    """Install exact pins into a private target directory, avoiding PEP 668 system writes."""
     return [
-        sys.executable, "-m", "pip", "install", "--user",
+        sys.executable, "-m", "pip", "install", "--target", str(install_target(version)), "--upgrade", "--no-deps",
         "--disable-pip-version-check", "--no-input", *pins,
     ]
 
 
-def _pip_install(pins: Sequence[str]) -> subprocess.CompletedProcess:
+def _pip_install(pins: Sequence[str], version: str) -> subprocess.CompletedProcess:
     """Run pip once for every pin (list arguments, no shell, bounded timeout)."""
     return subprocess.run(
-        _pip_argv(pins),
+        _pip_argv(pins, version),
         capture_output=True,
         text=True,
         encoding="utf-8",
@@ -180,6 +197,7 @@ def _cmd_check(args: argparse.Namespace) -> int:
         _json({"mode": "bundle", "ready": False,
                "error": f"dependency metadata unreadable: {type(exc).__name__}: {exc}"})
         return 1
+    _add_install_target(str(metadata.get("cpa_version", "unknown")))
     rows = evaluate(metadata)
     missing = [row["name"] for row in rows if row["status"] == "missing"]
     mismatched = [f'{row["name"]}=={row["version"]}' for row in rows if row["status"] == "mismatched"]
@@ -188,6 +206,7 @@ def _cmd_check(args: argparse.Namespace) -> int:
         "mode": "bundle",
         "ready": ready,
         "cpa_version": metadata.get("cpa_version"),
+        "install_target": str(install_target(str(metadata.get("cpa_version", "unknown")))),
         "python": {"version": platform.python_version(), "minimum": metadata.get("python_minimum")},
         "requirements": rows,
         "missing": missing,
@@ -197,7 +216,7 @@ def _cmd_check(args: argparse.Namespace) -> int:
 
 
 def _cmd_install(args: argparse.Namespace) -> int:
-    """`setup install`: install the missing or mismatched pins into the user site.
+    """`setup install`: install the missing or mismatched pins into the Cowork-only package target.
 
     Exact pins only, from the payload metadata; nothing else is installed, upgraded or removed.
     Re-verifies after the pip run and reports honestly: exit 0 only when every applicable pin is
@@ -212,6 +231,8 @@ def _cmd_install(args: argparse.Namespace) -> int:
         _json({"mode": "bundle", "installed": [], "ready": False,
                "error": f"dependency metadata unreadable: {type(exc).__name__}: {exc}"})
         return 1
+    version = str(metadata.get("cpa_version", "unknown"))
+    target = _add_install_target(version)
     rows = evaluate(metadata)
     targets = [f'{row["name"]}=={row["version"]}' for row in rows if row["status"] in ("missing", "mismatched")]
     if not targets:
@@ -223,7 +244,7 @@ def _cmd_install(args: argparse.Namespace) -> int:
                "error": "pip is not importable in this interpreter; no install attempted"})
         return 1
     try:
-        proc = _pip_install(targets)
+        proc = _pip_install(targets, version)
     except subprocess.TimeoutExpired:
         _json({"mode": "bundle", "installed": [], "ready": False,
                "error": f"pip install timed out after {PIP_TIMEOUT_SECONDS} seconds; no verification performed"})
@@ -235,14 +256,14 @@ def _cmd_install(args: argparse.Namespace) -> int:
     if proc.returncode != 0:
         tail = (proc.stderr or proc.stdout or "").strip().splitlines()[-5:]
         _json({"mode": "bundle", "installed": [], "ready": False,
-               "error": "pip install failed", "detail": tail})
+               "error": "pip install failed", "detail": tail, "install_target": str(target)})
         return 1
     rows = evaluate(metadata)
     missing = [row["name"] for row in rows if row["status"] == "missing"]
     mismatched = [f'{row["name"]}=={row["version"]}' for row in rows if row["status"] == "mismatched"]
     ready = not missing and not mismatched
     _json({"mode": "bundle", "installed": targets, "ready": ready,
-           "missing": missing, "mismatched": mismatched})
+           "missing": missing, "mismatched": mismatched, "install_target": str(target)})
     return 0 if ready else 1
 
 
@@ -264,7 +285,7 @@ def register(subparsers: argparse._SubParsersAction) -> None:
     p.set_defaults(func=_cmd_check)
     p = sub.add_parser(
         "install",
-        help="Install missing or mismatched pinned packages into the user site (exact pins only).",
+        help="Install missing or mismatched pinned packages into the Cowork sandbox package target (exact pins only).",
     )
     p.add_argument(
         "--metadata", type=Path, default=None,

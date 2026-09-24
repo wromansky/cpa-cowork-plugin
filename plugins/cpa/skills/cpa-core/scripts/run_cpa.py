@@ -16,6 +16,7 @@ import importlib.metadata
 import json
 import platform
 import re
+import site
 import sys
 from pathlib import Path
 
@@ -129,6 +130,10 @@ def _metadata_and_integrity():
 def _environment():
     metadata, bundle_errors = _metadata_and_integrity()
     sys.path.insert(0, str(RUNTIME))
+    if metadata is not None:
+        target = Path(site.getuserbase()) / "cpa-cowork" / str(metadata.get("cpa_version", "unknown"))
+        if str(target) not in sys.path:
+            sys.path.insert(0, str(target))
     if metadata is not None and not bundle_errors:
         try:
             import cpa
@@ -205,9 +210,10 @@ def main(argv=None):
     if not report["python"]["available"]:
         print(f"Python {report['python']['minimum']} or newer is required; found {report['python']['version']}.", file=sys.stderr)
         return 2
-    if not report["dependencies"]["available"]:
-        print("CPA runtime dependencies do not match this bundle; use a Cowork Python sandbox with its declared packages. "
-              "This launcher will not install anything. See `--check`.", file=sys.stderr)
+    install_request = len(argv) >= 2 and argv[:2] == ["setup", "install"]
+    if not report["dependencies"]["available"] and not install_request:
+        print("CPA runtime dependencies do not match this bundle; run `setup install` through cpa-setup. "
+              "This launcher will not run workflows until dependencies are ready. See `--check`.", file=sys.stderr)
         return 2
     if len(argv) >= 2 and argv[:2] == ["healthcheck", "run"] and "--path" not in argv:
         print("The default repository tests are not included in this plugin payload; pass healthcheck run --path <tests-dir>. "

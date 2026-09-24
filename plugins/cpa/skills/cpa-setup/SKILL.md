@@ -16,11 +16,16 @@ description: Provision the Cowork sandbox interpreter for the CPA runtime. Run w
 
 ## Steps
 1. Run the runtime check documented in cpa-core (pass `--check` to the bundled launcher) and
-   record the JSON report and the exit code.
+   record the JSON report and exit code. Use only the runtime provided inside this Cowork
+   session. If its default version is below the bundle minimum, use another compatible
+   session runtime already provided by Cowork if one exists; never use or install a runtime on
+   the analyst's Windows PC.
 2. If the check exits 0, the runtime is ready for workflow skills; go to step 5.
 3. If the check fails on `dependencies` (missing or mismatched pinned packages), run
-   `python -m cpa setup install`. It installs exactly the pinned versions the payload declares,
-   into this session's interpreter only, and re-verifies them.
+   `python -m cpa setup install` through the bundled launcher. It installs only exact pins into
+   the versioned user-owned package target inside Cowork's sandbox (not OS-managed packages or the
+   analyst's Windows PC); this target-based install works with OS-managed runtimes and does not require
+   a local tool install or a `--break-system-packages` override.
 4. Re-run the runtime check. It must exit 0 before any workflow skill runs in this session.
 5. Write the run record: `python -m cpa state record --skill cpa-setup --verification "<ready:
    which pins were satisfied or installed; engine availability as reported>"`. If the workspace
@@ -41,8 +46,9 @@ description: Provision the Cowork sandbox interpreter for the CPA runtime. Run w
 - `python -m cpa setup install` exits nonzero (pip failed, timed out, or the re-check still
   shows missing pins): stop and report the printed JSON verbatim. Do not retry with different
   packages, versions or installers.
-- The check fails on `bundle` integrity or the interpreter version: setup cannot fix those;
-  report the failing key and stop.
+- The check fails on `bundle` integrity or no Cowork-provided interpreter meets the required
+  minimum version: setup cannot fix those; report the failing key and stop. Never ask the analyst
+  to install software on her Windows PC.
 - pip is not importable in the session interpreter: report the controlled error; do not install
   a different interpreter.
 
