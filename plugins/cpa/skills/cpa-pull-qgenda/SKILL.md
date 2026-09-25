@@ -1,6 +1,6 @@
 ---
 name: cpa-pull-qgenda
-description: Export the QGenda task definitions for a department through Claude in Chrome under the analyst's login and validate them so every task carries its system-assigned TaskKey. Run when the user says "QGenda tasks for <department>", or when cpa-cag-match needs an updated task list, or when cpa-monthly-pull calls it.
+description: Export the QGenda task definitions for a department through Claude in Chrome under the analyst's login and validate them so every task carries its system-assigned TaskKey. Run when the user says "QGenda tasks for this department", or when cpa-cag-match needs an updated task list, or when cpa-monthly-pull calls it.
 ---
 
 # cpa-pull-qgenda

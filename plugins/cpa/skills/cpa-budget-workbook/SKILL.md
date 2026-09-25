@@ -1,6 +1,6 @@
 ---
 name: cpa-budget-workbook
-description: Rebuild the budget workbook from the SAP CO line-item export, keeping every row and all ten cost structure columns. Run when inbox/sap/co_lineitems_<FYMM> lands, or the user says "rebuild the budget workbook" or "budget workbook for <month>".
+description: Rebuild the budget workbook from the SAP CO line-item export, keeping every row and all ten cost structure columns. Run when the fiscal month's SAP CO line-item export lands in inbox/sap, or the user says "rebuild the budget workbook" or "budget workbook for this month".
 ---
 
 # cpa-budget-workbook

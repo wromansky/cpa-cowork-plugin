@@ -1,6 +1,6 @@
 ---
 name: cpa-pull-medvitals
-description: Export MedVitals data under the analyst's own sign-in - the ProFee CPT Billing Profile for a division and business plan files for a provider cohort. Run when the user says "CPT profile for <division>", "pull MedVitals", "business plans for the cohort" or "monthly pull", or when cpa-app-pnl, cpa-lookback or cpa-monthly-pull calls it for a position or a cohort.
+description: Export MedVitals data under the analyst's own sign-in - the ProFee CPT Billing Profile for a division and business plan files for a provider cohort. Run when the user says "CPT profile for this division", "pull MedVitals", "business plans for the cohort" or "monthly pull", or when cpa-app-pnl, cpa-lookback or cpa-monthly-pull calls it for a position or a cohort.
 ---
 
 # cpa-pull-medvitals

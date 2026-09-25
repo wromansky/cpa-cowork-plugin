@@ -1,6 +1,6 @@
 ---
 name: cpa-master-data
-description: Refresh the departmental master data workbook's Load tab from the Power BI export and reconcile it against Trend Department. Run when inbox/powerbi/dept_productivity_<FYMM> lands, or the user says "refresh master data" or "rerun master data".
+description: Refresh the departmental master data workbook's Load tab from the Power BI export and reconcile it against Trend Department. Run when the fiscal month's departmental productivity export lands in inbox/powerbi, or the user says "refresh master data" or "rerun master data".
 ---
 
 # cpa-master-data

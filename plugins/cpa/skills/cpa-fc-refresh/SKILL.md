@@ -1,6 +1,6 @@
 ---
 name: cpa-fc-refresh
-description: Refresh the Finance Committee (FC) deck and workbook from this month's exports plus the budget workbook, on the fixed slide set. Run when inbox/tableau/charges_by_day, inbox/powerbi/dept_productivity, inbox/cognos/dept_financials and outbox/budget/<FYMM>/Budget_Workbook_<FYMM> for the fiscal month have all landed, or the user says "refresh the FC deck".
+description: Refresh the Finance Committee (FC) deck and workbook from this month's exports plus the budget workbook, on the fixed slide set. Run when inbox/tableau/charges_by_day, inbox/powerbi/dept_productivity, inbox/cognos/dept_financials and the budget workbook under outbox/budget for the fiscal month have all landed, or the user says "refresh the FC deck".
 ---
 
 # cpa-fc-refresh

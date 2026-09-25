@@ -1,6 +1,6 @@
 ---
 name: cpa-pull-epic
-description: Export a pinned Epic aggregate report (wRVU, PB encounters, charges or collections at department, division or provider grain) through Claude in Chrome under the analyst's login and validate it with the patient-level grain guard. Run when the user says "pull encounters for <cohort>" or "get the Epic numbers for <department>", or when cpa-lookback, cpa-governance-refresh or cpa-monthly-pull calls it.
+description: Export a pinned Epic aggregate report (wRVU, PB encounters, charges or collections at department, division or provider grain) through Claude in Chrome under the analyst's login and validate it with the patient-level grain guard. Run when the user says "pull encounters for this cohort" or "get the Epic numbers for this department", or when cpa-lookback, cpa-governance-refresh or cpa-monthly-pull calls it.
 ---
 
 # cpa-pull-epic

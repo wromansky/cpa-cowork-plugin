@@ -1,6 +1,6 @@
 ---
 name: cpa-crf
-description: Build this period's CRF commitment report from the COGNOS CRF export and roll last period's commitments forward. Run when inbox/cognos/crf_<FYMM> lands, or the user says "CRF report", "CRF" or "roll the commitments forward".
+description: Build this period's CRF commitment report from the COGNOS CRF export and roll last period's commitments forward. Run when the fiscal month's CRF export lands in inbox/cognos, or the user says "CRF report", "CRF" or "roll the commitments forward".
 ---
 
 # cpa-crf

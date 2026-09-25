@@ -1,6 +1,6 @@
 ---
 name: cpa-adhoc-pnl
-description: Build a department or division P&L workbook for an ad hoc request. Run when a request folder's brief.md reads as a P&L ask (requested_output mentions a P&L, margin, or department/division financials), or when the user says "build the P&L for this request" or names a requests/<id> folder.
+description: Build a department or division P&L workbook for an ad hoc request. Run when a request folder's brief.md reads as a P&L ask (requested_output mentions a P&L, margin, or department/division financials), or when the user says "build the P&L for this request" or names a folder under requests by its ID.
 ---
 
 # cpa-adhoc-pnl

@@ -1,7 +1,7 @@
 {
-  "cpa_version": "0.2.9",
+  "cpa_version": "0.2.10",
   "files": {
-    "cpa/__init__.py": "b6274fac9c754a3535dc258d3e1dcdcb586ab88cecad3c735445411d4c8e150e",
+    "cpa/__init__.py": "6e66480e865ba6c12debd504f363c4f4dd0c4b26ba0ca998239e766aefa62ec6",
     "cpa/__main__.py": "938d9c1057e9d2800398ca92cde866c87fc12db341bc4f2a20c06477f76ee9b2",
     "cpa/activity_block.py": "05ed184c6f9f19e5b9b8f28fd9083004b04ffa5e98179c2f5536862e2db06031",
     "cpa/benchmarks.py": "d16bc2d7d60202b88ec9bc4cd71d98df277f2f43be193169b03307a0773e37cf",

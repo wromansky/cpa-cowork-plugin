@@ -11,7 +11,7 @@ from approved sources in the analyst's private workspace. Never guess or publish
 ## ZIP installation available
 
 Personal GitHub-marketplace updates have not reliably propagated to the analyst. Use the
-reviewed [cpa-0.2.9.zip](https://github.com/wromansky/cpa-cowork-plugin/releases/download/v0.2.9/cpa-0.2.9.zip)
+reviewed [cpa-0.2.10.zip](https://github.com/wromansky/cpa-cowork-plugin/releases/download/v0.2.10/cpa-0.2.10.zip)
 with Claude's custom-plugin upload option; see [quickstart.md](quickstart.md). Do not unzip it
 or use GitHub's generic repository ZIP. Avoid two enabled CPA copies, and preserve your
 workspace and any custom changes when replacing an old installation. ZIP installs require
@@ -20,7 +20,15 @@ an approved new ZIP for each update; they do not automatically follow GitHub pus
 This repository remains available while ZIP installation is tested. The release packager
 runs privately, sanitizes rates, and recomputes runtime integrity metadata before distribution.
 
-## Version 0.2.9: safer Office-file editing
+## Version 0.2.10: manual-upload repair
+
+Replaces angle-bracket placeholders in 12 skill descriptions with plain-language triggers.
+Cowork rejected those descriptions as XML in 0.2.9. Packaging now checks all 46 descriptions
+and explicitly requires .claude-plugin/plugin.json at the ZIP root. The root manifest was
+already present in 0.2.9; the accompanying uploader manifest error remains unexplained.
+Actual Cowork upload retesting is required; this is not a claim of installation acceptance.
+
+## Office-file safety retained from 0.2.9
 
 Includes all five improvements from 0.2.8, plus primary XML-root/sheet-declaration validation
 and rejection of raw ZIP names normalized by Windows. An unreadable template must not be
@@ -39,8 +47,9 @@ interpreted as an empty workbook and overwritten.
   NOT_RECALCULATED still blocks CLEAN; geometry checks do not establish rendered appearance.
   No upstream Office skills, new dependencies, renderer or calculation backend are bundled.
 
-Validation: **924 passed, 6 skipped** on the Linux build box; sanitized runtime integrity and
-ZIP checks passed. Windows/Linux CI (Python 3.13) and the isolated wheel smoke test also passed.
+Validation: **929 passed, 6 skipped** on the Linux build box; sanitized runtime integrity and
+ZIP checks passed. The last completed Windows/Linux CI and wheel smoke evidence is for 0.2.9;
+0.2.10 CI was still running when this release was prepared.
 These are synthetic/library checks, not her Cowork session, real-file or visual acceptance.
 The analyst must still review actual outputs. Nothing is sent automatically.
 
@@ -74,7 +83,7 @@ processing are made. Official Claude documentation is linked in the bundled less
 - Setup, supervised browser trials and feedback guidance match the shipped capabilities.
   The incorrect SAP JE draft remains disabled; corrected COGNOS formatting is not yet implemented.
 
-After updating, start a fresh Cowork conversation and confirm the mounted bundle reports **0.2.9**.
+After updating, start a fresh Cowork conversation and confirm the mounted bundle reports **0.2.10**.
 Confirm the bundled **branding** skill loads before disabling the standalone brand skill.
 Use actual approved files for a supervised review: fonts, header/tab colors, protected formulas,
 source notes and Verification. Report concrete mismatches through **cpa-workflow-feedback**;

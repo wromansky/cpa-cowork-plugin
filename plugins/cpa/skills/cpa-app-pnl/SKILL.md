@@ -1,6 +1,6 @@
 ---
 name: cpa-app-pnl
-description: Build the three-year APP position P&L from the version 5 template using a triaged department submission, the MedVitals CPT Billing Profile, the Tableau collection rate, and SullivanCotter benchmarks. Run after cpa-app-triage marks a position COMPLETE or FIXABLE and the pulls have landed, or when the user says "build the P&L for <position>".
+description: Build the three-year APP position P&L from the version 5 template using a triaged department submission, the MedVitals CPT Billing Profile, the Tableau collection rate, and SullivanCotter benchmarks. Run after cpa-app-triage marks a position COMPLETE or FIXABLE and the pulls have landed, or when the user says "build the P&L for this position".
 ---
 
 # cpa-app-pnl

@@ -1,6 +1,6 @@
 ---
 name: cpa-app-deck
-description: Assemble the SOM Review Committee deck for a cycle from every position with a verified P&L and a built slide. Run the day before the meeting, or when the user says "assemble the SOM deck" or "build the deck for <cycle>".
+description: Assemble the SOM Review Committee deck for a cycle from every position with a verified P&L and a built slide. Run the day before the meeting, or when the user says "assemble the SOM deck" or "build the deck for this cycle".
 ---
 
 # cpa-app-deck

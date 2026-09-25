@@ -8,6 +8,16 @@ The version lives in one place, `cpa/__init__.py` (`__version__`). `pyproject.to
 `plugin.json` version goes up. The first `## [x.y.z]` heading below must equal that version
 (`tests/test_portability.py::test_package_importable_and_version`). Add a new heading on every bump.
 
+## [0.2.10]
+
+### Fixed
+- Replace angle-bracket placeholders in 12 skill descriptions with plain-language triggers.
+  Cowork's manual uploader rejected these descriptions as XML in 0.2.9.
+- Packaging now rejects XML angle brackets in parsed skill descriptions and explicitly
+  requires the root .claude-plugin/plugin.json manifest before writing a ZIP.
+- Plugin layout, workflow instructions, financial logic and approved branding originals are
+  unchanged. Rebuilt ZIP requires an actual Cowork upload retest; local checks are not acceptance.
+
 ## [0.2.9]
 
 ### Fixed

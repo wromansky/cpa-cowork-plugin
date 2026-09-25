@@ -1,6 +1,6 @@
 ---
 name: cpa-app-slide
-description: Build the APP committee slide for a new position, or the returning-position Q&A slide, from a verified P&L. Run after cpa-app-pnl builds and verifies a position's P&L, or when the user says "build the slide for <position>" or "build the Q&A slide for <position>".
+description: Build the APP committee slide for a new position, or the returning-position Q&A slide, from a verified P&L. Run after cpa-app-pnl builds and verifies a position's P&L, or when the user says "build the slide for this position" or "build the Q&A slide for this position".
 ---
 
 # cpa-app-slide

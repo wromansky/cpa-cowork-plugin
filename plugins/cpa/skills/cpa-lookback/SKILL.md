@@ -1,6 +1,6 @@
 ---
 name: cpa-lookback
-description: Assemble a provider lookback cohort from its business plans, clinical actuals and salary extract, then build the variance workbook and the retention deck. Run when a cohort folder appears under staging/lookback with its inputs manifested, or the user says "run the lookback for <cohort>" or "lookback deck".
+description: Assemble a provider lookback cohort from its business plans, clinical actuals and salary extract, then build the variance workbook and the retention deck. Run when a cohort folder appears under staging/lookback with its inputs manifested, or the user says "run the lookback for this cohort" or "lookback deck".
 ---
 
 # cpa-lookback
