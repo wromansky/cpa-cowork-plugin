@@ -9,12 +9,13 @@ are shipped. The public bundle intentionally leaves all JHM rates unfilled; they
 be supplied from approved sources in the analyst's own workspace, never guessed or
 posted to this repository.
 
-**Version 0.2.4:** The incorrect SAP-based JE draft is disabled. Use **cpa-workflow-feedback**
-for an attended COGNOS walkthrough and analyst-reviewed text notes, saved locally only.
+**Version 0.2.5:** Use **cpa-workflow-feedback** to prepare a short reviewed message the analyst
+sends directly to Billy. Local saving is optional; notes alone need no workspace or browser.
+Do not send recordings or generated skill exports. The incorrect SAP-based JE draft remains disabled.
 CRF starts with approved manual exports and a sanitized finished example. Browser-assisted
 pulls require an approved connection and confirmed saved report paths; the analyst handles
 login, SSO and MFA. This is not screen recording or automatic plugin self-modification.
-After updating, start a fresh session and confirm the mounted bundle reports 0.2.4.
+After updating, start a fresh session and confirm the mounted bundle reports 0.2.5.
 
 LibreOffice is excluded everywhere, including Cowork sandboxes. No engine
 is discovered or executed. Automatic workbook recalculation is unsupported; workflows needing

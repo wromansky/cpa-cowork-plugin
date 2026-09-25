@@ -8,6 +8,16 @@ The version lives in one place, `cpa/__init__.py` (`__version__`). `pyproject.to
 `plugin.json` version goes up. The first `## [x.y.z]` heading below must equal that version
 (`tests/test_portability.py::test_package_importable_and_version`). Add a new heading on every bump.
 
+## [0.2.5]
+
+### Changed
+
+- Workflow feedback defaults to a short analyst-reviewed message she sends directly to Billy.
+  Notes alone need no workspace or browser; local saving is optional and requires consent.
+- Cowork recordings may inform her description, but CPA does not request or import recordings
+  or generated skills. No automatic uploads, sending, or plugin self-modification.
+- Added feedback eval scenarios for notes-only operation and recording-derived descriptions.
+
 ## [0.2.4]
 
 ### Changed

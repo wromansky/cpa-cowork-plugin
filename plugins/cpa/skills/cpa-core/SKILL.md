@@ -115,7 +115,8 @@ Every skill writes its run record with `python -m cpa state record --skill <name
 JE refunds are COGNOS report formatting and manual handoff to Accounting, not SAP journal-entry
 creation; cpa-je-refund blocks the retired draft. CRF is the priority trial using approved manual
 exports first. Use cpa-workflow-feedback when the analyst demonstrates a workflow or reports a
-browser failure. It stores only reviewed sanitized notes locally; it never uploads or changes
+browser failure. It prepares reviewed notes she can send directly to Billy; local saving is
+optional. No recordings or generated skill exports are required. It never uploads or changes
 navigation. Browser tools must actually be available and authorized; she handles login and MFA.
 Do not run browser discovery unattended or assume a signed-in laptop browser is visible to Cowork.
 

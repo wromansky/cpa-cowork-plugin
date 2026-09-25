@@ -15,7 +15,7 @@ rates and all business data in your approved workspace, not in a public reposito
    `https://github.com/wromansky/cpa-cowork-plugin` and select **Sync**.
 3. Install the plugin named **cpa** and turn it on under Personal plugins.
 4. Start a **new Cowork conversation** with the plugin enabled. For this release, confirm the
-   mounted bundle reports **0.2.4**; an older copy may still be present after an update.
+   mounted bundle reports **0.2.5**; an older copy may still be present after an update.
 
 If the marketplace or **cpa** does not appear, stop and ask Billy for help. You should not need
 a terminal or a local software install.
@@ -53,9 +53,10 @@ the result; do not move files into a temporary workspace.
 ## 4. Begin with a supervised run
 
 Ask: **“Use cpa-workflow-feedback to walk through my COGNOS CRF process with me and record
-reviewed, sanitized notes locally.”** She signs in herself. If Cowork has no approved browser
+reviewed, sanitized notes for me to send to Billy.”** She signs in herself. If Cowork has no approved browser
 connection, start with a manual export and a sanitized example finished report instead. Browser
-feedback is text, not a screen recording; nothing is uploaded or sent automatically.
+feedback is a short message she reviews and sends herself, not a recording or skill export.
+Local saving is optional; notes alone need no workspace or browser. Nothing is sent automatically.
 
 The old SAP-based JE draft is disabled. JE now needs confirmation of the COGNOS report, font,
 and highlight rule; sending to Accounting stays manual.
