@@ -9,9 +9,12 @@ are shipped. The public bundle intentionally leaves all JHM rates unfilled; they
 be supplied from approved sources in the analyst's own workspace, never guessed or
 posted to this repository.
 
-**Version 0.2.3:** Setup selects a compatible interpreter already present in Cowork, tolerates
-incidental bytecode caches while importing verified source only, and reports the loaded launcher
-path. After updating, start a fresh session and confirm the mounted bundle reports 0.2.3.
+**Version 0.2.4:** The incorrect SAP-based JE draft is disabled. Use **cpa-workflow-feedback**
+for an attended COGNOS walkthrough and analyst-reviewed text notes, saved locally only.
+CRF starts with approved manual exports and a sanitized finished example. Browser-assisted
+pulls require an approved connection and confirmed saved report paths; the analyst handles
+login, SSO and MFA. This is not screen recording or automatic plugin self-modification.
+After updating, start a fresh session and confirm the mounted bundle reports 0.2.4.
 
 LibreOffice is excluded everywhere, including Cowork sandboxes. No engine
 is discovered or executed. Automatic workbook recalculation is unsupported; workflows needing

@@ -17,12 +17,19 @@ description: Build this period's CRF commitment report from the COGNOS CRF expor
 | Fiscal period | inferred from the export's filename, or given with `--period` | no |
 
 ## Steps
-1. In the plugin checkout, resolve two absolute paths before running anything. The interpreter, by
-   resolving `.venv\Scripts\python.exe` inside the checkout. The workspace, by reading `CPA_WORKSPACE` in
-   cpa-core and running `.venv\Scripts\python.exe -m cpa config where` with that resolved interpreter.
-   Every `.venv\Scripts\python.exe` below stands for the resolved executable, and every `inbox`,
-   `staging`, `outbox`, `reference` and `logs` path below is relative to the workspace root the command
-   printed, so run the rest of the steps from that root. Never hard-code either path.
+1. Follow cpa-core's mounted launcher convention for every command below; there is no local install
+   requirement. Run `python -m cpa config where` and confirm with her that Cowork can access the actual
+   intended workspace. If missing, stop without creating a substitute. For the first trial, ask for an
+   approved sanitized manual COGNOS export and an example finished report. Use cpa-workflow-feedback to
+   confirm the layout, commitment identifiers, closure rules, source totals, formatting, and review
+   steps. The current implementation is fixture-based: do not build until these match the real workflow.
+   Her reported CRF handling time is two to four hours, not a proven automation saving.
+   Manual exports are supported; record their real source, report, filters and as-of date with
+   `python -m cpa manifest write <export> --source cognos --report "<confirmed report>" --filters
+   "<confirmed filters>" --as-of <date>`. Browser pulls may use cpa-pull-cognos only after approved,
+   attended navigation is pinned. She performs all login, SSO and MFA herself.
+   If the required result needs recalculated figures, stop before building: automatic recalculation
+   is unsupported. Validation and workflow discovery may proceed, but are not a completed CRF report.
 2. Run `.venv\Scripts\python.exe -m cpa state ready --json`. When cpa-crf is not listed for this fiscal
    month, say why - the export has not landed, or this period has already been run against it - and
    continue only when the analyst asked for a rerun.
@@ -58,6 +65,8 @@ description: Build this period's CRF commitment report from the COGNOS CRF expor
 - The Verification tab reads CLEAN, or every issue is listed and reported.
 
 ## If something is wrong
+- A real export or example differs from the fixture model -> stop and record reviewed feedback with
+  cpa-workflow-feedback. Do not reshape her export or silently classify missing commitments as Closed.
 - The prior report is rejected -> it is not a report this tool wrote, or its Commitments header differs;
   report which; never rebuild the prior month by hand.
 - The export fails validation -> stop and land a fresh A6 export; never edit or re-save the export file.

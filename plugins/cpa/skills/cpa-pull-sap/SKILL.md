@@ -1,6 +1,6 @@
 ---
 name: cpa-pull-sap
-description: Export a SAP salary extract, a SAP CO line item detail file, or locate a misposting line item by amount, cost center and period, through Claude in Chrome under the analyst's login, then validate it through the SAP adapter. Run when the user says "salary extract", "pull the CO line items" or "find this misposting", or when cpa-lookback, cpa-budget-workbook, cpa-je-refund or cpa-monthly-pull calls it. Read and export only; nothing is ever posted.
+description: Export a SAP salary extract, a SAP CO line item detail file, or locate a misposting line item by amount, cost center and period, through Claude in Chrome under the analyst's login, then validate it through the SAP adapter. Run when the user says "salary extract", "pull the CO line items" or "find this misposting", or when cpa-lookback, cpa-budget-workbook or cpa-monthly-pull calls it. Read and export only; nothing is ever posted.
 ---
 
 # cpa-pull-sap
@@ -9,8 +9,8 @@ description: Export a SAP salary extract, a SAP CO line item detail file, or loc
 - Per lookback cohort (A10): the salary extract for the cohort's provider list.
 - Monthly (A11): the CO line item detail for a cost center range and fiscal period, which feeds
   cpa-budget-workbook.
-- Per JE refund (A12): locate the one CO line item matching an amount, a cost center and a period,
-  which cpa-je-refund then drafts from.
+- On an explicit SAP line-item research request: locate the matching amount, cost center and period.
+  JE refunds are not a SAP workflow; route them to cpa-je-refund for the corrected COGNOS requirements.
 - The user says "salary extract", "pull the CO line items" or "find this misposting".
 
 ## Inputs
@@ -58,7 +58,7 @@ description: Export a SAP salary extract, a SAP CO line item detail file, or loc
 9. On a locate exit 1, report every matching row exactly as printed (document, line, amount, cost
    center) or say that nothing matched, and ask her to narrow the amount, cost center or period.
 10. Report the file path or the locate result, the row count, the filters, the as-of date and which
-    workflows consume it (cpa-lookback, cpa-budget-workbook, cpa-je-refund).
+    workflows consume it (cpa-lookback, cpa-budget-workbook).
 11. Write the run record: run
     `.venv\Scripts\python.exe -m cpa state record --skill cpa-pull-sap --input <the request or
     cohort list> --output <the export path or staging/je/<id>/locate.json>

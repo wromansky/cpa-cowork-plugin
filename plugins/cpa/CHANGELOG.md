@@ -8,6 +8,20 @@ The version lives in one place, `cpa/__init__.py` (`__version__`). `pyproject.to
 `plugin.json` version goes up. The first `## [x.y.z]` heading below must equal that version
 (`tests/test_portability.py::test_package_importable_and_version`). Add a new heading on every bump.
 
+## [0.2.4]
+
+### Changed
+
+- Disabled the incorrect SAP-based JE draft API and CLI. The analyst's actual workflow is a
+  COGNOS report, font adjustment, cell highlighting, and manual handoff to Accounting; exact
+  report and formatting requirements still need confirmation.
+- Added cpa-workflow-feedback and a deterministic local note recorder: attended browser
+  walkthroughs, explicit analyst review, no credential capture, uploads, or automatic path edits.
+- Prioritized a CRF manual-export trial with sanitized source and finished examples. Browser
+  pulls remain available for confirmed saved report paths; COGNOS waits must not create duplicate jobs.
+- No new browser driver or desktop recorder is installed. Cowork must expose an approved browser
+  connection; unvalidated navigation is demonstrated by the analyst. Recalculation remains unsupported.
+
 ## [0.2.3]
 
 ### Fixed

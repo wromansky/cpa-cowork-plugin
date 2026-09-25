@@ -27,7 +27,9 @@ description: Export COGNOS data under the analyst's own sign-in - the department
 ## Steps
 1. Read `CPA_WORKSPACE` from cpa-core.
 2. Read the report's entry in `reference/cognos_paths.yaml`. When its `url` or its `report_name` is null, stop
-   and ask the analyst to fill that entry in; never guess which report she means or browse to a guessed location.
+   and offer cpa-workflow-feedback for an attended analyst demonstration. She confirms the report and
+   supplies the bookmark; never guess a location or automatically promote observation notes to approved
+   navigation. The JE report is a separate, unvalidated workflow: do not substitute A5 or A6 for it.
 3. Before any browser interaction in this run, ask the analyst to confirm two things for COGNOS: that Hopkins
    approves exporting this data with Claude in Chrome driving the browser, and which access method is approved
    for this run - Claude in Chrome, a supervised session in which she drives the browser herself, or another
@@ -46,6 +48,10 @@ description: Export COGNOS data under the analyst's own sign-in - the department
    departmental financials, fiscal year to date for the recruitment cost report - and put nothing into any other
    field on the page.
 8. Wait until the view has finished loading - no spinner, and the row count is visible - before exporting.
+   COGNOS pulls may take about twenty minutes according to the analyst. Observe the existing job's status
+   with her present; never click Run repeatedly, refresh to resubmit, or start duplicate jobs. If progress
+   is unclear, ask whether to continue waiting or stop, and record the last confirmed step through
+   cpa-workflow-feedback. Do not claim a cancelled or completed job without observing that status.
 9. Export the view through the report's own download control to the file that entry's `lands_as` names:
    `inbox/cognos/dept_financials_<FYMM>.xlsx` (A5) or `inbox/cognos/crf_<FYMM>.xlsx` (A6). When the browser
    saves into Downloads, move the file into `inbox/cognos/`.

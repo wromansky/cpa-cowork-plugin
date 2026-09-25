@@ -88,7 +88,8 @@ computes a fiscal period, a workday count, or a proration by hand.
 10. Department labels pass through `reference/dept_crosswalk.csv`. Unmatched fails loudly.
 11. Workbooks above 15 MB stream through `cpa.bigxlsx` (`python -m cpa bigxlsx`). Never load whole.
 12. SAP access goes through `cpa.sources.sap`. Workday replaces it mid-2027.
-13. JE refunds stop at a ready-to-post draft. Never post.
+13. JE refunds are COGNOS report formatting with manual Accounting handoff. The old SAP draft is
+    disabled pending corrected requirements. Never post or send automatically.
 14. Epic and SAP browser sessions are read and export only. Navigation is pinned to named reports.
 15. Any value marked needs-you in `reference/assumptions.yaml` (`python -m cpa config check` lists
     the ones due for quarterly review) is required through `cpa.config.assumption()`. A missing key
@@ -109,6 +110,14 @@ Every skill writes its run record with `python -m cpa state record --skill <name
 [--input <path> ...] --output <path> [--output <path> ...] --verification <summary>
 [--warning <text> ...] --duration <seconds> [--needs-analyst]`. The command writes
 `logs/runs/<UTC timestamp>_<skill>.json`; no skill hand-writes that file.
+
+## Workflow corrections and supervised discovery
+JE refunds are COGNOS report formatting and manual handoff to Accounting, not SAP journal-entry
+creation; cpa-je-refund blocks the retired draft. CRF is the priority trial using approved manual
+exports first. Use cpa-workflow-feedback when the analyst demonstrates a workflow or reports a
+browser failure. It stores only reviewed sanitized notes locally; it never uploads or changes
+navigation. Browser tools must actually be available and authorized; she handles login and MFA.
+Do not run browser discovery unattended or assume a signed-in laptop browser is visible to Cowork.
 
 ## Notification
 At the end of any run, one message: what ran, what is in outbox, what is flagged, what is blocked.

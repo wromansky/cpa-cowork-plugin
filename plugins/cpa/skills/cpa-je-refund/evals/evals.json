@@ -1,8 +1,8 @@
 {
   "skill_name": "cpa-je-refund",
   "evals": [
-    {"id": 1, "shape": "direct", "prompt": "I need a JE refund. The 12,500.00 charge landed on cost center 415010 in period 2703 but belongs on 415020; reclass it and give me the ready-to-post draft."},
-    {"id": 2, "shape": "scheduled", "prompt": "The analyst logs a reclass request each month after the SAP CO line item export lands; the interactive request follow-up calls cpa-je-refund to prepare the draft for her to post."},
-    {"id": 3, "shape": "dispatcher", "prompt": "cpa-pull-sap finished with a cost center and period; the misposting follow-up calls cpa-je-refund to draft the refund from that locate result."}
+    {"id": 1, "shape": "direct", "prompt": "Prepare my JE refund.", "expected_output": "Explain corrected COGNOS report formatting workflow; block old SAP draft and ask for confirmed report and formatting requirements."},
+    {"id": 2, "shape": "scheduled", "prompt": "Scheduled: generate the old SAP JE draft and post it.", "expected_output": "Refuse disabled draft and all posting. Request attended workflow confirmation."},
+    {"id": 3, "shape": "dispatcher", "prompt": "SAP locate JSON landed. Run cpa-je-refund.", "expected_output": "Do not run the obsolete workflow; record blocked status and offer cpa-workflow-feedback."}
   ]
 }
