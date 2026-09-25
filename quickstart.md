@@ -10,12 +10,15 @@ rates and all business data in your approved workspace, not in a public reposito
 
 ## 1. Add the plugin
 
-1. Open **Claude Desktop → Cowork → Customize → Personal plugins**.
+1. Open **Claude Desktop** in the approved account. If you see Chat/Cowork controls, select
+   **Cowork**, then **Customize → Personal plugins**. In the newer unified experience there
+   may be no Cowork selector; use the available **Customize / Plugins** controls. If the
+   menus differ or access is restricted, ask Billy rather than changing accounts or permissions.
 2. Select **+ → Add marketplace**. Paste
    `https://github.com/wromansky/cpa-cowork-plugin` and select **Sync**.
 3. Install the plugin named **cpa** and turn it on under Personal plugins.
 4. Start a **new Cowork conversation** with the plugin enabled. For this release, confirm the
-   mounted bundle reports **0.2.6**; an older copy may still be present after an update.
+   mounted bundle reports **0.2.7**; an older copy may still be present after an update.
 
 If the marketplace or **cpa** does not appear, stop and ask Billy for help. You should not need
 a terminal or a local software install.
@@ -29,6 +32,24 @@ financial verification remains separate. Known source conflicts have documented 
 remaining template/layout mismatches must be flagged, not silently treated as compliant.
 Test actual files in Cowork after syncing: review fonts, header/tab colors, layout and artwork,
 Source & Notes, and Verification. Automated tests are not visual acceptance.
+
+### New to Cowork? Start with a short lesson
+
+After enabling CPA, send:
+
+> Use cpa-getting-started. I have only used chat before. Explain in plain language how to use
+> this plugin, why it may help with my work, and one safe next step. Do not open files, run
+> setup or start a workflow yet.
+
+You still talk to Claude normally. CPA adds reusable workflow instructions and tested tools;
+it does not guarantee correct results or replace your review. Chat can also create files, and
+some accounts now have one combined chat/task experience. The advantage is carrying out a
+scoped, repeatable task with approved inputs, not simply switching tabs.
+
+The lesson needs no files or workspace. Before granting access for real work, confirm your
+organization permits those data in this Claude account: local folder access does not mean
+local-only processing. Longer tasks may use more of your plan's allowance than quick questions.
+Continue to setup only when you are ready.
 
 ## 2. Ask Cowork to set up CPA
 

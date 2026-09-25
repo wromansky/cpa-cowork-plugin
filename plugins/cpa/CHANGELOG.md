@@ -8,6 +8,17 @@ The version lives in one place, `cpa/__init__.py` (`__version__`). `pyproject.to
 `plugin.json` version goes up. The first `## [x.y.z]` heading below must equal that version
 (`tests/test_portability.py::test_package_importable_and_version`). Add a new heading on every bump.
 
+## [0.2.7]
+
+### Added
+- cpa-getting-started: a teaching-first orientation for analysts who have only used chat.
+  Covers practical benefits and limits, current separate/unified Claude interfaces, a safe
+  first CRF input review, permissions/privacy, output review and feedback. Includes official
+  Claude documentation references and direct/scheduled/dispatcher evaluation cases.
+- Quickstart lesson prompt and dispatcher help handoff. Teaching requires no workspace or
+  tool access; setup, file inspection and saved logging require separate consent. No automatic
+  workflow, browser or scheduling demonstration, and no promise of verified calculations.
+
 ## [0.2.6]
 
 ### Changed

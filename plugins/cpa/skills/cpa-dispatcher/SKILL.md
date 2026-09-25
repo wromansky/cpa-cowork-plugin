@@ -20,7 +20,9 @@ description: Scan the CPA workspace inbox and run whichever workflows are ready,
 | Dependency order | the dependency rules listed in step 4 below (guide 7.3) | yes |
 
 ## Steps
-1. Read `CPA_WORKSPACE` from cpa-core. Every path below is workspace-relative under that root, and every
+1. If the request is to learn Cowork or understand the plugin, hand off to cpa-getting-started
+   and return without scanning files, resolving a workspace or starting workflows. Its lesson
+   needs none of the operational inputs above. Otherwise read `CPA_WORKSPACE` from cpa-core. Every path below is workspace-relative under that root, and every
    path handed to a `cpa` command is spelled as an absolute path under `CPA_WORKSPACE`, because the commands
    record and resolve paths against the workspace rather than the shell's current directory.
 2. Run `.venv\Scripts\python.exe -m cpa state scan` and read every line it prints. `new` and `changed` are

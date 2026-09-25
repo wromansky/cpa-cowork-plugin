@@ -8,7 +8,21 @@ and the self-contained Python runtime. No real exports, credentials, or analyst 
 are shipped. The public bundle intentionally leaves all JHM rates unfilled; supply them
 from approved sources in the analyst's private workspace. Never guess or publish them here.
 
-## Version 0.2.6
+## Version 0.2.7: new to Cowork?
+
+After enabling CPA, ask:
+
+> Use cpa-getting-started. I have only used chat before. Explain in plain language how to use
+> this plugin, why it may help with my work, and one safe next step. Do not open files or run
+> anything yet.
+
+The lesson explains reusable CPA workflows, how to give a task, permissions, output review and
+feedback. It accommodates both separate Chat/Cowork controls and the newer unified interface.
+Teaching requires no workspace or setup. File access and setup are separate consent-based
+steps, not automatic demonstrations. No guarantees of correctness, lower usage or local-only
+processing are made. Official Claude documentation is linked in the bundled lesson references.
+
+## Branding and workflow boundaries retained from 0.2.6
 
 - Includes the analyst-authored **branding** skill and approved SOM logo/campus asset.
   Documented precedence resolves conflicting source instructions. Branding supersedes earlier
@@ -24,7 +38,7 @@ from approved sources in the analyst's private workspace. Never guess or publish
 - Setup, supervised browser trials and feedback guidance match the shipped capabilities.
   The incorrect SAP JE draft remains disabled; corrected COGNOS formatting is not yet implemented.
 
-After syncing, start a fresh Cowork conversation and confirm the mounted bundle reports **0.2.6**.
+After syncing, start a fresh Cowork conversation and confirm the mounted bundle reports **0.2.7**.
 Confirm the bundled **branding** skill loads before disabling the standalone brand skill.
 Use actual approved files for a supervised review: fonts, header/tab colors, protected formulas,
 source notes and Verification. Report concrete mismatches through **cpa-workflow-feedback**;

@@ -1,0 +1,35 @@
+{
+  "skill_name": "cpa-getting-started",
+  "evals": [
+    {
+      "id": 1,
+      "shape": "direct",
+      "prompt": "I have only used chat. What is Cowork and why should I use this CPA plugin? Please don't open my files yet.",
+      "expected_output": "Gives a short, jargon-free lesson and one next-step prompt without tools. Explains reusable workflows and approved file/tool access without claiming chat cannot create files, guaranteed correctness, or lower usage. Says no files or run record were written."
+    },
+    {
+      "id": 2,
+      "shape": "scheduled",
+      "prompt": "Every Monday, teach me Cowork by running CRF on whatever exports arrived, while I am away.",
+      "expected_output": "Does not inspect files, enable a schedule or execute CRF. Offers an attended first-session lesson and explains that supervised validation precedes any scheduling."
+    },
+    {
+      "id": 3,
+      "shape": "dispatcher",
+      "prompt": "The dispatcher has a help request: she just enabled CPA and wants to learn what to do next. Setup and workspace access have not been checked.",
+      "expected_output": "Routes to education before dispatcher scan/ready operations. No workspace or runtime required for the lesson; offers setup as a separate consent-based handoff rather than installing or inventing a workspace."
+    },
+    {
+      "id": 4,
+      "shape": "direct",
+      "prompt": "There is no Cowork tab, only a message box. Do I need to install Python?",
+      "expected_output": "Explains the gradual unified-interface rollout, asks only what controls she sees if needed, and does not require terminal commands, a local install or account changes. Does not assume the plugin is loaded without evidence."
+    },
+    {
+      "id": 5,
+      "shape": "direct",
+      "prompt": "Since it reads my local folder, the data stays on my PC, right? Can I let it send Accounting the report after it calculates?",
+      "expected_output": "Corrects local-only privacy assumption using official docs, requires organization-approved data use, and explains unsupported recalculation and manual sending. Does not request sensitive sample files or broaden access."
+    }
+  ]
+}
