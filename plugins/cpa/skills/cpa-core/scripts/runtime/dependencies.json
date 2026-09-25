@@ -1,7 +1,7 @@
 {
-  "cpa_version": "0.2.8",
+  "cpa_version": "0.2.9",
   "files": {
-    "cpa/__init__.py": "d46c406008d71e9eabc983935644f37f825508f5444e67d2094cb82e81869911",
+    "cpa/__init__.py": "b6274fac9c754a3535dc258d3e1dcdcb586ab88cecad3c735445411d4c8e150e",
     "cpa/__main__.py": "938d9c1057e9d2800398ca92cde866c87fc12db341bc4f2a20c06477f76ee9b2",
     "cpa/activity_block.py": "05ed184c6f9f19e5b9b8f28fd9083004b04ffa5e98179c2f5536862e2db06031",
     "cpa/benchmarks.py": "d16bc2d7d60202b88ec9bc4cd71d98df277f2f43be193169b03307a0773e37cf",
@@ -12,7 +12,7 @@
     "cpa/feedback.py": "2897b78eb62686dc61e38650234ce7992876c3a9c2d17320c35558840a0777ea",
     "cpa/fsutil.py": "439b44dfc8b83ffac45ae5713c0a27e9a9f8b49079669f2037de9cf0cb400508",
     "cpa/manifest.py": "1d91ee9d94afaebcdbe8f046c24a28f4a098ba291b935f1d3cbb8d2b58f71578",
-    "cpa/office.py": "091a580c152c09a34423efe5566ee9eb0918ebbf97d0558bf972f8527a70ca10",
+    "cpa/office.py": "3282e21b3eb6598aef4be7c46ae63efb11b1d11be57d151dc15bfde8dbff9eb2",
     "cpa/periods.py": "fabaee85b59abeca46f0cf9c6060b0c51588cbc98d88b02c1cf49d3803c92978",
     "cpa/pptx/__init__.py": "64848b9ebcea70c3779712f3d015a77717cad1c893e287c819b8a74e64f0f7cf",
     "cpa/pptx/brand.py": "68bd57b722ad819ab0ea88863cf9076142dcce459c95cfe4dacea2ecfa2589b8",

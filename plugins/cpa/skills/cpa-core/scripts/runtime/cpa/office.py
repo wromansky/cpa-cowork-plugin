@@ -49,6 +49,7 @@ class PackageReport:
     parts: dict[str, str]
     external_links: int
     raw_parts: dict[str, str]
+    sheet_names: tuple[str, ...] = ()
 
 
 def _target(source: str, target: str) -> str:
@@ -71,6 +72,19 @@ def _rel_source(name: str) -> str:
     if not parent.endswith("/_rels"):
         raise OfficeSafetyError("Invalid relationship part location")
     return parent[:-6] + "/" + leaf[:-5]
+
+
+def _expected_root(name):
+    fixed = {"[Content_Types].xml": f"{{{_CT}}}Types", "xl/workbook.xml": f"{{{_SHEET}}}workbook",
+             "xl/styles.xml": f"{{{_SHEET}}}styleSheet", "xl/sharedStrings.xml": f"{{{_SHEET}}}sst",
+             "ppt/presentation.xml": "{http://schemas.openxmlformats.org/presentationml/2006/main}presentation"}
+    if name.endswith(".rels"):
+        return f"{{{_REL}}}Relationships"
+    if re.fullmatch(r"xl/worksheets/[^/]+\.xml", name):
+        return f"{{{_SHEET}}}worksheet"
+    if re.fullmatch(r"ppt/slides/[^/]+\.xml", name):
+        return "{http://schemas.openxmlformats.org/presentationml/2006/main}sld"
+    return fixed.get(name)
 
 
 def _directory_limits(path):
@@ -117,6 +131,7 @@ def _inspect_package(path: Path | str, *, workbook_edit: bool = False) -> Packag
     defaults: dict[str, str] = {}
     overrides: dict[str, str] = {}
     external = 0
+    sheets = []
     try:
         _directory_limits(path)
         with zipfile.ZipFile(path) as archive:
@@ -128,7 +143,7 @@ def _inspect_package(path: Path | str, *, workbook_edit: bool = False) -> Packag
                 raise OfficeSafetyError("Duplicate package member names")
             for member in members:
                 name = member.filename
-                if ("\\" in name or name.startswith("/") or ":" in name or
+                if (member.orig_filename != name or "\\" in name or name.startswith("/") or ":" in name or
                         any(p in ("", ".", "..") for p in name.split("/")) or
                         (member.external_attr >> 16) & 0o170000 == 0o120000):
                     raise OfficeSafetyError("Unsafe package member name or symlink")
@@ -168,6 +183,8 @@ def _inspect_package(path: Path | str, *, workbook_edit: bool = False) -> Packag
                                 raise OfficeSafetyError("XML entities are not supported")
                             if event == "start":
                                 depth += 1
+                                if depth == 1 and _expected_root(name) not in (None, elem.tag):
+                                    raise OfficeSafetyError(f"Unsupported XML root in {name}")
                                 if depth > MAX_XML_DEPTH:
                                     raise OfficeSafetyError("XML depth limit exceeded")
                                 if elem.getroottree().docinfo.doctype:
@@ -187,6 +204,13 @@ def _inspect_package(path: Path | str, *, workbook_edit: bool = False) -> Packag
                                         ref_count += 1
                                 digest.update(repr(("start", elem.tag, sorted(elem.attrib.items()))).encode("utf-8"))
                                 continue
+                            if name == "xl/workbook.xml" and elem.tag == f"{{{_SHEET}}}sheet":
+                                title, sid, rid = elem.get("name", ""), elem.get("sheetId", ""), elem.get(f"{{{_DOCREL}}}id", "")
+                                parent = elem.getparent()
+                                if (not title or not sid.isdigit() or int(sid) < 1 or not rid or parent is None
+                                        or parent.tag != f"{{{_SHEET}}}sheets"):
+                                    raise OfficeSafetyError("Incomplete workbook sheet declaration")
+                                sheets.append((title, int(sid), rid))
                             if (workbook_edit and elem.tag in {f"{{{_SHEET}}}f", f"{{{_SHEET}}}definedName"}
                                     and _EXTERNAL_FORMULA.search(elem.text or "")):
                                 raise OfficeSafetyError("External workbook dependency in formula/name; write blocked")
@@ -253,11 +277,24 @@ def _inspect_package(path: Path | str, *, workbook_edit: bool = False) -> Packag
             expected = ("spreadsheetml.sheet.main+xml" if kind == "xlsx" else "presentationml.presentation.main+xml")
             if not overrides.get(root, "").endswith(expected):
                 raise OfficeSafetyError("Unsupported or mismatched document content type")
+            if kind == "xlsx":
+                if not sheets or any(len({s[index].casefold() if index == 0 else s[index] for s in sheets}) != len(sheets)
+                                     for index in range(3)):
+                    raise OfficeSafetyError("Missing or duplicate workbook sheet declarations")
+                targets = set()
+                for _, _, rid in sheets:
+                    target, relation_type, mode = rels.get(root, {}).get(rid, ("", "", ""))
+                    if mode != "Internal" or not relation_type.endswith("/worksheet"):
+                        raise OfficeSafetyError("Unsupported workbook sheet relationship")
+                    targets.add(_target(root, target))
+                worksheet_parts = {name for name in names if re.fullmatch(r"xl/worksheets/[^/]+\.xml", name)}
+                if len(targets) != len(sheets) or targets != worksheet_parts:
+                    raise OfficeSafetyError("Unreferenced or aliased workbook sheet parts")
     except OfficeSafetyError:
         raise
     except (OSError, ValueError, RuntimeError, zipfile.BadZipFile, etree.XMLSyntaxError) as exc:
         raise OfficeSafetyError(f"Office package inspection failed: {exc}") from exc
-    return PackageReport(kind, parts, external, raw_parts)
+    return PackageReport(kind, parts, external, raw_parts, tuple(s[0] for s in sheets))
 
 
 def _xml(value):
@@ -331,6 +368,9 @@ def load_workbook(path: Path | str):
     if bigxlsx.is_large(path):
         raise OfficeSafetyError("Large workbook: use the streaming workflow; whole-workbook editing is blocked")
     wb = openpyxl.load_workbook(path, rich_text=True, keep_links=True)
+    if wb.sheetnames != list(report.sheet_names):
+        wb.close()
+        raise OfficeSafetyError("Object loader did not preserve all declared sheets")
     wb._cpa_original = _snapshot(wb)
     wb._cpa_package = report
     with zipfile.ZipFile(path) as archive:

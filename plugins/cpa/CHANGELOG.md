@@ -8,6 +8,16 @@ The version lives in one place, `cpa/__init__.py` (`__version__`). `pyproject.to
 `plugin.json` version goes up. The first `## [x.y.z]` heading below must equal that version
 (`tests/test_portability.py::test_package_importable_and_version`). Add a new heading on every bump.
 
+## [0.2.9]
+
+### Fixed
+- Reject wrong XML roots/namespaces and missing, duplicate, aliased or unreferenced workbook
+  sheet declarations before object loading. Confirm the object loader read every declared sheet.
+  An invalid workbook must not be interpreted as an empty template and overwritten.
+- Reject raw ZIP names that the platform normalizes (including Windows backslashes and
+  truncated names); malformed-name fixtures now retain their exact names on Windows.
+- Includes all five Office-safety improvements from 0.2.8; no additional dependencies or backend.
+
 ## [0.2.8]
 
 ### Added
