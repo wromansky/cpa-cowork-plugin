@@ -14,8 +14,8 @@ rates and all business data in your approved workspace, not in a public reposito
    **Cowork**, then **Customize → Personal plugins**. In the newer unified experience there
    may be no Cowork selector; use the available **Customize / Plugins** controls. If the
    menus differ or access is restricted, ask Billy rather than changing accounts or permissions.
-2. Download Billy's reviewed **cpa-0.2.10.zip** from the
-   [release page](https://github.com/wromansky/cpa-cowork-plugin/releases/tag/v0.2.10), or use the
+2. Download Billy's reviewed **cpa-0.2.11.zip** from the
+   [release page](https://github.com/wromansky/cpa-cowork-plugin/releases/tag/v0.2.11), or use the
    approved copy he sends you. Do not use GitHub's generic repository Download ZIP.
 3. For the switch from GitHub installation, finish active tasks first. Remove the old CPA
    marketplace entry if desired, then check whether its CPA plugin remains enabled. Preserve
@@ -24,11 +24,12 @@ rates and all business data in your approved workspace, not in a public reposito
    do not unzip it. Enable **cpa**. Menu labels vary; if the upload option is missing or a
    duplicate is rejected, ask Billy before removing anything else.
 5. Start a **new conversation** with CPA enabled. During setup, confirm the mounted bundle
-   reports **0.2.10**; an older copy may still be present after an update.
+   reports **0.2.11**; an older copy may still be present after an update.
 
-0.2.10 corrects the 12 XML-description errors reported during manual upload. If upload still
-fails, send Billy the complete error; do not unzip/re-zip or install individual skills as a
-workaround. The rebuilt archive still requires actual installation confirmation.
+0.2.11 retains the XML-description repair and removes the legacy command wrappers. The user
+reported successful 0.2.10 upload with a non-blocking legacy notice; 0.2.11 needs retesting to
+confirm the notice is gone. If upload fails, send Billy the complete error; do not unzip/re-zip
+or install individual skills as a workaround.
 
 ZIP installs do not automatically receive later GitHub changes. Billy will provide a reviewed
 ZIP for each update. The public GitHub repository remains available for now, but publication

@@ -8,6 +8,19 @@ The version lives in one place, `cpa/__init__.py` (`__version__`). `pyproject.to
 `plugin.json` version goes up. The first `## [x.y.z]` heading below must equal that version
 (`tests/test_portability.py::test_package_importable_and_version`). Add a new heading on every bump.
 
+## [0.2.11]
+
+### Changed
+- Remove the six legacy commands/ wrappers and the manifest's commands declaration. All 46
+  existing skills remain in skills/*/SKILL.md; no duplicate skills or workflow changes.
+- Retire the old short command aliases. Use the existing skills instead: dashboard ->
+  cpa-dashboard, forecast -> cpa-charge-forecast, pull-monthly -> cpa-monthly-pull,
+  request -> cpa-intake, triage -> cpa-app-triage, verify -> cpa-verify.
+- Remove stale wrapper instructions, including the unsupported recalculation instruction.
+  Automatic recalculation remains unsupported; financial verification rules are unchanged.
+- Packaging rejects legacy command files and manifest declarations. Cowork upload must confirm
+  the legacy-format notice is gone; prior successful upload evidence applies to 0.2.10 only.
+
 ## [0.2.10]
 
 ### Fixed
