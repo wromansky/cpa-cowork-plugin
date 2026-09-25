@@ -299,7 +299,13 @@ def main(argv: Sequence[str] | None = None, *, package: ModuleType | None = None
     parser, result = build_parser(package=package, strict=strict)
     _warn_failures(result)
     args = parser.parse_args(None if argv is None else list(argv))
-    code = args.func(args)
+    from cpa.office import OfficeSafetyError
+
+    try:
+        code = args.func(args)
+    except OfficeSafetyError as exc:
+        print(f"Office safety: {exc}. Output approval is blocked; review the original file.", file=sys.stderr)
+        return 2
     return 0 if code is None else int(code)
 
 

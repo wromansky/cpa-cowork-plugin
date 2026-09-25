@@ -18,6 +18,8 @@ Exit codes: 0 produced and clean (a partial export alone is still 0, labelled), 
 """
 from __future__ import annotations
 
+from cpa import office
+
 import argparse
 import csv
 import io
@@ -375,6 +377,33 @@ def _check_template(wb, tmap: dict, cells: dict[str, tuple[str, str]], path: Pat
                                            f"{path.name} does not have"))
 
 
+def _write_scope(wb, tmap: dict, ex: ExportFacts, cells: dict) -> dict[str, set[str]]:
+    """Declare template mutation coordinates before the forecast writer changes anything."""
+    allowed: dict[str, set[str]] = {}
+    for sheet, coord in [cells["fiscal_month"], cells["total_workdays"], _split_ref(tmap["prior_year"]["cell"])]:
+        allowed.setdefault(sheet, set()).add(coord)
+    paste = tmap["paste"]
+    sh = wb[paste["sheet"]]
+    first, last = (_col(x) for x in _COLS_RE.match(str(paste["clear_columns"])).groups())
+    header = int(paste.get("header_row") or 1)
+    allowed.setdefault(sh.title, set()).update(sh.cell(row=r, column=c).coordinate
+        for r in range(header, max(sh.max_row, header + len(ex.rows)) + 1) for c in range(first, last + 1))
+    if ex.closed:
+        hist = tmap["historical"]
+        sh = wb[hist["sheet"]]
+        cols = [_col(hist[k]) for k in ("date_column", "charges_column")]
+        limit = sh.max_row + len(ex.rows)
+        allowed.setdefault(sh.title, set()).update(sh.cell(row=r, column=c).coordinate
+            for r in range(int(hist.get("first_row") or 2), limit + 1) for c in cols
+            if sh.cell(row=r, column=c).value is None)
+    notes = tmap["notes"]
+    sh = wb[notes["sheet"]]
+    col = _col(notes["column"])
+    row = max([r for r in range(1, sh.max_row + 1) if sh.cell(row=r, column=col).value not in (None, "")] or [0]) + 1
+    allowed.setdefault(sh.title, set()).add(sh.cell(row=row, column=col).coordinate)
+    return allowed
+
+
 def _paste(wb, tmap: dict, ex: ExportFacts) -> int:
     """Clear the paste columns, paste the export header and its dated rows, and return the dated rows read back."""
     spec = tmap["paste"]
@@ -607,9 +636,10 @@ def run(export: Path | str, out_dir: Path | str, *, template: Path | str | None 
     if not ex.source:
         warnings.append(f"{export.name} has no manifest; its figures will show SOURCE UNKNOWN in verification")
 
-    wb = openpyxl.load_workbook(str(tpath))
+    wb = office.load_workbook(tpath)
     try:
         _check_template(wb, tmap, cells, tpath)
+        allowed = _write_scope(wb, tmap, ex, cells)
         if ex.exceeds:
             issues.append(_issue("EXPORT_ROWS_EXCEED_DAYS", str(tmap["paste"]["sheet"]), "",
                                  f"at most {ex.days_elapsed} rows ({_month_bounds(fymm)[0].isoformat()} through "
@@ -639,7 +669,7 @@ def run(export: Path | str, out_dir: Path | str, *, template: Path | str | None 
         wb.calculation.fullCalcOnLoad = True
         out_dir.mkdir(parents=True, exist_ok=True)
         out_path = out_dir / fsutil.safe_filename(f"{OUTPUT_STEM}{fymm}.xlsx")
-        fsutil.atomic_write(out_path, lambda tmp: wb.save(str(tmp)))
+        office.save_workbook(wb, out_path, changed_cells=allowed)
     finally:
         wb.close()
 

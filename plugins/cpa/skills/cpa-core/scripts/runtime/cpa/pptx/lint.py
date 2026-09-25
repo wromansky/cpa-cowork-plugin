@@ -10,9 +10,9 @@ lint_deck() and lint_workbook() are pure readers: they never write. Deck checks 
 minimum body text for a dean/board audience; R148: speaker notes present on every slide; R068/R184:
 no flag-convention text hidden only in notes; R145/R185: the 7-8 slide cap for a dean/board main
 deck). Workbook checks follow the analyst branding skill: Lato/Arial, approved palette,
-Source & Notes, and no freeze panes unless asked. This is not a complete visual acceptance check. No deck-building unit exists yet (app_slides/app_pnl are later units), so a
-closing-takeaway-slide check and the agenda-slide check (R184/R145) are left out: they need a
-slide-content contract (a slide "kind" the deck carries) this unit's inputs do not have yet.
+Source & Notes, and no freeze panes unless asked. Transformed bounds and placeholder checks
+are conservative diagnostics, not rendered visual acceptance. Agenda and closing-takeaway
+semantics require a workflow-specific slide-kind contract and are not inferred here.
 """
 
 from __future__ import annotations
@@ -50,12 +50,16 @@ class UnsupportedFile(LintError):
 
 @dataclass
 class LintIssue:
+    """One technical finding, optionally attributed to the original template or this edit."""
+
     code: str
     location: str
     detail: str
+    origin: str = "CURRENT"
 
     def to_json(self) -> dict:
-        return {"code": self.code, "location": self.location, "detail": self.detail}
+        """Serialize a finding without treating inherited defects as approved exceptions."""
+        return {"code": self.code, "location": self.location, "detail": self.detail, "origin": self.origin}
 
 
 def _run_point_sizes(shape):
@@ -65,7 +69,8 @@ def _run_point_sizes(shape):
                 yield run.font.size.pt
 
 
-def lint_deck(path: Path | str, *, audience: str, deck_kind: str = "main") -> list[LintIssue]:
+def lint_deck(path: Path | str, *, audience: str, deck_kind: str = "main",
+              baseline: Path | str | None = None) -> list[LintIssue]:
     """Format-lint one .pptx against `audience`'s rules; returns every issue found (empty = passes).
 
     `deck_kind`: "main" (the 7-8 slide cap applies to a dean/board deck) or "companion" (the guide's
@@ -82,10 +87,14 @@ def lint_deck(path: Path | str, *, audience: str, deck_kind: str = "main") -> li
 
     from pptx import Presentation
 
+    from cpa import office
+    from cpa.pptx.geometry import diagnostics
+
+    office.inspect_package(path)
     prs = Presentation(str(path))
     slides = list(prs.slides)
     high_bar = audience in _HIGH_BAR_AUDIENCES
-    issues: list[LintIssue] = []
+    issues: list[LintIssue] = [LintIssue(*finding) for finding in diagnostics(prs)]
 
     if high_bar and deck_kind == "main" and len(slides) > MAX_MAIN_SLIDES:
         issues.append(LintIssue(
@@ -126,6 +135,15 @@ def lint_deck(path: Path | str, *, audience: str, deck_kind: str = "main") -> li
                 "a CPA flag belongs in a yellow box on the slide, never only in the speaker notes "
                 "(R068/R184)",
             ))
+    if baseline is not None:
+        from collections import Counter
+
+        prior = Counter((i.code, i.location, i.detail) for i in lint_deck(baseline, audience=audience, deck_kind=deck_kind))
+        for issue in issues:
+            key = (issue.code, issue.location, issue.detail)
+            issue.origin = "INHERITED" if prior[key] else "NEW"
+            if prior[key]:
+                prior[key] -= 1
     return issues
 
 
@@ -142,7 +160,9 @@ def lint_workbook(path: Path | str, tab: str | None = None, *, allow_freeze: boo
 
     import openpyxl
 
-    if path.stat().st_size > 15 * 1024 * 1024:
+    from cpa import bigxlsx
+
+    if bigxlsx.is_large(path):
         return [LintIssue("STREAMING_REVIEW_REQUIRED", "workbook",
                           "Use cpa.bigxlsx for files above 15 MB; full format inspection is not available here")]
     wb = openpyxl.load_workbook(str(path), read_only=False)
@@ -199,7 +219,7 @@ def _cmd_lint(args: argparse.Namespace) -> int:
     if args.json:
         print(json.dumps([i.to_json() for i in issues], indent=2, ensure_ascii=False))
     elif not issues:
-        print("lint: clean")
+        print("lint: no findings in checked scope; visual review NOT_REVIEWED; financial verification separate")
     else:
         for i in issues:
             print(f"{i.location}: {i.code} - {i.detail}")

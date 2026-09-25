@@ -16,6 +16,8 @@ wait on her prior lookback template, offer letter and recommendation letter (doc
 """
 from __future__ import annotations
 
+from cpa import office
+
 import argparse
 import csv
 import io
@@ -977,7 +979,7 @@ def workbook(cohort: str, *, root: Path | str | None = None) -> Path:
 
     for sheet in wb.worksheets:
         brand.style_generated_sheet(sheet)
-    fsutil.atomic_write(out, lambda tmp: wb.save(str(tmp)))
+    office.save_workbook(wb, out)
     _, as_of = _as_of(joined_path)
     manifest.write(out, source="lookback", report="B11 lookback variance workbook", filters=f"cohort={cohort}",
                    as_of=as_of, inputs=[joined_path])
@@ -1191,8 +1193,8 @@ def deck(cohort: str, *, root: Path | str | None = None) -> Path:
         slide_no = len(prs.slides) + 1
         s = prs.slides.add_slide(blank)
         textbox(s, "title", 0.5, 0.3, 12.3, 0.8, f"{d['who']}: support plan", 28, True, navy)
-        textbox(s, "framing", 0.5, 1.05, 12.3, 0.5, RETENTION_SHORT, 14)
-        textbox(s, "periods", 0.5, 1.5, 12.3, 0.6, f"Plan period {d['plan_period']}. Actual period "
+        textbox(s, "framing", 0.5, 1.15, 12.3, 0.4, RETENTION_SHORT, 14)
+        textbox(s, "periods", 0.5, 1.6, 12.3, 0.5, f"Plan period {d['plan_period']}. Actual period "
                                                    f"{d['actual_period']}. Proration: {d['proration']}.", 12)
         body = [[("Measure", False), ("Plan (prorated)", False), ("Actual", False), ("Variance", False)]]
         figs, flagged = [], []
@@ -1241,17 +1243,22 @@ def deck(cohort: str, *, root: Path | str | None = None) -> Path:
     for name, text in all_text:
         _framing_check(text, f"slide text ({name})")
 
-    out = _outbox(root, cohort) / f"Lookback_{cohort}.pptx"
-    fsutil.atomic_write(out, lambda tmp: prs.save(str(tmp)))
+    import tempfile
+
+    final = _outbox(root, cohort) / fsutil.safe_filename(f"Lookback_{cohort}.pptx")
+    stage = Path(tempfile.mkdtemp(prefix="deck_", dir=_staging(root, cohort)))
+    out = stage / final.name
+    office.save_presentation(prs, out)
     notes.write_notes(out, note_slides, "committee")
     issues = lint.lint_deck(out, audience="committee", deck_kind="companion")
     if issues:
-        raise LintFailed("deck failed format lint: " + "; ".join(f"{i.code} {i.where}" for i in issues))
+        raise LintFailed("deck failed format lint: " + "; ".join(f"{i.code} {i.location}" for i in issues))
     _, as_of = _as_of(xlsx)
     manifest.write(out, source="lookback", report="B12 lookback deck", filters=f"cohort={cohort}", as_of=as_of,
                    row_count=len(prs.slides), inputs=[xlsx])
     manifest.update(out, figures=figures)
-    return out
+    office.deliver_artifacts({out: final})
+    return final
 
 
 # ---------------------------------------------------------------- readiness (D19)

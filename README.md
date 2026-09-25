@@ -11,7 +11,7 @@ from approved sources in the analyst's private workspace. Never guess or publish
 ## ZIP installation available
 
 Personal GitHub-marketplace updates have not reliably propagated to the analyst. Use the
-reviewed [cpa-0.2.7.zip](https://github.com/wromansky/cpa-cowork-plugin/releases/download/v0.2.7/cpa-0.2.7.zip)
+reviewed [cpa-0.2.8.zip](https://github.com/wromansky/cpa-cowork-plugin/releases/download/v0.2.8/cpa-0.2.8.zip)
 with Claude's custom-plugin upload option; see [quickstart.md](quickstart.md). Do not unzip it
 or use GitHub's generic repository ZIP. Avoid two enabled CPA copies, and preserve your
 workspace and any custom changes when replacing an old installation. ZIP installs require
@@ -20,7 +20,26 @@ an approved new ZIP for each update; they do not automatically follow GitHub pus
 This repository remains available while ZIP installation is tested. The release packager
 runs privately, sanitizes rates, and recomputes runtime integrity metadata before distribution.
 
-## Version 0.2.7: new to Cowork?
+## Version 0.2.8: safer Office-file editing
+
+- Preflight detects known unsupported workbook features before editing. Candidate files are
+  checked before replacement; template changes must stay within the declared edit scope.
+- Preserves more than values: original formulas/types, numeric precision, names, styles,
+  protection, rich text and supported comment XML/popup geometry. Unsupported cases stop;
+  never strip features or install local tools to bypass a safety check.
+- Mapped slide text retains styled runs and hyperlinks. Package/part checks, identity-based
+  diffs and conservative geometry/placeholder diagnostics catch additional defects.
+- APP P&L/slides, deck refresh and lookback decks finish required checks in staging before
+  delivery. Multi-file copying has rollback/recovery handling, not a filesystem transaction.
+- Package integrity, preservation, financial verification and visual review are separate.
+  NOT_RECALCULATED still blocks CLEAN; geometry checks do not establish rendered appearance.
+  No upstream Office skills, new dependencies, renderer or calculation backend are bundled.
+
+Validation: **919 passed, 6 skipped** on the Linux build box; sanitized runtime integrity and
+ZIP checks passed. These are synthetic tests, not Windows, Cowork or real-file acceptance.
+The analyst must still review actual outputs. Nothing is sent automatically.
+
+## New to Cowork?
 
 After enabling CPA, ask:
 
@@ -50,7 +69,7 @@ processing are made. Official Claude documentation is linked in the bundled less
 - Setup, supervised browser trials and feedback guidance match the shipped capabilities.
   The incorrect SAP JE draft remains disabled; corrected COGNOS formatting is not yet implemented.
 
-After updating, start a fresh Cowork conversation and confirm the mounted bundle reports **0.2.7**.
+After updating, start a fresh Cowork conversation and confirm the mounted bundle reports **0.2.8**.
 Confirm the bundled **branding** skill loads before disabling the standalone brand skill.
 Use actual approved files for a supervised review: fonts, header/tab colors, protected formulas,
 source notes and Verification. Report concrete mismatches through **cpa-workflow-feedback**;

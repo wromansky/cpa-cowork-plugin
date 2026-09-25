@@ -25,6 +25,8 @@ description of her CAG_Task_Combined v3-v8 script, not from the script itself.
 """
 from __future__ import annotations
 
+from cpa import office
+
 import argparse
 import csv
 import io
@@ -759,7 +761,7 @@ def write_workbook(result: MatchResult, path: Path, *, period: str, as_of: str) 
 
     for sheet in wb.worksheets:
         brand.style_generated_sheet(sheet, role="reference" if sheet.title == "Legend" else "summary")
-    fsutil.atomic_write(path, lambda tmp: wb.save(str(tmp)))
+    office.save_workbook(wb, path)
     wb.close()
     return figures
 

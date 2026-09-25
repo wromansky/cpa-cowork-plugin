@@ -25,6 +25,8 @@ here posts, sends, or writes to a source system.
 """
 from __future__ import annotations
 
+from cpa import office
+
 import argparse
 import sys
 from dataclasses import dataclass, field
@@ -252,7 +254,7 @@ def _write_workbook(out: Path, rows: list[Commitment], total: float, missing_cou
 
     for sheet in wb.worksheets:
         brand.style_generated_sheet(sheet)
-    fsutil.atomic_write(out, lambda tmp: wb.save(str(tmp)))
+    office.save_workbook(wb, out)
 
 
 def _write_figure_evidence(path: Path, open_rows: list[Commitment]) -> str:

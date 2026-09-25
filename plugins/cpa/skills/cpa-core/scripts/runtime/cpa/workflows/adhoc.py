@@ -36,6 +36,8 @@ not this module.
 """
 from __future__ import annotations
 
+from cpa import office
+
 import argparse
 from dataclasses import dataclass
 from pathlib import Path
@@ -164,7 +166,7 @@ def _save_workbook(wb, path: Path) -> Path:
             brand.style_generated_sheet(sheet)
     else:
         brand.style_generated_deck(wb)
-    fsutil.atomic_write(path, lambda tmp: wb.save(str(tmp)))
+    office.save_workbook(wb, path)
     return path
 
 
@@ -617,7 +619,7 @@ def build_slides(brief: Brief, source_path: Path | str, *, audience: str = "inte
         p.text = line
         p.font.size = Pt(20)
 
-    _save_workbook(prs, out)
+    office.save_presentation(prs, out)
 
     slide_contents = [
         notes_mod.Slide(title=f"{brief.requested_output} for {brief.department}",

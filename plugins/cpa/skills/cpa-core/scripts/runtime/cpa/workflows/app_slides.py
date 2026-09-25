@@ -28,6 +28,8 @@ into one shared `Presentation`, then walks every slide once to set its `page_num
 """
 from __future__ import annotations
 
+from cpa import office
+
 import json
 import re
 import sys
@@ -543,6 +545,14 @@ def _render_agenda_slide(prs, new_ids: Sequence[str], returning_ids: Sequence[st
 # ---------------------------------------------------------------- position(), qa()
 
 
+def _staged_folder(ws: Path) -> Path:
+    import tempfile
+
+    parent = ws / "staging" / "app_slides"
+    parent.mkdir(parents=True, exist_ok=True)
+    return Path(tempfile.mkdtemp(prefix="run_", dir=parent))
+
+
 def position_detailed(position_id: str, *, ws: Path | None = None) -> Path:
     """Build outbox/app/<cycle>/<position>/slide.pptx (B5) and return its path."""
     from pptx import Presentation
@@ -555,13 +565,12 @@ def position_detailed(position_id: str, *, ws: Path | None = None) -> Path:
     content = _slide_content(position_id, ws)
     prs = Presentation()
     _render_committee_slide(prs, content)
-    out_dir = ws / "outbox" / "app" / content.cycle / position_id
-    out_dir.mkdir(parents=True, exist_ok=True)
-    path = out_dir / SLIDE_NAME
+    final = ws / "outbox" / "app" / content.cycle / position_id / SLIDE_NAME
+    path = _staged_folder(ws) / SLIDE_NAME
     from cpa.pptx import brand
 
     brand.style_generated_deck(prs)
-    fsutil.atomic_write(path, lambda tmp: prs.save(str(tmp)))
+    office.save_presentation(prs, path)
     notes.write_notes(path, [notes.Slide(title=_slide_title(content), points=[content.business_need],
                                          flagged_metrics=list(content.flagged_labels))], AUDIENCE)
     issues = lint.lint_deck(path, audience=AUDIENCE)
@@ -571,7 +580,8 @@ def position_detailed(position_id: str, *, ws: Path | None = None) -> Path:
     stage = _stage(ws, position_id)
     manifest.write(path, "derived", "APP committee slide", f"position {position_id}", content.as_of,
                   row_count=1, inputs=[content.workbook, stage / SLIDE_INPUTS_NAME, stage / app_pnl.FLAGS_NAME])
-    return path
+    office.deliver_artifacts({path: final})
+    return final
 
 
 def position(position_id: str) -> Path:
@@ -626,13 +636,12 @@ def qa_detailed(position_id: str, *, ws: Path | None = None) -> Path:
     content = _qa_content(position_id, ws)
     prs = Presentation()
     _render_qa_slide(prs, content)
-    out_dir = ws / "outbox" / "app" / content.cycle / position_id
-    out_dir.mkdir(parents=True, exist_ok=True)
-    path = out_dir / QA_NAME
+    final = ws / "outbox" / "app" / content.cycle / position_id / QA_NAME
+    path = _staged_folder(ws) / QA_NAME
     from cpa.pptx import brand
 
     brand.style_generated_deck(prs)
-    fsutil.atomic_write(path, lambda tmp: prs.save(str(tmp)))
+    office.save_presentation(prs, path)
     notes.write_notes(path, [notes.Slide(title=f"Returning Position Q&A: {position_id}",
                                          points=[r.question for r in content.rows])], AUDIENCE)
     issues = lint.lint_deck(path, audience=AUDIENCE)
@@ -642,7 +651,8 @@ def qa_detailed(position_id: str, *, ws: Path | None = None) -> Path:
     stage = _stage(ws, position_id)
     manifest.write(path, "derived", "APP returning-position Q&A slide", f"position {position_id}", _today(),
                   row_count=len(content.rows), inputs=[stage / QA_INPUTS_NAME])
-    return path
+    office.deliver_artifacts({path: final})
+    return final
 
 
 def _today() -> str:
@@ -753,12 +763,12 @@ def deck_detailed(cycle: str, *, ws: Path | None = None) -> DeckResult:
             if shape.name == "page_number":
                 shape.text_frame.text = str(i)
 
-    out_path = ws / "outbox" / "app" / DECK_NAME_FMT.format(cycle=fsutil.safe_filename(cycle))
-    out_path.parent.mkdir(parents=True, exist_ok=True)
+    final = ws / "outbox" / "app" / DECK_NAME_FMT.format(cycle=fsutil.safe_filename(cycle))
+    out_path = _staged_folder(ws) / final.name
     from cpa.pptx import brand
 
     brand.style_generated_deck(prs)
-    fsutil.atomic_write(out_path, lambda tmp: prs.save(str(tmp)))
+    office.save_presentation(prs, out_path)
     notes.write_notes(out_path, slide_notes, AUDIENCE)
 
     issues = lint.lint_deck(out_path, audience=AUDIENCE, deck_kind="main")
@@ -773,8 +783,10 @@ def deck_detailed(cycle: str, *, ws: Path | None = None) -> DeckResult:
 
     manifest.write(out_path, "derived", "SOM Review Committee deck", f"cycle {cycle}", cycle,
                   row_count=len(list(prs.slides)), inputs=[p for _, p, _ in included])
-    return DeckResult(path=out_path, new=new_ids, returning=returning_ids, excluded=tuple(excluded),
-                      exclusions_path=exclusions_path)
+    final_exclusions = final.with_name(exclusions_path.name)
+    office.deliver_artifacts({out_path: final, exclusions_path: final_exclusions})
+    return DeckResult(path=final, new=new_ids, returning=returning_ids, excluded=tuple(excluded),
+                      exclusions_path=final_exclusions)
 
 
 def deck(cycle: str) -> Path:

@@ -27,7 +27,7 @@ from datetime import date
 from pathlib import Path
 from typing import Any, Iterable, Iterator
 
-from cpa import recalc
+from cpa import office, recalc
 
 VERIFICATION_SHEET = recalc.VERIFICATION_SHEET
 SUMMARY_LABEL_CELL, SUMMARY_CELL = "A1", "B1"
@@ -137,6 +137,7 @@ class VerifyResult:
     threshold_pct: float = 0.0
     verified_at: str = ""
     notes: list[str] = field(default_factory=list)
+    office_checks: dict[str, str] = field(default_factory=dict)
 
     @property
     def clean(self) -> bool:
@@ -164,6 +165,9 @@ class VerifyResult:
             "threshold_pct": self.threshold_pct,
             "verified_at": self.verified_at,
             "notes": self.notes,
+            "acceptance": office.acceptance(
+                financial=self.summary if self.recalc_status == recalc.RECALCULATED else (
+                    self.recalc_status or "NOT_CHECKED"), **self.office_checks),
         }
 
 
@@ -648,6 +652,7 @@ def build_verification_tab(workbook, prior=None, sources_dir=None, threshold=Non
     if large:
         bigxlsx.write_rows(result.verification_file, _tab_rows(result), sheet_title=VERIFICATION_SHEET)
         result.notes.append("workbook over 15 MB: verification written to the sibling file; the workbook is unchanged")
+        result.office_checks = {"package": "SIBLING_CHECKED_SCOPE", "preservation": "SOURCE_NOT_EDITED"}
     else:
         _write_tab(path, result)
         if result.recalc_status == recalc.RECALCULATED:
@@ -657,11 +662,12 @@ def build_verification_tab(workbook, prior=None, sources_dir=None, threshold=Non
                                            "recalculated after the tab was written", rc2.reason or rc2.status))
                 _write_tab(path, result)
         else:
-            result.notes.append("not recalculated: formula cells carry no cached value until Excel opens the file")
+            result.notes.append("not recalculated: cached formula values are not accepted as verified results")
     if manifest.exists(path):
         manifest.update(path, verification={"summary": result.summary, "issues": len(result.issues),
                                             "verified_at": result.verified_at,
-                                            "file": manifest.to_rel(result.verification_file)})
+                                            "file": manifest.to_rel(result.verification_file),
+                                            "acceptance": result.to_json()["acceptance"]})
     return result
 
 
@@ -868,6 +874,8 @@ def _tab_rows(result: VerifyResult) -> list[list]:
     rows += [r.to_row() for r in result.figure_rows]
     rows += [[], ["Issues", len(result.issues)], list(ISSUE_COLUMNS)]
     rows += [i.to_row() for i in result.issues]
+    rows += [[], ["Acceptance", "Package/preservation: see run result", "Financial", result.summary,
+                  "Visual", "NOT_REVIEWED"]]
     return [[_safe(v) for v in row] for row in rows]
 
 
@@ -878,7 +886,10 @@ def _write_tab(path: Path, result: VerifyResult) -> None:
 
     from cpa import fsutil
 
-    wb = openpyxl.load_workbook(str(path))
+    from cpa import office
+
+    wb = office.load_workbook(path)
+    added = {VERIFICATION_SHEET, "Source & Notes"} - set(wb.sheetnames)
     try:
         if VERIFICATION_SHEET in wb.sheetnames:
             wb.remove(wb[VERIFICATION_SHEET])
@@ -912,7 +923,8 @@ def _write_tab(path: Path, result: VerifyResult) -> None:
         for sheet in wb.worksheets:
             sheet.sheet_view.tabSelected = sheet.title == VERIFICATION_SHEET
         wb.calculation.fullCalcOnLoad = True
-        fsutil.atomic_write(path, lambda tmp: wb.save(str(tmp)))
+        office.save_workbook(wb, path, changed_sheets={VERIFICATION_SHEET}, added_sheets=added)
+        result.office_checks = {"package": "CHECKED_SCOPE", "preservation": "CHECKED_SCOPE"}
     finally:
         wb.close()
 

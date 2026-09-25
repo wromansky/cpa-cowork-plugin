@@ -29,6 +29,8 @@ Every department label goes through `crosswalk.load().lookup`; unmatched -> `Unm
 """
 from __future__ import annotations
 
+from cpa import office
+
 import argparse
 import csv
 import json
@@ -524,7 +526,7 @@ def write_workbook(by_role: dict[str, list[CfteRow]], consolidated: list[CfteRow
     for sheet in wb.worksheets:
         brand.style_generated_sheet(sheet)
     path.parent.mkdir(parents=True, exist_ok=True)
-    fsutil.atomic_write(path, lambda tmp: wb.save(str(tmp)))
+    office.save_workbook(wb, path)
     wb.close()
     return figures
 

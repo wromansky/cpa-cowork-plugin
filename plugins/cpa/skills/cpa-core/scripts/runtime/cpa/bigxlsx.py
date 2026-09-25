@@ -380,40 +380,13 @@ def _atomic_save(wb: Any, path: Path, retries: int, wait_s: float) -> Path:
     wb.save runs exactly once (a write_only workbook cannot be saved twice). Only os.replace is retried: on
     PermissionError wait `wait_s` and retry, up to `retries` times, then remove the temp file and raise
     PermissionError naming Excel and the OneDrive sync client. The temp file is removed on every failure path."""
-    import tempfile
+    from cpa import office
 
-    fd, name = tempfile.mkstemp(dir=path.parent, prefix="cpa_", suffix=".xlsx")
-    os.close(fd)  # closed before save: an open handle blocks os.replace on Windows
-    tmp = Path(name)
     try:
-        wb.save(str(tmp))
+        return office.save_workbook(wb, path, retries=retries, wait_s=wait_s)
     except BaseException:
         _discard(wb)
-        with contextlib.suppress(OSError):
-            tmp.unlink()
         raise
-    attempt = 0
-    while True:
-        try:
-            os.replace(tmp, path)
-            return path
-        except PermissionError as exc:
-            if attempt >= retries:
-                with contextlib.suppress(OSError):
-                    tmp.unlink()
-                raise PermissionError(
-                    exc.errno if exc.errno is not None else errno.EACCES,
-                    f"could not replace {path} after {attempt + 1} attempt(s): the file is open in Excel or locked "
-                    "by the OneDrive sync client. Close it in Excel (or wait for OneDrive to finish syncing) and "
-                    "run again",
-                    str(path),
-                ) from exc
-            attempt += 1
-            time.sleep(wait_s)
-        except BaseException:
-            with contextlib.suppress(OSError):
-                tmp.unlink()
-            raise
 
 
 # ------------------------------------------------------------------------------------------------ public API

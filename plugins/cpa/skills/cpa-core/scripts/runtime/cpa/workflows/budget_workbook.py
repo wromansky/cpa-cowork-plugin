@@ -18,6 +18,8 @@ The C5 prior-month check sheet and `--status`/STATUS_MISSING handling are not im
 """
 from __future__ import annotations
 
+from cpa import office
+
 import argparse
 import json
 import sys
@@ -241,7 +243,7 @@ def run(export: Path | str, *, fymm: str | None = None, root: Path | str | None 
     out_dir = ws_root / "outbox" / "budget" / resolved_fymm
     out_dir.mkdir(parents=True, exist_ok=True)
     out = out_dir / f"{OUTPUT_STEM}{resolved_fymm}.xlsx"
-    fsutil.atomic_write(out, lambda tmp: wb.save(str(tmp)))
+    office.save_workbook(wb, out)
 
     manifest.write(out, SOURCE_SYSTEM, REPORT, f"fiscal period {resolved_fymm}", date.today().isoformat(),
                    row_count=scan.row_count, inputs=[export], period=resolved_fymm, status="budget")

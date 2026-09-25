@@ -28,8 +28,11 @@ description: Brand and format lint a deck or workbook, generate speaker notes, o
    Technical format diagnostics: run `python -m cpa pptx lint [--deck <deck>] [--workbook <workbook>
    --tab <tab>] --audience <internal|committee|dean|board> [--deck-kind <main|companion>]
    [--allow-freeze] --json` when asked to check brand or format, or called by another skill before
-   it returns a deck or workbook. This lint checks approved fonts/fills and source notes, not every layout or
-   semantic color choice. A clean result does not establish full visual brand compliance. Review the actual output with branding; stop delivery on a mismatch.
+   it returns a deck or workbook. This lint checks approved fonts/fills, source notes and scoped
+   slide geometry/placeholder conditions, not every layout or semantic color choice. No findings
+   in checked scope is not visual approval. Geometry may need human interpretation; never shrink
+   text or remove yellow missing-data flags just to pass. Review the actual output with branding;
+   stop delivery on a mismatch.
 3. Speaker notes: run `python -m cpa pptx notes --deck <deck> --audience
    <internal|committee|dean|board> --content <content.json> --json` when asked to generate or
    refresh speaker notes. Notes density follows audience: dean and board get the high-level story;
@@ -37,11 +40,14 @@ description: Brand and format lint a deck or workbook, generate speaker notes, o
    why/source text - a flag is never buried in notes.
 4. Deck or workbook diff: run `python -m cpa pptx diff --a <earlier> --b <later> --json` when asked
    what changed between two versions.
-5. Read the JSON result of whichever command ran.
+5. Read the JSON result of whichever command ran. Keep package integrity, preservation, financial
+   verification and visual review separate. Visual review remains NOT_REVIEWED until the analyst
+   actually reviews the file. Where baseline attribution is present, report inherited and new
+   findings separately without hiding either. Diffs can report both text and formatting changes.
 6. If the lint reported issues: list each one with its location and the rule it broke. Do not fix
    any of them here; report them to the calling skill or the analyst.
 7. Run `python -m cpa state record --skill cpa-format --input <deck-or-workbook-or-a> [--input <b>]
-   --output <deck, when notes were written> --verification <"clean" or "N issues"> --duration
+   --output <deck, when notes were written> --verification <"no format findings; visual NOT_REVIEWED" or "N issues"> --duration
    <seconds>` to write the run record.
 
 ## Outputs
@@ -51,12 +57,16 @@ description: Brand and format lint a deck or workbook, generate speaker notes, o
 - `logs/runs/<timestamp>_cpa-format.json` - the run record.
 
 ## Verify
-- A lint run reports its technical findings; nothing was fixed automatically. Its "clean"
-  result is not a brand verdict. branding governs visual compliance and flags writer gaps.
+- A lint run reports its technical findings; nothing was fixed automatically. A no-finding
+  result is not a brand verdict or financial verification. branding governs visual compliance.
 - A notes run writes notes text onto every slide in the deck, none skipped.
 - A diff run separates numeric changes from format-only changes and never misreports one as the other.
 
 ## If something is wrong
+- An Office safety/preservation check blocks a write -> stop, keep the original and report the
+  error. Do not strip features, rebuild a template or install tools to bypass it. No updated file
+  should be described as delivered. A rollback failure explicitly marked DO NOT SEND needs Billy's
+  review; recovery copies stay in staging.
 - `pptx lint` exits 2 (bad argument or unreadable file) -> stop and report the error text; do not
   write a run record claiming success.
 - `pptx notes` exits 2 (slide-count mismatch between `--content` and the deck) -> stop; do not write

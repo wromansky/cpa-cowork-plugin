@@ -8,6 +8,27 @@ The version lives in one place, `cpa/__init__.py` (`__version__`). `pyproject.to
 `plugin.json` version goes up. The first `## [x.y.z]` heading below must equal that version
 (`tests/test_portability.py::test_package_importable_and_version`). Add a new heading on every bump.
 
+## [0.2.8]
+
+### Added
+- Independently implemented Office-file safety checks: bounded package preflight, explicit
+  template edit scopes and validation before atomic file replacement. No Office skill code
+  is copied or bundled; no new dependency, renderer or recalculation backend is introduced.
+- Preservation of original formulas/types, numeric precision, names, styles, protection,
+  rich text and supported comment XML/popup geometry. Known unsupported features stop writes;
+  large workbooks remain on the streaming path. Source changes after preflight stop edits.
+- Run-preserving slide text replacement, native-identity diffs, scoped slide/part checks,
+  shared-chart dependency refusal and transformed-bound/placeholder/collision diagnostics.
+- Separate package, preservation, financial, geometry and visual acceptance evidence.
+  NOT_RECALCULATED and NOT_REVIEWED remain explicit; inherited lint findings are not waived.
+
+### Changed
+- All workbook/presentation serialization goes through the candidate gate. APP P&L, APP slides,
+  deck refresh and lookback decks finish their final checks in staging before delivery.
+  Multi-file delivery has rollback/recovery handling, not a claim of filesystem transactions.
+- Corrected overlapping generated lookback heading boxes without changing financial content.
+- Formatting lint no longer calls a no-finding result an overall clean artifact.
+
 ## [0.2.7]
 
 ### Added

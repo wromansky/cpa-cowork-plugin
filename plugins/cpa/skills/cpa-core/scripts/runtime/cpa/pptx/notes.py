@@ -10,6 +10,8 @@ why/source text is brand.flag_text's job, for the on-slide yellow box, never for
 
 from __future__ import annotations
 
+from cpa import office
+
 import argparse
 import json
 import sys
@@ -104,7 +106,7 @@ def write_notes(deck: Path | str, slides: list[Slide], audience: str) -> list[st
 
     from cpa import fsutil
 
-    prs = Presentation(str(path))
+    prs = office.load_presentation(path)
     slide_objs = list(prs.slides)
     if len(slides) != len(slide_objs):
         raise NotesError(
@@ -114,7 +116,7 @@ def write_notes(deck: Path | str, slides: list[Slide], audience: str) -> list[st
     texts = [slide_notes(content, audience) for content in slides]
     for slide_obj, text in zip(slide_objs, texts):
         slide_obj.notes_slide.notes_text_frame.text = text
-    fsutil.atomic_write(path, lambda tmp: prs.save(str(tmp)))
+    office.save_presentation(prs, path, allow_notes=True)
     return texts
 
 

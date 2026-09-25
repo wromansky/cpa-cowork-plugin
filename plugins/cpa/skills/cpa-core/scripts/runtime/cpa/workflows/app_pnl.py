@@ -10,15 +10,15 @@ fringe: cpa.benchmarks.tcc, and the supplements input cell is TCC - base), 2 and
 specific interpolated percentiles: cpa.benchmarks), 5/7 (a missing narrative metric is a yellow MISSING flag, never
 blank, never estimated; every figure carries period, status, source and as-of), 15 (a null rate stops the run; an
 unmapped specialty stops for a human). Rules: R046 (the department never gets a benchmark cell), R048/R093/R232
-(locked-cell diff against the template is zero, checked before the workbook reaches outbox and again after
-verify's recalculation), R050 (a missing collection rate is a yellow placeholder and the run continues), R111
+(locked-cell diff against the template is zero, checked before and after Verification while still in staging), R050 (a missing collection rate is a yellow placeholder and the run continues), R111
 (inputs go only into unlocked, input-filled cells), R171 (three years only).
 
 Order (build_detailed): read and validate every input, the map, the rates and the specialty (nothing copied yet);
-write the inputs into the in-memory template and save a work copy under staging/app/<position>/work/; recalculate a
-temp copy to read the named rows and Year-1 activity; write the SullivanCotter rows and the M2 block (cpa.
-activity_block); gate 1 (locked-cell diff); copy to outbox/app/<cycle>/<position>/PnL.xlsx with its manifest and
-pnl_figures.csv; verify (cpa.verify); gate 2; pnl_flags.json for the slide unit. Conventions: DECISIONS D26.
+preflight the template, write mapped inputs and validate a work copy under staging/app/<position>/work/;
+call the recalculation interface (currently unsupported; named rows/activity are not guessed); write the
+SullivanCotter rows and M2 block; gate 1 (locked-cell diff); provenance and Verification; gate 2 and scoped
+original-template preservation; deliver the checked copy and manifest to outbox, then write pnl_flags.json.
+Conventions: DECISIONS D26 as amended by the Office safety contract.
 """
 from __future__ import annotations
 
@@ -74,7 +74,7 @@ _DATE_RE = re.compile(r"(\d{4}-\d{2}-\d{2})")
 
 
 class AppPnlError(RuntimeError):
-    """Base for every app_pnl failure. Raised before anything reaches outbox, except a gate-2 LockedCellChanged."""
+    """Base for APP P&L failures; template and verification gates run before delivery."""
 
 
 class TemplateMapError(AppPnlError):
@@ -113,7 +113,7 @@ class ScPointsMismatch(AppPnlError):
 
 class LockedCellChanged(AppPnlError):
     """The locked-cell diff against the template is not empty (R232). `.changes` lists them; `.stage` is
-    'before recalc' (nothing reached outbox) or 'after recalc' (the output was renamed FAILED_NAME)."""
+    'before recalc' or 'after recalc' (legacy labels). Gate failures remain in staging, never outbox."""
 
     def __init__(self, message: str, changes: list, stage: str) -> None:
         super().__init__(message)
@@ -186,6 +186,7 @@ class BuildResult:
     included_supplements: tuple = ()
     warnings: list = field(default_factory=list)
     recalc_reason: str = ""
+    acceptance: dict[str, str] = field(default_factory=dict)
 
     def to_json(self) -> dict:
         from cpa import manifest
@@ -196,7 +197,7 @@ class BuildResult:
             "statements": {m: r.statement for m, r in self.statements.items()},
             "values": {k: {str(y): v for y, v in d.items()} for k, d in self.values.items()},
             "excluded_fringe": list(self.excluded_fringe), "included_supplements": list(self.included_supplements),
-            "warnings": list(self.warnings), "recalc_reason": self.recalc_reason,
+            "warnings": list(self.warnings), "recalc_reason": self.recalc_reason, "acceptance": self.acceptance,
         }
 
 
@@ -791,7 +792,9 @@ def _write_benchmarks(work: Path, tmap: dict, rows: list[tuple], yellow: str | N
 
     rsheet, (c1, r1, _c2, _r2) = _split_region(_regions(tmap)[0])
     flags: list[PnlFlag] = []
-    wb = openpyxl.load_workbook(str(work))
+    from cpa import office
+
+    wb = office.load_workbook(work)
     try:
         ws = wb[rsheet or str(tmap["pnl_sheet"])]
         ws.cell(row=r1, column=c1, value=BENCH_TITLE).font = Font(name="Arial", bold=True)
@@ -819,7 +822,9 @@ def _write_benchmarks(work: Path, tmap: dict, rows: list[tuple], yellow: str | N
             if yellow:
                 cell.fill = _flag_fill(yellow)
             flags.append(PnlFlag("benchmark", f"{ws.title}!{cell.coordinate}", missing))
-        fsutil.atomic_write(work, lambda tmp: wb.save(str(tmp)))
+        allowed = {ws.cell(row=r, column=c).coordinate for r in range(r1, _r2 + 1)
+                   for c in range(c1, _c2 + 1)}
+        office.save_workbook(wb, work, changed_cells={ws.title: allowed})
     finally:
         wb.close()
     return flags
@@ -941,7 +946,9 @@ def build_detailed(position_id: str, *, cycle: str | None = None) -> BuildResult
     if rate is None or set(points) != set(benchmarks.METRICS):
         yellow = brand.color("flag_yellow")
 
-    wb = openpyxl.load_workbook(str(template))
+    from cpa import office
+
+    wb = office.load_workbook(template)
     try:
         _check_template(wb, tmap, template, warnings)
         sets: list[tuple[str, Any]] = [(tmap["inputs"]["base_salary"], inputs.base_salary),
@@ -971,7 +978,14 @@ def build_detailed(position_id: str, *, cycle: str | None = None) -> BuildResult
         work_dir = stage / "work"
         work_dir.mkdir(parents=True, exist_ok=True)
         work = work_dir / OUTPUT_NAME
-        fsutil.atomic_write(work, lambda tmp: wb.save(str(tmp)))
+        allowed: dict[str, set[str]] = {}
+        for ref in [r for r, _ in sets] + [cr["cell"]]:
+            sheet, coord = _ref(ref, "input cell")
+            allowed.setdefault(sheet, set()).add(coord)
+        allowed.setdefault(cs.title, set()).update(
+            f"{str(cpt['columns'][field]).upper()}{int(cpt['first_row']) + i}"
+            for i in range(len(cpt_rows)) for field in CPT_FIELDS)
+        office.save_workbook(wb, work, changed_cells=allowed)
     finally:
         wb.close()
 
@@ -1016,11 +1030,8 @@ def build_detailed(position_id: str, *, cycle: str | None = None) -> BuildResult
             f"{manifest.to_rel(work)} for inspection (it has no manifest by design)", changes, "before recalc")
 
     out_dir = ws_root / "outbox" / "app" / fsutil.safe_filename(cycle) / position_id
-    out_dir.mkdir(parents=True, exist_ok=True)
-    out = out_dir / OUTPUT_NAME
-    _move(work, out)
-    if not any(work_dir.iterdir()):
-        work_dir.rmdir()
+    final_out = out_dir / OUTPUT_NAME
+    out = work  # verification and the final preservation gate run before delivery
 
     cols = [str(c).upper() for c in tmap["years"]["columns"]]
     fig_list = [(f"{name}_y{n}", values[name][n], f"{tmap['pnl_sheet']}!{cols[n - 1]}{tmap['rows'][name]['row']}",
@@ -1042,13 +1053,14 @@ def build_detailed(position_id: str, *, cycle: str | None = None) -> BuildResult
     vres = verify.build_verification_tab(out)
     result = BuildResult(workbook=out, verify_summary=vres.summary, verify_issues=[i.to_json() for i in vres.issues],
                          flags=flags, statements=statements, values=values, excluded_fringe=excluded,
-                         included_supplements=included, warnings=warnings, recalc_reason=reason)
+                         included_supplements=included, warnings=warnings, recalc_reason=reason,
+                         acceptance=vres.to_json()["acceptance"])
     if (out_dir / FAILED_NAME).exists():
         warnings.append(f"{FAILED_NAME} from an earlier failed run is still in {manifest.to_rel(out_dir)}; do not send it")
 
     changes = diff_locked_cells(template, out, appended=appended)
     if changes:
-        failed = out_dir / FAILED_NAME
+        failed = work_dir / FAILED_NAME
         _move(out, failed)
         side_old, side_new = manifest.sidecar(out), manifest.sidecar(failed)
         if side_old.is_file():
@@ -1066,6 +1078,22 @@ def build_detailed(position_id: str, *, cycle: str | None = None) -> BuildResult
             f"{len(changes)} locked cell(s) differ from the template after recalculation: "
             + "; ".join(c.line() for c in changes[:5]) + f". The output was renamed {manifest.to_rel(failed)}; "
             "do not send it", changes, "after recalc")
+    for region in appended:
+        sheet, (c1, r1, c2, r2) = _split_region(region)
+        from openpyxl.utils import get_column_letter
+
+        allowed.setdefault(sheet, set()).update(f"{get_column_letter(c)}{r}"
+                                                for r in range(r1, r2 + 1) for c in range(c1, c2 + 1))
+    office.check_workbook_preservation(template, out, changed_cells=allowed,
+                                      changed_sheets={verify.VERIFICATION_SHEET},
+                                      added_sheets={verify.VERIFICATION_SHEET, "Source & Notes"})
+    side = manifest.sidecar(out)
+    office.deliver_artifacts({out: final_out})
+    result.workbook = final_out
+    out.unlink()
+    side.unlink()
+    if not any(work_dir.iterdir()):
+        work_dir.rmdir()
     _write_flags(stage / FLAGS_NAME, result, inputs)
     return result
 

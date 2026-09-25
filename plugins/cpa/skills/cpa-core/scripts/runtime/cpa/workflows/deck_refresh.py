@@ -24,7 +24,6 @@ import csv
 import json
 import re
 import sys
-import zipfile
 from dataclasses import dataclass, field
 from datetime import date
 from pathlib import Path
@@ -45,7 +44,6 @@ CHANGE_LOG_NAME = "change_log.md"
 MISSING = "MISSING"
 BUILTIN_PLACEHOLDERS = ("month_name", "period", "fymm", "key", "as_of")
 SLIDE_KINDS = ("title", "content", "takeaway")
-LOST_PART_PREFIXES = ("xl/charts/", "xl/drawings/", "xl/pivotCache/", "xl/pivotTables/")
 HIGH_BAR_AUDIENCES = ("dean", "board")
 REPORT = "CPA deck refresh"
 EXIT_OK, EXIT_ISSUES, EXIT_STOPPED = 0, 1, 2
@@ -129,6 +127,7 @@ class RefreshResult:
     figures: list[dict] = field(default_factory=list)
     lint: list[dict] = field(default_factory=list)
     warnings: list[str] = field(default_factory=list)
+    acceptance: dict[str, str] = field(default_factory=dict)
 
     def exit_code(self) -> int:
         """0 clean; 1 produced with issues, flags, unexplained variances or a verification that is not CLEAN."""
@@ -140,7 +139,7 @@ class RefreshResult:
                 "deck": str(self.deck), "change_log": str(self.change_log), "verify": self.verify,
                 "issues": self.issues, "flags": self.flags, "unexplained": self.unexplained,
                 "figures": self.figures, "lint": self.lint, "warnings": self.warnings,
-                "exit_code": self.exit_code()}
+                "exit_code": self.exit_code(), "acceptance": self.acceptance}
 
 
 # ---------------------------------------------------------------- small helpers
@@ -465,31 +464,10 @@ def _check_shapes(slides, tmap: dict) -> None:
 
 
 def _set_text(text_frame, text: str) -> None:
-    """Replace the text, keeping each paragraph's first-run formatting (so the refresh never drifts the format)."""
-    from copy import deepcopy
+    """Replace mapped text without discarding mixed formatting or hyperlink runs."""
+    from cpa.pptx.text import replace_text
 
-    lines = text.split("\n")
-    paras = list(text_frame.paragraphs)
-    template_run = next((r for p in paras for r in p.runs), None)
-    for i, line in enumerate(lines):
-        if i < len(paras):
-            para = paras[i]
-        else:
-            para = text_frame.add_paragraph()
-        runs = list(para.runs)
-        if runs:
-            run = runs[0]
-            for extra in runs[1:]:
-                extra._r.getparent().remove(extra._r)
-        else:
-            run = para.add_run()
-            if template_run is not None and template_run._r.find(
-                    "{http://schemas.openxmlformats.org/drawingml/2006/main}rPr") is not None:
-                run._r.insert(0, deepcopy(template_run._r.find(
-                    "{http://schemas.openxmlformats.org/drawingml/2006/main}rPr")))
-        run.text = line
-    for para in paras[len(lines):]:
-        para._p.getparent().remove(para._p)
+    replace_text(text_frame, text)
 
 
 def _add_flag_box(slide, prs, lines: list[str], hex_color: str, n: int) -> None:
@@ -537,11 +515,6 @@ def _short_ranges(wb, tab: str, old_last: int, new_last: int) -> list[dict]:
     return found
 
 
-def _zip_parts(path: Path) -> set[str]:
-    with zipfile.ZipFile(path) as z:
-        return {n for n in z.namelist() if n.startswith(LOST_PART_PREFIXES)}
-
-
 def _prior_figures(wb) -> dict[str, Any]:
     if DECK_FIGURES_TAB not in wb.sheetnames:
         return {}
@@ -555,6 +528,31 @@ def run(deck: str, fymm: str, templates_dir: Path | str | None = None, inbox: Pa
         outdir: Path | str | None = None, *, key: str | None = None, base_deck: Path | str | None = None,
         base_workbook: Path | str | None = None, explanations: dict[str, str] | None = None,
         verify_output: bool = True) -> RefreshResult:
+    """Build and check all artifacts in staging before delivery; retain staging on failure."""
+    import tempfile
+    from cpa import config, fsutil, manifest, office
+
+    root = config.workspace()
+    tmap = load_map(str(deck).upper())
+    parent = root / "staging" / "deck_refresh"
+    parent.mkdir(parents=True, exist_ok=True)
+    stage = Path(tempfile.mkdtemp(prefix="run_", dir=parent))
+    result = _run_staged(deck, fymm, templates_dir, inbox, stage, key=key, base_deck=base_deck,
+                         base_workbook=base_workbook, explanations=explanations, verify_output=verify_output)
+    target = Path(outdir) if outdir is not None else root / "outbox" / tmap["outbox"] / result.key
+    artifacts = [result.workbook, result.deck, result.change_log]
+    files = {source: target / source.name for source in artifacts}
+    office.deliver_artifacts(files)
+    result.workbook, result.deck, result.change_log = (files[p] for p in artifacts)
+    if result.verify:
+        result.verify["file"] = manifest.to_rel(result.workbook)
+    return result
+
+
+def _run_staged(deck: str, fymm: str, templates_dir: Path | str | None = None, inbox: Path | str | None = None,
+                outdir: Path | str | None = None, *, key: str | None = None, base_deck: Path | str | None = None,
+                base_workbook: Path | str | None = None, explanations: dict[str, str] | None = None,
+                verify_output: bool = True) -> RefreshResult:
     """Refresh last cycle's deck and workbook for `deck` (BOG, FC, GOV) from `fymm`'s exports.
 
     Raises DeckRefreshError (or a cpa.config / crosswalk error) before anything is written when it cannot run."""
@@ -563,7 +561,7 @@ def run(deck: str, fymm: str, templates_dir: Path | str | None = None, inbox: Pa
     from pptx import Presentation
     from pptx.chart.data import CategoryChartData
 
-    from cpa import bigxlsx, config, crosswalk, fsutil, manifest, periods
+    from cpa import bigxlsx, config, crosswalk, fsutil, manifest, office, periods, verify
     from cpa.pptx import brand, lint, notes
 
     deck = str(deck).upper()
@@ -618,7 +616,7 @@ def run(deck: str, fymm: str, templates_dir: Path | str | None = None, inbox: Pa
                                          if f.slides else "", f.source_hint or f.source) for f in missing}
 
     # 4: base files
-    prs = Presentation(str(b_deck))
+    prs = office.load_presentation(b_deck)
     if tmap.get("fixture") and not str(prs.core_properties.subject or "").startswith("FIXTURE"):
         raise DeckRefreshError(f"the {DECKS[deck]}.yaml map is still the FIXTURE map, and {b_deck.name} is not a "
                                "FIXTURE deck (document subject). Confirm the map against her deck and set "
@@ -626,7 +624,7 @@ def run(deck: str, fymm: str, templates_dir: Path | str | None = None, inbox: Pa
     slides = list(prs.slides)
     _check_slides(slides, tmap, b_deck.name)
     _check_shapes(slides, tmap)
-    wb = openpyxl.load_workbook(str(b_wb))
+    wb = office.load_workbook(b_wb)
     try:
         absent = [tab for tab in tmap["inputs"] if tab not in wb.sheetnames]
         if absent:
@@ -665,12 +663,10 @@ def run(deck: str, fymm: str, templates_dir: Path | str | None = None, inbox: Pa
         out_dir.mkdir(parents=True, exist_ok=True)
         out_wb = out_dir / fsutil.safe_filename(tmap["outputs"]["workbook"].format(**names))
         out_deck = out_dir / fsutil.safe_filename(tmap["outputs"]["deck"].format(**names))
-        fsutil.atomic_write(out_wb, lambda tmp: wb.save(str(tmp)))
+        office.save_workbook(wb, out_wb, changed_sheets={*inputs, DECK_FIGURES_TAB},
+                             added_sheets={DECK_FIGURES_TAB})
     finally:
         wb.close()
-    for part in sorted(_zip_parts(b_wb) - _zip_parts(out_wb)):
-        issues.append(_issue("PART_LOST", "", "", f"{part} kept from {b_wb.name}",
-                             "dropped by the openpyxl round trip; re-add the chart or object by hand"))
     manifest.write(out_wb, "derived", f"{REPORT} {deck} workbook", f"{deck} {key}", as_of,
                    inputs=[*paths.values(), b_wb], period=period, fymm=fymm, deck=deck)
     for fig in figures.values():
@@ -678,7 +674,22 @@ def run(deck: str, fymm: str, templates_dir: Path | str | None = None, inbox: Pa
             manifest.add_figure(out_wb, fig.fid, fig.value, fig.source_file, fig.ref, cell=cells[fig.fid],
                                 status=fig.status, period=period)
 
-    # 6: deck
+    # 6: deck; declare owned shapes and chart dependencies before any mutation.
+    changed_shapes: dict[int, set[int]] = {}
+    changed_parts: set[str] = set()
+    for n, (slide, spec) in enumerate(zip(slides, tmap["slides"]), 1):
+        texts, charts, tables = _slide_items(spec)
+        changed_shapes[n] = {_shape(slide, item["shape"]).shape_id for item in [*texts, *charts, *tables]}
+        changed_shapes[n].update(s.shape_id for s in slide.shapes if s.name.startswith(FLAG_SHAPE_PREFIX))
+        for item in charts:
+            part = _shape(slide, item["shape"]).chart.part
+            dependencies = [part] + [rel.target_part for rel in part.rels.values() if not rel.is_external]
+            for dependency in dependencies:
+                consumers = sum(1 for p in prs.part.package.iter_parts() for rel in p.rels.values()
+                                if not rel.is_external and rel.target_part is dependency)
+                if consumers > 1:
+                    raise office.OfficeSafetyError("Shared chart dependency; confirm an isolated chart mapping before refresh")
+                changed_parts.add(str(dependency.partname).lstrip("/"))
     values = {"month_name": _month_name(fymm), "period": period, "fymm": fymm, "key": key, "as_of": as_of}
     flags: list[dict] = []
     for n, (slide, spec) in enumerate(zip(slides, tmap["slides"]), start=1):
@@ -710,7 +721,9 @@ def run(deck: str, fymm: str, templates_dir: Path | str | None = None, inbox: Pa
         if not fig.slides:
             flags.append({"slide": None, "figure": fig.fid, "label": fig.label, "reason": fig.reason,
                           "text": flag_lines[fig.fid]})
-    fsutil.atomic_write(out_deck, lambda tmp: prs.save(str(tmp)))
+    for n, slide in enumerate(slides, 1):
+        changed_shapes[n].update(s.shape_id for s in slide.shapes if s.name.startswith(FLAG_SHAPE_PREFIX))
+    office.save_presentation(prs, out_deck, changed_shapes=changed_shapes, changed_parts=changed_parts)
     _check_slides(list(Presentation(str(out_deck)).slides), tmap, out_deck.name)  # R067, after the write
 
     # 7: verify against last cycle's workbook
@@ -722,11 +735,11 @@ def run(deck: str, fymm: str, templates_dir: Path | str | None = None, inbox: Pa
         try:
             vr = verify.build_verification_tab(out_wb, prior=b_wb)
         except verify.VerifyError as exc:
-            issues.append(_issue("VERIFY_FAILED", "", "", "a Verification tab", str(exc)))
+            raise office.OfficeSafetyError(f"Verification could not complete; artifacts remain in staging: {exc}") from exc
         else:
             verification = {"summary": vr.summary, "clean": vr.clean, "issues": [i.line() for i in vr.issues],
                             "figures": [r.to_json() for r in vr.figure_rows],
-                            "file": manifest.to_rel(vr.verification_file)}
+                            "file": manifest.to_rel(vr.verification_file), "recalc": vr.recalc_status}
             unexplained = [i.figure_id for i in vr.issues
                            if i.code == "VARIANCE_ABOVE_THRESHOLD" and i.figure_id not in explanations]
 
@@ -746,14 +759,23 @@ def run(deck: str, fymm: str, templates_dir: Path | str | None = None, inbox: Pa
         note_slides.append(notes.Slide(title=str(spec["title"]), points=points, figures=figs,
                                        flagged_metrics=[f.label for f in on if f.missing]))
     notes.write_notes(out_deck, note_slides, tmap["audience"])
-    lint_issues = [i.to_json() for i in lint.lint_deck(out_deck, audience=tmap["audience"])]
+    lint_issues = [i.to_json() for i in lint.lint_deck(out_deck, audience=tmap["audience"], baseline=b_deck)]
     for li in lint_issues:
-        issues.append(_issue(f"LINT_{li['code']}", li["location"], "", "format lint clean", li["detail"]))
+        finding = _issue(f"LINT_{li['code']}", li["location"], "", "no finding in checked scope", li["detail"])
+        finding["origin"] = li["origin"]
+        issues.append(finding)
+    office.check_workbook_preservation(b_wb, out_wb, changed_sheets={*inputs, DECK_FIGURES_TAB, verify.VERIFICATION_SHEET},
+                                      added_sheets={DECK_FIGURES_TAB, verify.VERIFICATION_SHEET, "Source & Notes"})
 
     result = RefreshResult(deck_name=deck, key=key, fymm=fymm, workbook=out_wb, deck=out_deck,
                            change_log=out_dir / CHANGE_LOG_NAME, verify=verification, issues=issues, flags=flags,
                            unexplained=unexplained, figures=[f.to_json() for f in figures.values()],
-                           lint=lint_issues, warnings=warnings)
+                           lint=lint_issues, warnings=warnings,
+                           acceptance=office.acceptance(package="CHECKED_SCOPE", preservation="CHECKED_SCOPE",
+                               financial=(verification["recalc"] if verification and verification["recalc"] != "RECALCULATED"
+                                          else verification["summary"] if verification else "NOT_CHECKED"),
+                               geometry_issues=sum(i["code"] in {"OFF_SLIDE", "POSSIBLE_TEXT_OVERLAP",
+                                   "GEOMETRY_UNCHECKED", "UNFINISHED_PLACEHOLDER", "DUPLICATE_SHAPE_ID"} for i in lint_issues)))
     _write_change_log(result, tmap, figures, b_deck, b_wb, explanations)
     return result
 
@@ -775,6 +797,7 @@ def _write_change_log(result: RefreshResult, tmap: dict, figures: dict[str, _Fig
              f"- Figures: {len(figures)}; changed since last cycle: "
              f"{sum(1 for f in figures.values() if _changed(f))}; flagged MISSING: {len(result.flags)}",
              f"- Verification: {result.verify['summary'] if result.verify else 'not run'}",
+             "- Acceptance dimensions: " + "; ".join(f"{key}={value}" for key, value in result.acceptance.items()),
              "- Unexplained variances above threshold: " + (", ".join(result.unexplained) or "none"), ""]
     for n, spec in enumerate(tmap["slides"], start=1):
         lines.append(f"## Slide {n}: {spec['title']}")

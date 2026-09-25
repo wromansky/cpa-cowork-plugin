@@ -24,6 +24,8 @@ this module stays pandas-sized like `cpa.reconcile` and `cpa.crosswalk` do.
 """
 from __future__ import annotations
 
+from cpa import office
+
 import argparse
 import re
 from dataclasses import dataclass, field
@@ -128,7 +130,7 @@ def refresh_load_tab(workbook_path: Path, export_path: Path, *, export_sheet: "s
     rows = df.to_numpy().tolist()
 
     if workbook_path.is_file():
-        wb = openpyxl.load_workbook(workbook_path)
+        wb = office.load_workbook(workbook_path)
     else:
         wb = openpyxl.Workbook()
         wb.remove(wb.active)
@@ -139,10 +141,10 @@ def refresh_load_tab(workbook_path: Path, export_path: Path, *, export_sheet: "s
     for row in rows:
         ws.append(row)
 
-    def _write(tmp: Path) -> None:
-        wb.save(tmp)
-
-    fsutil.atomic_write(workbook_path, _write)
+    try:
+        office.save_workbook(wb, workbook_path, changed_sheets={LOAD_TAB}, added_sheets={LOAD_TAB})
+    finally:
+        wb.close()
     return len(rows)
 
 

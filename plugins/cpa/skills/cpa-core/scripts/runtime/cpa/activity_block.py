@@ -249,7 +249,9 @@ def build(workbook: Path | str, tab: str, metrics: dict, narrative_relevant: set
 
     from cpa import fsutil
 
-    wb = openpyxl.load_workbook(str(path))
+    from cpa import office
+
+    wb = office.load_workbook(path)
     try:
         if tab not in wb.sheetnames:
             raise TabNotFound(f"{path.name} has no tab {tab!r}; build a P&L tab before adding the M2 block")
@@ -310,7 +312,9 @@ def build(workbook: Path | str, tab: str, metrics: dict, narrative_relevant: set
             flags.append(Flag(metric=r.base, label=r.label, tab=tab, cell=value_cell.coordinate,
                               narrative_relevant=r.base in narrative_relevant, why=r.why, source=r.source,
                               text=text))
-        fsutil.atomic_write(path, lambda tmp: wb.save(str(tmp)))
+        allowed = {ws.cell(row=r, column=c).coordinate
+                   for r in range(row0, row0 + 2 + len(rows)) for c in range(col0, col0 + len(HEADERS))}
+        office.save_workbook(wb, path, changed_cells={tab: allowed})
     finally:
         wb.close()
     return flags

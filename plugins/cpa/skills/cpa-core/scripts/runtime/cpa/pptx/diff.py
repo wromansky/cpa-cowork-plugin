@@ -4,8 +4,8 @@ from format drift - `python -m cpa pptx diff --a --b`.
 Build-list items: C11 deck and workbook diff (guide 5 cpa-format, guide 9 pptx/diff.py, build-list
 guide-13.21 "change log lists the seeded change"). R149: separates numeric changes from format
 drift. A `Change.kind` is "numeric" when both the before and after values parse as a number, "text"
-when a non-numeric value changed, or "format" when only a font/fill/size changed and the value did
-not.
+when a non-numeric value changed, or "format" when formatting changed. Content changes do not
+hide independent format changes.
 """
 
 from __future__ import annotations
@@ -37,6 +37,8 @@ class MismatchedFiles(DiffError):
 
 @dataclass
 class Change:
+    """One content or formatting change, not a full acceptance verdict."""
+
     kind: str  # "numeric" | "text" | "format"
     location: str  # "slide 3 shape 0" or "Sheet1!B4"
     field: str  # "text" | "value" | "font" | "fill" | "slide_count" | ...
@@ -44,6 +46,7 @@ class Change:
     after: Any
 
     def to_json(self) -> dict:
+        """Serialize a change for the existing diff CLI."""
         return {"kind": self.kind, "location": self.location, "field": self.field,
                  "before": self.before, "after": self.after}
 
@@ -85,35 +88,73 @@ def _first_run_size(shape) -> float | None:
     return None
 
 
+def _text_shapes(shapes):
+    result = {}
+    for shape in shapes:
+        children = _text_shapes(shape.shapes) if hasattr(shape, "shapes") else {}
+        if shape.has_text_frame:
+            children[shape.shape_id] = shape
+        if result.keys() & children.keys():
+            raise DiffError("Duplicate shape identity; cannot safely pair template shapes")
+        result.update(children)
+    return result
+
+
+def _run_properties(shape):
+    return [[str(run._r.rPr.xml) if run._r.rPr is not None else None for run in paragraph.runs]
+            for paragraph in shape.text_frame.paragraphs]
+
+
 def diff_decks(a: Path | str, b: Path | str) -> list[Change]:
-    """Slide-by-slide change report between two .pptx decks: text (and whether it is numeric) plus
-    body font size, matching slides and shapes by index (this module never re-orders content)."""
+    """Compare native slide/shape identities; report content and formatting independently.
+
+    Human locations retain the original text-shape index; matching does not use that index.
+    This is a change report, not a complete preservation or rendered appearance guarantee.
+    """
     a, b = Path(a), Path(b)
     _check_pair(a, b, ".pptx", "diff_decks")
 
     from pptx import Presentation
 
+    from cpa import office
+
+    office.inspect_package(a)
+    office.inspect_package(b)
     slides_a = list(Presentation(str(a)).slides)
     slides_b = list(Presentation(str(b)).slides)
     changes: list[Change] = []
     if len(slides_a) != len(slides_b):
         changes.append(Change("format", "deck", "slide_count", len(slides_a), len(slides_b)))
 
-    for i, (slide_a, slide_b) in enumerate(zip(slides_a, slides_b), start=1):
+    ids_a, ids_b = [s.slide_id for s in slides_a], [s.slide_id for s in slides_b]
+    if set(ids_a) == set(ids_b) and ids_a != ids_b:
+        changes.append(Change("format", "deck", "slide_order", ids_a, ids_b))
+    other_slides = {s.slide_id: s for s in slides_b}
+    for i, slide_a in enumerate(slides_a, start=1):
         loc = f"slide {i}"
-        shapes_a = [s for s in slide_a.shapes if s.has_text_frame]
-        shapes_b = [s for s in slide_b.shapes if s.has_text_frame]
-        for j, (shape_a, shape_b) in enumerate(zip(shapes_a, shapes_b)):
+        slide_b = other_slides.get(slide_a.slide_id)
+        if slide_b is None:
+            changes.append(Change("format", loc, "slide_presence", True, False))
+            continue
+        shapes_a, shapes_b = _text_shapes(slide_a.shapes), _text_shapes(slide_b.shapes)
+        for j, identity in enumerate(dict.fromkeys([*shapes_a, *shapes_b])):
+            shape_a, shape_b = shapes_a.get(identity), shapes_b.get(identity)
             shape_loc = f"{loc} shape {j}"
-            text_a = shape_a.text_frame.text
-            text_b = shape_b.text_frame.text
+            if shape_a is None or shape_b is None:
+                changes.append(Change("format", shape_loc, "shape_presence", shape_a is not None, shape_b is not None))
+                continue
+            text_a, text_b = shape_a.text_frame.text, shape_b.text_frame.text
             if text_a != text_b:
                 changes.append(Change(_value_kind(text_a, text_b), shape_loc, "text", text_a, text_b))
-                continue  # a content change already explains this shape; a size diff on the same
-                # shape is noise once the text itself moved
             size_a, size_b = _first_run_size(shape_a), _first_run_size(shape_b)
             if size_a != size_b:
                 changes.append(Change("format", shape_loc, "font_size", size_a, size_b))
+            props_a, props_b = _run_properties(shape_a), _run_properties(shape_b)
+            if props_a != props_b:
+                changes.append(Change("format", shape_loc, "run_properties", props_a, props_b))
+    for slide_b in slides_b:
+        if slide_b.slide_id not in ids_a:
+            changes.append(Change("format", f"slide {ids_b.index(slide_b.slide_id) + 1}", "slide_presence", False, True))
     return changes
 
 
@@ -135,8 +176,12 @@ def diff_workbooks(a: Path | str, b: Path | str) -> list[Change]:
 
     import openpyxl
 
-    wb_a = openpyxl.load_workbook(str(a))
-    wb_b = openpyxl.load_workbook(str(b))
+    from cpa import bigxlsx
+
+    if bigxlsx.is_large(a) or bigxlsx.is_large(b):
+        raise DiffError("Large workbook: full cell-format diff is unavailable; use streaming review")
+    wb_a = openpyxl.load_workbook(str(a), rich_text=True)
+    wb_b = openpyxl.load_workbook(str(b), rich_text=True)
     try:
         changes: list[Change] = []
         common_tabs = [t for t in wb_a.sheetnames if t in wb_b.sheetnames]
@@ -152,7 +197,6 @@ def diff_workbooks(a: Path | str, b: Path | str) -> list[Change]:
                     if cell_a.value != cell_b.value:
                         changes.append(Change(_value_kind(cell_a.value, cell_b.value), loc, "value",
                                                cell_a.value, cell_b.value))
-                        continue
                     font_a = (cell_a.font.name, cell_a.font.bold, cell_a.font.size)
                     font_b = (cell_b.font.name, cell_b.font.bold, cell_b.font.size)
                     if font_a != font_b:
