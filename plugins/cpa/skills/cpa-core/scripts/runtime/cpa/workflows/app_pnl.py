@@ -660,8 +660,8 @@ def diff_locked_cells(template: Path | str, output: Path | str, *, appended=()) 
 
     A cell locked in the template must keep its value or formula text and stay locked. A template-empty locked
     cell may be written only inside an `appended` region ('Sheet!A1:E4', or 'A1:E4' for any tab). Each tab's
-    protection flag must be unchanged, no template tab may be removed, and the only tab an output may add is
-    Verification. Unlocked (input) cells may change freely."""
+    protection flag must be unchanged, no template tab may be removed, and the only tabs an output may add are
+    Verification and Source & Notes. Existing source notes remain fully protected. Unlocked (input) cells may change freely."""
     import openpyxl
 
     from cpa import verify
@@ -693,7 +693,7 @@ def diff_locked_cells(template: Path | str, output: Path | str, *, appended=()) 
                 if oc is not None and not oc.protection.locked:
                     changes.append(CellChange(name, coord, "protection", True, False))
         for name in owb.sheetnames:
-            if name not in twb.sheetnames and name != verify.VERIFICATION_SHEET:
+            if name not in twb.sheetnames and name not in (verify.VERIFICATION_SHEET, "Source & Notes"):
                 changes.append(CellChange(name, "", "sheet added"))
     finally:
         twb.close()
@@ -794,9 +794,9 @@ def _write_benchmarks(work: Path, tmap: dict, rows: list[tuple], yellow: str | N
     wb = openpyxl.load_workbook(str(work))
     try:
         ws = wb[rsheet or str(tmap["pnl_sheet"])]
-        ws.cell(row=r1, column=c1, value=BENCH_TITLE).font = Font(name="Calibri", bold=True)
+        ws.cell(row=r1, column=c1, value=BENCH_TITLE).font = Font(name="Arial", bold=True)
         for i, head in enumerate(BENCH_HEADERS):
-            ws.cell(row=r1 + 1, column=c1 + i, value=head).font = Font(name="Calibri", bold=True)
+            ws.cell(row=r1 + 1, column=c1 + i, value=head).font = Font(name="Arial", bold=True)
         for k, (metric, value, res, missing) in enumerate(rows):
             r = r1 + 2 + k
             ws.cell(row=r, column=c1, value=BENCH_LABELS[metric])
@@ -936,8 +936,10 @@ def build_detailed(position_id: str, *, cycle: str | None = None) -> BuildResult
     flags: list[PnlFlag] = [PnlFlag("fringe_excluded", "", f"{name!r} was dropped from TCC as fringe (hard rule 1)")
                             for name in excluded]
     yellow: str | None = None
+    from cpa.pptx import brand
+
     if rate is None or set(points) != set(benchmarks.METRICS):
-        yellow = str(config.assumption("brand", "flag_yellow"))
+        yellow = brand.color("flag_yellow")
 
     wb = openpyxl.load_workbook(str(template))
     try:
@@ -992,7 +994,7 @@ def build_detailed(position_id: str, *, cycle: str | None = None) -> BuildResult
                                      f"{match.sc_specialty}", f"the {metric} percentile statement",
                                      f"SullivanCotter {benchmarks.SURVEY_COLUMN} survey ({POINTS_NAME})")
             if yellow is None:
-                yellow = str(config.assumption("brand", "flag_yellow"))
+                yellow = brand.color("flag_yellow")
             bench_rows.append((metric, value, None, text))
         flags += _write_benchmarks(work, tmap, bench_rows, yellow)
         metrics = _m2_metrics(inputs, values, tmap, cpt_as_of, reason)

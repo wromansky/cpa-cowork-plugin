@@ -8,10 +8,10 @@ fiscal:
   year_start_month: 7            # confirmed: fiscal year starts July 1
 
 rates:
-  fringe_jhm_base_pct: null     # ask the analyst to supply an approved current rate locally
-  fringe_jhu_clinical_pct: null # needs confirmation from Finance
-  deans_tax_pct: null           # needs current confirmed rate
-  dom_clinical_tax_pct: null    # needs current confirmed rate
+  fringe_jhm_base_pct: null      # supply the approved current rate in your private workspace
+  fringe_jhu_clinical_pct: null  # needs you: confirm with Finance
+  deans_tax_pct: null            # needs you: current Dean's Tax
+  dom_clinical_tax_pct: null     # needs you: current DoM Clinical Tax
 
 brand:
   navy: "#1F4E79"                # confirmed
@@ -27,9 +27,6 @@ verification:
 reconcile:
   tolerance_abs: 1.0             # tool setting (DECISIONS D05)
   tolerance_pct: 0.5             # tool setting (DECISIONS D05)
-
-tools:
-  libreoffice_path: null         # optional: full path to soffice if it is not found automatically
 
 cycles:
   som_materials_lead_days: null  # needs you: business days before SOM Review Committee

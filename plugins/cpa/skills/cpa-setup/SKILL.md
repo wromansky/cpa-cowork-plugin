@@ -40,8 +40,7 @@ description: Provision the Cowork sandbox interpreter for the CPA runtime. Run w
 
 ## Verify
 - The final runtime check exits 0 with no missing or mismatched pins.
-- The legacy `engine` report says unsupported. LibreOffice is excluded everywhere; never probe
-  or invoke it, including through another skill. Setup can finish, but workflows requiring
+- The `engine` report says unsupported. Setup can finish, but workflows requiring
   recalculated figures must stop until an approved backend is implemented.
 
 ## If something is wrong
@@ -57,7 +56,7 @@ description: Provision the Cowork sandbox interpreter for the CPA runtime. Run w
 ## Never
 - Never install, upgrade or remove any package other than through `python -m cpa setup install`
   with the payload's exact pins.
-- Never install software on the user's machine (an interpreter, LibreOffice, Git or any add-on);
+- Never install software on the user's machine (an interpreter, Git or any add-on);
   setup provisions only this session's sandbox interpreter.
 - Never change a pin, add a package, or use a version range to make the check pass.
 - Never touch the workspace, assumptions or any analyst file during setup.

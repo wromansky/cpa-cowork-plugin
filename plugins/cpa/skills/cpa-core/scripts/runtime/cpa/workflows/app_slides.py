@@ -60,8 +60,8 @@ ROW_LABELS = {"jhu_contribution_margin": "JHU Contribution Margin", "division_su
 ROW_COLORS = {"jhu_contribution_margin": "gold", "division_surplus": "navy"}  # R216/R217
 BENCH_METRICS = ("TCC", "Work RVUs")
 # FIXTURE -- confirm against her file: branding/footer/placeholder wording; no her real deck exists yet.
-BRANDING_TEXT = "Johns Hopkins University School of Medicine - SOM Review Committee"
-FOOTER_FMT = "CPA | SOM Review Committee | {cycle}"
+BRANDING_TEXT = "Johns Hopkins University School of Medicine"
+FOOTER_FMT = "Clinical Practice Association | SOM Review Committee | {cycle}"
 INCUMBENT_LABEL = "Incumbent actuals (fill in by hand before the meeting)"
 EXIT_OK, EXIT_ISSUES, EXIT_STOPPED = 0, 1, 2
 
@@ -395,6 +395,7 @@ def _add_text(slide, left, top, width, height, text: str, name: str, *, size_pt=
         p = tf.paragraphs[0] if i == 0 else tf.add_paragraph()
         run = p.add_run()
         run.text = line
+        run.font.name = "Arial"
         run.font.size = Pt(size_pt)
         run.font.bold = bold
         if color_hex:
@@ -557,6 +558,9 @@ def position_detailed(position_id: str, *, ws: Path | None = None) -> Path:
     out_dir = ws / "outbox" / "app" / content.cycle / position_id
     out_dir.mkdir(parents=True, exist_ok=True)
     path = out_dir / SLIDE_NAME
+    from cpa.pptx import brand
+
+    brand.style_generated_deck(prs)
     fsutil.atomic_write(path, lambda tmp: prs.save(str(tmp)))
     notes.write_notes(path, [notes.Slide(title=_slide_title(content), points=[content.business_need],
                                          flagged_metrics=list(content.flagged_labels))], AUDIENCE)
@@ -625,6 +629,9 @@ def qa_detailed(position_id: str, *, ws: Path | None = None) -> Path:
     out_dir = ws / "outbox" / "app" / content.cycle / position_id
     out_dir.mkdir(parents=True, exist_ok=True)
     path = out_dir / QA_NAME
+    from cpa.pptx import brand
+
+    brand.style_generated_deck(prs)
     fsutil.atomic_write(path, lambda tmp: prs.save(str(tmp)))
     notes.write_notes(path, [notes.Slide(title=f"Returning Position Q&A: {position_id}",
                                          points=[r.question for r in content.rows])], AUDIENCE)
@@ -748,6 +755,9 @@ def deck_detailed(cycle: str, *, ws: Path | None = None) -> DeckResult:
 
     out_path = ws / "outbox" / "app" / DECK_NAME_FMT.format(cycle=fsutil.safe_filename(cycle))
     out_path.parent.mkdir(parents=True, exist_ok=True)
+    from cpa.pptx import brand
+
+    brand.style_generated_deck(prs)
     fsutil.atomic_write(out_path, lambda tmp: prs.save(str(tmp)))
     notes.write_notes(out_path, slide_notes, AUDIENCE)
 

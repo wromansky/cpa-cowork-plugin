@@ -1,7 +1,7 @@
 # Install CPA in Cowork
 
 **For the analyst.** You need Claude Desktop with Cowork available. You do **not** need to clone
-this repository, open PowerShell, install Python or LibreOffice, or run a command yourself.
+this repository, open PowerShell, install Python, or run a command yourself.
 Keep real exports in your approved CPA workspace; do not paste sensitive data into chat.
 
 **Before you start:** ask Billy to confirm that use of this CPA plugin is approved for your work.
@@ -15,10 +15,20 @@ rates and all business data in your approved workspace, not in a public reposito
    `https://github.com/wromansky/cpa-cowork-plugin` and select **Sync**.
 3. Install the plugin named **cpa** and turn it on under Personal plugins.
 4. Start a **new Cowork conversation** with the plugin enabled. For this release, confirm the
-   mounted bundle reports **0.2.5**; an older copy may still be present after an update.
+   mounted bundle reports **0.2.6**; an older copy may still be present after an update.
 
 If the marketplace or **cpa** does not appear, stop and ask Billy for help. You should not need
 a terminal or a local software install.
+
+### Bundled branding
+
+The plugin includes your analyst-authored `jhm-brand` standard and supplied assets. After
+confirming the updated plugin loads its bundled `branding` skill, disable the standalone copy to
+avoid competing copies. Your brand rules supersede earlier CPA styling, including workbooks;
+financial verification remains separate. Known source conflicts have documented resolutions;
+remaining template/layout mismatches must be flagged, not silently treated as compliant.
+Test actual files in Cowork after syncing: review fonts, header/tab colors, layout and artwork,
+Source & Notes, and Verification. Automated tests are not visual acceptance.
 
 ## 2. Ask Cowork to set up CPA
 
@@ -32,8 +42,8 @@ Copy and send this message in Cowork:
 > is missing, stop and tell me what failed; do not ask me to use PowerShell.
 
 Cowork should show a report for the **bundle**, **Python**, and **dependencies**; all three must
-be ready. Automatic workbook recalculation is **unsupported**. LibreOffice is not used anywhere,
-including inside Cowork. Do not run a workflow requiring recalculation until a supported path
+be ready. Automatic workbook recalculation is **unsupported**.
+Do not run a workflow requiring recalculation until a supported path
 is verified. A successful setup report does not mean workbook calculations have been verified.
 
 ## 3. Check the workspace before putting files in it

@@ -5,25 +5,35 @@
 This is a **public installation snapshot** of the `cpa` Cowork plugin, not its private
 source/development repository. It contains the marketplace manifest, plugin skills,
 and the self-contained Python runtime. No real exports, credentials, or analyst workspace
-are shipped. The public bundle intentionally leaves all JHM rates unfilled; they must
-be supplied from approved sources in the analyst's own workspace, never guessed or
-posted to this repository.
+are shipped. The public bundle intentionally leaves all JHM rates unfilled; supply them
+from approved sources in the analyst's private workspace. Never guess or publish them here.
 
-**Version 0.2.5:** Use **cpa-workflow-feedback** to prepare a short reviewed message the analyst
-sends directly to Billy. Local saving is optional; notes alone need no workspace or browser.
-Do not send recordings or generated skill exports. The incorrect SAP-based JE draft remains disabled.
-CRF starts with approved manual exports and a sanitized finished example. Browser-assisted
-pulls require an approved connection and confirmed saved report paths; the analyst handles
-login, SSO and MFA. This is not screen recording or automatic plugin self-modification.
-After updating, start a fresh session and confirm the mounted bundle reports 0.2.5.
+## Version 0.2.6
 
-LibreOffice is excluded everywhere, including Cowork sandboxes. No engine
-is discovered or executed. Automatic workbook recalculation is unsupported; workflows needing
-recalculated results must stop. No replacement backend is implemented.
+- Includes the analyst-authored **branding** skill and approved SOM logo/campus asset.
+  Documented precedence resolves conflicting source instructions. Branding supersedes earlier
+  CPA visual defaults, including internal workbooks; financial safeguards remain binding.
+- Generated workbook writers use approved typography/palette, headers and neutral banding.
+  Verification adds an absent **Source & Notes** tab from recorded provenance. Existing source
+  notes and financial/template cells are preserved, not restyled wholesale.
+- Generated slide helpers normalize fonts and widescreen dimensions. They are not complete
+  implementations or visual validators of all five brand layouts. Real-file layout, artwork,
+  spacing and readability acceptance belongs to the analyst in Cowork.
+- Automatic workbook recalculation is unsupported; no backend is implemented. Workflows needing
+  recalculated values must stop, and cached formulas cannot establish CLEAN.
+- Setup, supervised browser trials and feedback guidance match the shipped capabilities.
+  The incorrect SAP JE draft remains disabled; corrected COGNOS formatting is not yet implemented.
 
-Local fixture tests and bundle-integrity checks do **not** prove that the plugin works
-inside Cowork on the analyst's machine. The first run must be watched; do not schedule
-live system pulls or rely on workbook recalculation until validated there.
+After syncing, start a fresh Cowork conversation and confirm the mounted bundle reports **0.2.6**.
+Confirm the bundled **branding** skill loads before disabling the standalone brand skill.
+Use actual approved files for a supervised review: fonts, header/tab colors, protected formulas,
+source notes and Verification. Report concrete mismatches through **cpa-workflow-feedback**;
+local note saving is optional. Nothing is sent or posted automatically.
 
-For installation issues, report the Cowork setup readiness result to the maintainer.
-Do not install Python or other tools on the analyst's PC to work around a failure.
+CRF begins with approved manual exports and a sanitized finished example. Browser-assisted
+pulls require approved connections and confirmed saved reports; the analyst handles login,
+SSO and MFA. Setup success, synthetic tests and integrity checks are not real-file or Cowork
+acceptance. Do not schedule unattended live pulls until separately validated.
+
+For installation issues, report the Cowork setup readiness result. Do not install Python,
+Git, or other local tools on the analyst's PC to work around a failure.

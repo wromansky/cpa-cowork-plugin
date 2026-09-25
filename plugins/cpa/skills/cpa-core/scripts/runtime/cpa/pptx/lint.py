@@ -9,8 +9,8 @@ in a yellow box on the slide, never only in the speaker notes).
 lint_deck() and lint_workbook() are pure readers: they never write. Deck checks (R061/R145/R185: 18pt
 minimum body text for a dean/board audience; R148: speaker notes present on every slide; R068/R184:
 no flag-convention text hidden only in notes; R145/R185: the 7-8 slide cap for a dean/board main
-deck). Workbook checks (R019/R146/R186: Calibri, no freeze panes unless asked, no fill outside the
-flag_yellow convention). No deck-building unit exists yet (app_slides/app_pnl are later units), so a
+deck). Workbook checks follow the analyst branding skill: Lato/Arial, approved palette,
+Source & Notes, and no freeze panes unless asked. This is not a complete visual acceptance check. No deck-building unit exists yet (app_slides/app_pnl are later units), so a
 closing-takeaway-slide check and the agenda-slide check (R184/R145) are left out: they need a
 slide-content contract (a slide "kind" the deck carries) this unit's inputs do not have yet.
 """
@@ -96,10 +96,19 @@ def lint_deck(path: Path | str, *, audience: str, deck_kind: str = "main") -> li
 
     for i, slide in enumerate(slides, start=1):
         loc = f"slide {i}"
+        for shape in slide.shapes:
+            if shape.has_text_frame:
+                for paragraph in shape.text_frame.paragraphs:
+                    for run in paragraph.runs:
+                        if run.font.name and run.font.name not in ("Lato", "Arial"):
+                            issues.append(LintIssue("UNAPPROVED_FONT", loc,
+                                                     f"font {run.font.name!r}; use Lato or Arial"))
         if high_bar:
             for shape in slide.shapes:
                 if not shape.has_text_frame:
                     continue
+                if shape.name in ("footer", "page_number", "source_line", "footnote"):
+                    continue  # explicitly typed non-body elements have their own smaller scales
                 for pt in _run_point_sizes(shape):
                     if pt < MIN_BODY_PT:
                         issues.append(LintIssue(
@@ -121,9 +130,10 @@ def lint_deck(path: Path | str, *, audience: str, deck_kind: str = "main") -> li
 
 
 def lint_workbook(path: Path | str, tab: str | None = None, *, allow_freeze: bool = False) -> list[LintIssue]:
-    """Format-lint one .xlsx internal working file: Calibri, no freeze panes unless `allow_freeze`,
-    no decorative fill outside the flag_yellow convention (R019/R146/R186). `tab=None` checks every
-    sheet."""
+    """Read-only brand diagnostics: approved fonts/fills, source notes and freeze permission.
+
+    `tab=None` checks every sheet. Protected templates are reported, never restyled.
+    """
     path = Path(path)
     if path.suffix.lower() != ".xlsx":
         raise UnsupportedFile(f"{path.name}: lint_workbook reads .xlsx only")
@@ -132,18 +142,17 @@ def lint_workbook(path: Path | str, tab: str | None = None, *, allow_freeze: boo
 
     import openpyxl
 
+    if path.stat().st_size > 15 * 1024 * 1024:
+        return [LintIssue("STREAMING_REVIEW_REQUIRED", "workbook",
+                          "Use cpa.bigxlsx for files above 15 MB; full format inspection is not available here")]
     wb = openpyxl.load_workbook(str(path), read_only=False)
     try:
         if tab is not None and tab not in wb.sheetnames:
             raise LintError(f"{path.name} has no tab {tab!r}")
-        try:
-            allowed_fill = brand.color("flag_yellow").lstrip("#")
-        except Exception:
-            allowed_fill = None  # gold/ice_blue/flag_yellow may be null; a fill check with no
-            # confirmed convention flags every fill, which is the safer default (never silently ok)
-
         sheets = [wb[tab]] if tab is not None else wb.worksheets
         issues: list[LintIssue] = []
+        if "Source & Notes" not in wb.sheetnames:
+            issues.append(LintIssue("SOURCE_NOTES_MISSING", "workbook", "Source & Notes tab required; Verification is separate"))
         for ws in sheets:
             if ws.freeze_panes and not allow_freeze:
                 issues.append(LintIssue(
@@ -157,17 +166,15 @@ def lint_workbook(path: Path | str, tab: str | None = None, *, allow_freeze: boo
                         continue
                     coord = f"{ws.title}!{cell.coordinate}"
                     name = cell.font.name if cell.font else None
-                    if name and name != "Calibri":
-                        issues.append(LintIssue("NOT_CALIBRI", coord,
-                                                 f"font {name!r}; internal files are Calibri "
-                                                 "(R019/R146/R186)"))
+                    if name not in ("Arial", "Lato"):
+                        issues.append(LintIssue("UNAPPROVED_FONT", coord,
+                                                 f"font {name!r}; branding requires Lato or Arial"))
                     if cell.fill is not None and cell.fill.fill_type == "solid":
                         fg = str(getattr(cell.fill.fgColor, "rgb", "") or "")[-6:].upper()
-                        if allowed_fill is None or fg != allowed_fill:
+                        if fg not in brand.APPROVED_FILLS:
                             issues.append(LintIssue(
-                                "DECORATIVE_FILL", coord,
-                                f"fill #{fg}; internal files carry no decoration (R019/R146/R186), "
-                                "only the flag_yellow convention",
+                                "UNAPPROVED_FILL", coord,
+                                f"fill #{fg}; use the analyst's approved palette. Theme/indexed colors need explicit review.",
                             ))
         return issues
     finally:

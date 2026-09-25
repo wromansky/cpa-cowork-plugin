@@ -872,7 +872,7 @@ def _tab_rows(result: VerifyResult) -> list[list]:
 
 
 def _write_tab(path: Path, result: VerifyResult) -> None:
-    """Replace the Verification sheet (first tab) and save atomically; no other cell is written."""
+    """Replace Verification and add absent source notes; leave original financial sheets untouched."""
     import openpyxl
     from openpyxl.styles import Font
 
@@ -883,8 +883,8 @@ def _write_tab(path: Path, result: VerifyResult) -> None:
         if VERIFICATION_SHEET in wb.sheetnames:
             wb.remove(wb[VERIFICATION_SHEET])
         ws = wb.create_sheet(VERIFICATION_SHEET, 0)
-        bold = Font(name="Calibri", bold=True)
-        plain = Font(name="Calibri")
+        bold = Font(name="Arial", bold=True)
+        plain = Font(name="Arial")
         for r, values in enumerate(_tab_rows(result), start=1):
             for c, value in enumerate(values, start=1):
                 cell = ws.cell(row=r, column=c)
@@ -892,6 +892,22 @@ def _write_tab(path: Path, result: VerifyResult) -> None:
                 if isinstance(value, str):
                     cell.data_type = "s"
                 cell.font = bold if r in (1, HEADER_ROW) or (c == 1 and value in ("Issues",)) else plain
+        from cpa.pptx import brand
+
+        brand.style_generated_sheet(ws, header_rows=(HEADER_ROW,), role="reference")
+        # Never replace analyst-maintained source notes or touch the original financial sheets.
+        if "Source & Notes" not in wb.sheetnames:
+            notes = wb.create_sheet("Source & Notes")
+            notes.append(["Figure", "Source system", "Source file", "Source reference", "Period", "Status", "As of"])
+            for figure in result.figure_rows:
+                notes.append([_safe(v) for v in (figure.figure, figure.source_system, figure.source_file,
+                              figure.source_ref, figure.period, figure.status, figure.as_of)])
+                for cell in notes[notes.max_row]:
+                    if isinstance(cell.value, str):
+                        cell.data_type = "s"
+            if not result.figure_rows:
+                notes.append(["No figure provenance recorded; analyst review required."])
+            brand.style_generated_sheet(notes, role="reference")
         wb.active = 0
         for sheet in wb.worksheets:
             sheet.sheet_view.tabSelected = sheet.title == VERIFICATION_SHEET

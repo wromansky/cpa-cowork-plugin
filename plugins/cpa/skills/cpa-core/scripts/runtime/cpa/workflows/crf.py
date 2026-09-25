@@ -230,7 +230,9 @@ def _write_workbook(out: Path, rows: list[Commitment], total: float, missing_cou
     # fetched only when actually needed, so a build with nothing missing never touches the assumption.
     fill = None
     if any(r.status == STATUS_OPEN and r.commitment_amount is None for r in rows):
-        yellow = str(config.assumption("brand", "flag_yellow")).lstrip("#")
+        from cpa.pptx import brand
+
+        yellow = brand.color("flag_yellow").lstrip("#")
         fill = PatternFill(fill_type="solid", fgColor=yellow, bgColor=yellow)
 
     wb = openpyxl.Workbook()
@@ -246,6 +248,10 @@ def _write_workbook(out: Path, rows: list[Commitment], total: float, missing_cou
     summary.append(["Figure", "Value"])
     summary.append(["Total commitment amount (open rows with supplied amounts)", total])
     summary.append(["Open rows missing commitment amount", missing_count])
+    from cpa.pptx import brand
+
+    for sheet in wb.worksheets:
+        brand.style_generated_sheet(sheet)
     fsutil.atomic_write(out, lambda tmp: wb.save(str(tmp)))
 
 

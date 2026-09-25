@@ -8,6 +8,25 @@ The version lives in one place, `cpa/__init__.py` (`__version__`). `pyproject.to
 `plugin.json` version goes up. The first `## [x.y.z]` heading below must equal that version
 (`tests/test_portability.py::test_package_importable_and_version`). Add a new heading on every bump.
 
+## [0.2.6]
+
+### Changed
+
+- Simplified recalculation guidance to state only the current unsupported capability.
+- Removed retired backend configuration, executable overrides and discovery compatibility API.
+- Reconciled setup, workflow-trial and maintainer documentation with current behavior.
+- Bundled the analyst-authored jhm-brand standard and approved artwork. CPA core and format
+  review defer visual standards to it, including internal workbooks. Original references are
+  preserved; documented precedence resolves fonts, logo placement, imagery and palette conflicts.
+- Applied the approved palette and Arial typography to generated content, navy worksheet headers,
+  neutral banding and provenance tabs. Budget tables stay streaming; protected/source templates
+  are not restyled wholesale. Verification adds missing Source & Notes from recorded provenance
+  without changing original financial sheets. Existing source notes remain untouched.
+- Updated format checks for approved fonts/fills and workbook source notes. Generated presentation
+  normalization sets Arial and widescreen without rewriting numbers or notes. These are not a
+  complete implementation or visual validation of all five slide layouts. Visual acceptance is
+  deferred to the analyst's Cowork trial; recalculation remains unsupported.
+
 ## [0.2.5]
 
 ### Changed
@@ -47,13 +66,13 @@ The version lives in one place, `cpa/__init__.py` (`__version__`). `pyproject.to
 
 - Billy's Cowork retest confirmed 0.2.2 installed all 16 pins on sandbox Python 3.12.3 and passed
   readiness. This is setup evidence only: workspace access and workflows remain untested.
-- Automatic workbook recalculation remains unsupported. LibreOffice is excluded everywhere.
+- Automatic workbook recalculation remains unsupported.
 
 ## [0.2.2]
 
 ### Changed
 
-- Removed LibreOffice discovery and execution on all platforms, including Cowork sandboxes.
+- Removed the automatic recalculation backend on all platforms.
 - Automatic recalculation reports unsupported; verification cannot claim CLEAN without it.
 - Removed installation advice and updated skill instructions to stop recalculation-dependent
   workflows. No replacement backend is implemented.

@@ -16,7 +16,7 @@ Design (U05 plan, decisions D1-D9):
   iterparse; openpyxl degrades to xml.etree without lxml (speed, not correctness), so lxml is never required.
 - D2 `is_large` answers the uncompressed question in two stages (see its docstring).
 - D3 `.xlsb` is read through pyxlsb and converted by `to_xlsx` (pyxlsb -> openpyxl write_only, both streaming);
-  no LibreOffice in the production path. Both .xlsb legs are proven only against a hand-encoded BIFF12 test
+  no external conversion process is used. Both .xlsb legs are proven only against a hand-encoded BIFF12 test
   workbook (the record subset the pinned pyxlsb parses); UNPROVEN against an Excel-written .xlsb.
 - D4 dependencies are checked lazily on first use (`MissingDependency`), never at import.
 - D6 interior gap rows are yielded as all-None lists; rows are padded, never truncated; the worksheet's

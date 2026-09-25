@@ -83,4 +83,4 @@ description: Prepare analyst-reviewed notes she can send directly to Billy about
   through this skill. Never request a raw recording or generated skill export as feedback.
 - Never upload notes, edit navigation configuration, or change plugin code based on feedback automatically.
 - Never invent a URL, report name, permission, success status, or an observation you did not make.
-- Never use LibreOffice, or claim recalculation succeeded; it is unsupported.
+- Never claim recalculation succeeded; automatic recalculation is unsupported.

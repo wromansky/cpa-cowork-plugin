@@ -1,0 +1,23 @@
+{
+  "skill_name": "branding",
+  "evals": [
+    {
+      "id": 1,
+      "shape": "direct",
+      "prompt": "Review this CPA executive deck against my jhm-brand skill. Its generator used the old CPA navy and Calibri.",
+      "expected_output": "Loads the complete analyst brand source, treats it as authoritative, flags obsolete styling, preserves data and stops branded delivery rather than relying on legacy lint."
+    },
+    {
+      "id": 2,
+      "shape": "scheduled",
+      "prompt": "Prepare the scheduled CPA workbook review. It has a Verification tab but no Source & Notes tab, and its formulas are not recalculated.",
+      "expected_output": "Requires both provenance and verification tabs, reports unsupported recalculation without claiming CLEAN, preserves protected templates and records the blocked review without sending."
+    },
+    {
+      "id": 3,
+      "shape": "dispatcher",
+      "prompt": "cpa-format requests brand review of a cover slide. Use the campus image and a reversed SOM logo on navy. The assets folder only contains som-logo.png and campus-bg.jpg.",
+      "expected_output": "Identifies the missing reversed asset and conflicting imagery directions. Does not recolor or reconstruct the logo or silently choose a layout; asks for clarification and blocks final delivery."
+    }
+  ]
+}

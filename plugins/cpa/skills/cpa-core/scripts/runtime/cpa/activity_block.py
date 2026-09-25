@@ -274,10 +274,12 @@ def build(workbook: Path | str, tab: str, metrics: dict, narrative_relevant: set
         if any(r.missing for r in rows):
             from cpa import config
 
-            flag_yellow = str(config.assumption("brand", "flag_yellow")).lstrip("#")
+            from cpa.pptx import brand
 
-        bold = Font(name="Calibri", bold=True)
-        plain = Font(name="Calibri")
+            flag_yellow = brand.color("flag_yellow").lstrip("#")
+
+        bold = Font(name="Arial", bold=True)
+        plain = Font(name="Arial")
         fill = PatternFill(fill_type="solid", fgColor=flag_yellow, bgColor=flag_yellow) if flag_yellow else None
 
         title_cell = ws.cell(row=row0, column=col0, value=verify.M2_TITLE)

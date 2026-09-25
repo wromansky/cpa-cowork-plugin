@@ -1,16 +1,14 @@
 """cpa - deterministic script layer for the CPA automation plugin (guide section 1 layer 2).
 
-Holds the workspace layout constants from Build List 0.1, the workspace ignore list from E3 and the
-D07 LibreOffice location data, so config (U01), rollover (U16), consolidate/archive (U23), recalc (U07)
-and tests/conftest.py share one copy of each.
+Holds workspace layout constants from Build List 0.1 and the workspace ignore list from E3,
+shared by config, rollover, consolidation, archive and test fixtures.
 
-Build-list items: 0.1 workspace layout (layout data only), E3 / R247 ignore list (data only),
-D07 soffice names and default Windows install directory (data only).
+Build-list items: 0.1 workspace layout (data only), E3 / R247 ignore list (data only).
 Hard rules enforced: none here. D03: importing cpa never touches the filesystem, so this module
 holds data only - no logic, no imports, no file access.
 """
 
-__version__: str = "0.2.5"  # single source: pyproject reads it (dynamic version); plugin.json and CHANGELOG are test-guarded
+__version__: str = "0.2.6"  # single source: pyproject reads it (dynamic version); plugin.json and CHANGELOG are test-guarded
 
 # Build List 0.1: one inbox folder per source system.
 INBOX_SYSTEMS: tuple[str, ...] = (
@@ -44,14 +42,6 @@ WORKSPACE_SUBDIRS: tuple[tuple[str, ...], ...] = (
     ("reference", "proposed"),  # D03: proposed assumption values she pastes in
     ("logs", "runs"),  # one JSON run record per skill run
 )
-
-# Retired D07 constants retained for compatibility tests only; no runtime discovery uses these.
-# Historical executable names in shutil.which order, and the default Windows install directory as
-# path parts (Path(*SOFFICE_WINDOWS_DIR) on her machine). U07's cpa.recalc.find_soffice and the
-# tests/conftest.py fallback both read these; no other file spells the directory.
-SOFFICE_NAMES: tuple[str, ...] = ("soffice", "soffice.com", "soffice.exe")
-SOFFICE_WINDOWS_DIR: tuple[str, ...] = ("C:\\", "Program Files", "LibreOffice", "program")
-SOFFICE_WINDOWS_EXES: tuple[str, ...] = ("soffice.com", "soffice.exe")  # D07 order inside that directory
 
 # R247 / Build List E3: git-track the workspace excluding raw exports. This is the WORKSPACE ignore
 # list, written into <workspace>/.gitignore by `python -m cpa rollover init` (U16) and re-asserted by

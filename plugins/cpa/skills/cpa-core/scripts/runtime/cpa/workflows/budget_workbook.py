@@ -188,9 +188,11 @@ def _build_workbook(export: Path, scan: _Scan):
 
     wb = openpyxl.Workbook(write_only=True)
     ws_m = wb.create_sheet(title=MONTHLY_SHEET)
-    ws_m.append(list(header) + monthly_headers)
+    from cpa.pptx import brand
+
+    brand.append_generated_row(ws_m, list(header) + monthly_headers, row_number=1, header=True)
     ws_y = wb.create_sheet(title=YEARLY_SHEET)
-    ws_y.append(list(header) + year_headers)
+    brand.append_generated_row(ws_y, list(header) + year_headers, row_number=1, header=True)
 
     written = 0
     try:
@@ -203,12 +205,12 @@ def _build_workbook(export: Path, scan: _Scan):
             m_row = row + _blank_row(len(monthly_headers))
             if key is not None:
                 m_row[len(header) + scan.fymm_keys.index(key)] = amount
-            ws_m.append(m_row)
+            brand.append_generated_row(ws_m, m_row, row_number=written + 2)
 
             y_row = row + _blank_row(len(year_headers))
             if key is not None:
                 y_row[len(header) + scan.fiscal_years.index(fy_of[key])] = amount
-            ws_y.append(y_row)
+            brand.append_generated_row(ws_y, y_row, row_number=written + 2)
             written += 1
     finally:
         body.close()

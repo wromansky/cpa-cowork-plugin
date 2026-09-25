@@ -16,9 +16,8 @@ Folders under the workspace root: `inbox/<system>`, `staging/<workflow>/<run>`, 
 Nothing leaves `outbox` by automation. The analyst reviews and sends every artifact.
 
 ## Recalculation limitation
-LibreOffice is excluded everywhere, including the Cowork sandbox. Never discover, install, invoke,
-or delegate to it through another skill. No replacement backend is implemented. Recalculation
-reports unsupported; never claim CLEAN, verified formula values, or a delivery-ready workbook
+Automatic workbook recalculation is unsupported; no backend is implemented.
+Never claim CLEAN, verified formula values, or a delivery-ready workbook
 when recalculation is required. Stop those workflows and report the blocker.
 
 ## Running in a Cowork session
@@ -102,8 +101,12 @@ computes a fiscal period, a workday count, or a proration by hand.
 - Every P&L gets the M2 activity block (`cpa-activity-block`, once built).
 - Live formulas, assumptions in labeled cells, recalculated with zero errors
   (`python -m cpa recalc`).
-- Internal files: Calibri, flat, pivot-ready, no decoration, no freeze panes unless asked.
-- Slides: see `cpa-format`, once built.
+- All deliverable branding, including internal workbooks, follows `branding`, the analyst's
+  authoritative skill. Load it before artifact work; its fonts, palettes, logo placement and
+  imagery supersede legacy CPA visual defaults. Preserve pivot-ready data and template protections.
+- `cpa-format` coordinates the brand review; legacy generator/lint output is not proof of brand
+  compliance. Stop branded delivery on a mismatch. Apply resolved precedence in
+  branding/references/integration.md; ask about ambiguities not covered there.
 
 ## Run records
 Every skill writes its run record with `python -m cpa state record --skill <name> --input <path>

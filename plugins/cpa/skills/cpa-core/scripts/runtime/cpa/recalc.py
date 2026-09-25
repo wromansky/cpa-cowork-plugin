@@ -1,8 +1,7 @@
 """Recalculation status and cached formula-error scans for CPA workbooks.
 
 C1 verification (R018, R033, R098) must not claim recalculation without a verified backend.
-LibreOffice is excluded from the workflow on every platform, including Cowork sandboxes.
-No replacement engine is implemented. Calls return NOT_RECALCULATED without executing an
+No automatic backend is implemented. Calls return NOT_RECALCULATED without executing an
 external program or modifying the input. Cached error scanning is not recalculation.
 Hard rule 11: scan large workbooks with read-only streaming.
 """
@@ -49,7 +48,6 @@ class RecalcResult:
     status: str
     reason: str = ""
     output: Path | None = None
-    soffice: Path | None = None  # Legacy result compatibility only; never used to execute anything.
     errors: list[ErrorCell] = field(default_factory=list)
 
     @property
@@ -64,16 +62,10 @@ class RecalcResult:
                 "errors": [e.to_json() for e in self.errors]}
 
 
-def find_soffice() -> None:
-    """Retired compatibility hook: never probes, reads configuration, or locates an engine."""
-    return None
-
-
-def recalc(path: Path | str, out_dir: Path | str, *, timeout: int = RECALC_TIMEOUT_S,
-           soffice: Path | None = None) -> RecalcResult:
+def recalc(path: Path | str, out_dir: Path | str, *, timeout: int = RECALC_TIMEOUT_S) -> RecalcResult:
     """Return unsupported without writing files or executing a program.
 
-    Legacy timeout and executable arguments cannot enable the removed backend.
+    The timeout parameter is reserved for a future approved backend.
     """
     path, out_dir = Path(path), Path(out_dir)
     if path.suffix.lower() != ".xlsx":
@@ -83,8 +75,7 @@ def recalc(path: Path | str, out_dir: Path | str, *, timeout: int = RECALC_TIMEO
     return RecalcResult(NOT_RECALCULATED, UNSUPPORTED_REASON)
 
 
-def recalc_in_place(path: Path | str, *, timeout: int = RECALC_TIMEOUT_S,
-                    soffice: Path | None = None) -> RecalcResult:
+def recalc_in_place(path: Path | str, *, timeout: int = RECALC_TIMEOUT_S) -> RecalcResult:
     """Preserve the workbook on unsupported or failed recalculation.
 
     The result protocol is retained for a future approved backend and fixture verification tests.
@@ -93,7 +84,7 @@ def recalc_in_place(path: Path | str, *, timeout: int = RECALC_TIMEOUT_S,
 
     path = Path(path)
     with tempfile.TemporaryDirectory(prefix="cpa_rc_") as temporary:
-        result = recalc(path, Path(temporary), timeout=timeout, soffice=soffice)
+        result = recalc(path, Path(temporary), timeout=timeout)
         if result.recalculated and result.output is not None:
             fsutil.atomic_write(path, lambda tmp: shutil.copyfile(result.output, tmp))
             result.output = path

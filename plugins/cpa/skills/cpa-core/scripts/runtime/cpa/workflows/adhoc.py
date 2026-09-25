@@ -157,7 +157,13 @@ def _canonical_department(label: str) -> str:
 
 def _save_workbook(wb, path: Path) -> Path:
     from cpa import fsutil
+    from cpa.pptx import brand
 
+    if path.suffix.lower() == ".xlsx":
+        for sheet in wb.worksheets:
+            brand.style_generated_sheet(sheet)
+    else:
+        brand.style_generated_deck(wb)
     fsutil.atomic_write(path, lambda tmp: wb.save(str(tmp)))
     return path
 

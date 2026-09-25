@@ -800,7 +800,7 @@ def workbook(cohort: str, *, root: Path | str | None = None) -> Path:
     findings = _read_findings(root, cohort)
     yellow = brand.color("flag_yellow").lstrip("#")  # MissingAssumption before anything is written
     fill = PatternFill(fill_type="solid", fgColor=yellow, bgColor=yellow)
-    bold = Font(name="Calibri", bold=True)
+    bold = Font(name="Arial", bold=True)
     joined_rel = manifest.to_rel(joined_path)
 
     def placeholder(cell, what: str, supplier: str) -> None:
@@ -973,6 +973,10 @@ def workbook(cohort: str, *, root: Path | str | None = None) -> Path:
 
     out = _outbox(root, cohort) / f"Lookback_{cohort}.xlsx"
     out.parent.mkdir(parents=True, exist_ok=True)
+    from cpa.pptx import brand
+
+    for sheet in wb.worksheets:
+        brand.style_generated_sheet(sheet)
     fsutil.atomic_write(out, lambda tmp: wb.save(str(tmp)))
     _, as_of = _as_of(joined_path)
     manifest.write(out, source="lookback", report="B11 lookback variance workbook", filters=f"cohort={cohort}",
@@ -1115,7 +1119,7 @@ def deck(cohort: str, *, root: Path | str | None = None) -> Path:
             p = tf.paragraphs[0] if i == 0 else tf.add_paragraph()
             run = p.add_run()
             run.text = para
-            run.font.size, run.font.bold, run.font.name = Pt(size), bold, "Calibri"
+            run.font.size, run.font.bold, run.font.name = Pt(size), bold, "Arial"
             if color:
                 run.font.color.rgb = RGBColor.from_string(color.lstrip("#"))
         if fill:
@@ -1136,7 +1140,7 @@ def deck(cohort: str, *, root: Path | str | None = None) -> Path:
                 cell.text = str(text)
                 for p in cell.text_frame.paragraphs:
                     for run in p.runs:
-                        run.font.size, run.font.name, run.font.bold = Pt(12), "Calibri", r == 0
+                        run.font.size, run.font.name, run.font.bold = Pt(12), "Arial", r == 0
                 if flagged:
                     cell.fill.solid()
                     cell.fill.fore_color.rgb = RGBColor.from_string(yellow.lstrip("#"))

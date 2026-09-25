@@ -461,9 +461,9 @@ def write_workbook(by_role: dict[str, list[CfteRow]], consolidated: list[CfteRow
     from cpa import fsutil
     from cpa.pptx import brand
 
-    header_fill = PatternFill("solid", fgColor=brand.color("dark_green").lstrip("#"))
-    header_font = Font(name="Calibri", bold=True, color="FFFFFF")
-    body_font = Font(name="Calibri")
+    header_fill = PatternFill("solid", fgColor=brand.color("navy").lstrip("#"))
+    header_font = Font(name=brand.FONT, bold=True, color="FFFFFF")
+    body_font = Font(name=brand.FONT)
     wb = openpyxl.Workbook()
     wb.remove(wb.active)
     cfte_col = ROW_HEADER.index("cFTE") + 1
@@ -521,6 +521,8 @@ def write_workbook(by_role: dict[str, list[CfteRow]], consolidated: list[CfteRow
             figures[fid] = (f"Summary!B{ws.max_row}", f"{sheet}!O1", value)
     ws.column_dimensions["A"].width = 32
 
+    for sheet in wb.worksheets:
+        brand.style_generated_sheet(sheet)
     path.parent.mkdir(parents=True, exist_ok=True)
     fsutil.atomic_write(path, lambda tmp: wb.save(str(tmp)))
     wb.close()

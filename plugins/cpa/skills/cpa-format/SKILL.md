@@ -21,10 +21,15 @@ description: Brand and format lint a deck or workbook, generate speaker notes, o
 
 ## Steps
 1. Read `CPA_WORKSPACE` from cpa-core.
-2. Brand and format check: run `python -m cpa pptx lint [--deck <deck>] [--workbook <workbook>
+2. Load branding and read its complete analyst-authored reference before reviewing branding.
+   It owns fonts, palette, logo placement, imagery and layout, including internal workbooks.
+   It supersedes the old CPA plain/Calibri defaults. Apply the documented resolutions in branding/references/integration.md;
+   ask only about ambiguities not covered there. Do not modify financial data or protected templates.
+   Technical format diagnostics: run `python -m cpa pptx lint [--deck <deck>] [--workbook <workbook>
    --tab <tab>] --audience <internal|committee|dean|board> [--deck-kind <main|companion>]
    [--allow-freeze] --json` when asked to check brand or format, or called by another skill before
-   it returns a deck or workbook.
+   it returns a deck or workbook. This lint checks approved fonts/fills and source notes, not every layout or
+   semantic color choice. A clean result does not establish full visual brand compliance. Review the actual output with branding; stop delivery on a mismatch.
 3. Speaker notes: run `python -m cpa pptx notes --deck <deck> --audience
    <internal|committee|dean|board> --content <content.json> --json` when asked to generate or
    refresh speaker notes. Notes density follows audience: dean and board get the high-level story;
@@ -46,7 +51,8 @@ description: Brand and format lint a deck or workbook, generate speaker notes, o
 - `logs/runs/<timestamp>_cpa-format.json` - the run record.
 
 ## Verify
-- A lint run reports "clean" or the list of issues; nothing was fixed automatically.
+- A lint run reports its technical findings; nothing was fixed automatically. Its "clean"
+  result is not a brand verdict. branding governs visual compliance and flags writer gaps.
 - A notes run writes notes text onto every slide in the deck, none skipped.
 - A diff run separates numeric changes from format-only changes and never misreports one as the other.
 
@@ -60,7 +66,8 @@ description: Brand and format lint a deck or workbook, generate speaker notes, o
 
 ## Never
 - Never fix a lint issue automatically - report it.
-- Never allow body text below 18 points on a Dean or board deck.
+- Never allow body text below 18 points on a Dean or board deck; explicitly typed footnotes,
+  data labels and page numbers follow their separate branding scales.
 - Never bury a flag in speaker notes; a flagged metric belongs in the on-slide box, named only in
   notes.
 - Never write notes onto some slides and skip others.

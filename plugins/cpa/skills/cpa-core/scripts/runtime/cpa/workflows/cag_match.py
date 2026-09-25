@@ -66,14 +66,14 @@ TIERS: tuple[str, ...] = ("strict", "loose activity", "loose division", "loose b
 # Tool setting (not a Hopkins fact): one fill per match quality, green = strongest. Never gold, ice blue or
 # flag yellow (DECISIONS D08). FIXTURE - confirm against her file: her v8 color legend.
 TIER_FILLS: dict[str, str] = {
-    "strict": "C6EFCE",
-    "loose activity": "E2EFDA",
-    "loose division": "EDEDED",
-    "loose both": "FCE4D6",
-    "department-only": "F8CBAD",
-    "reverse": "E4DFEC",
-    "unmatched": "D9D9D9",
-    "issue": "FFC7CE",
+    "strict": "F3C300",
+    "loose activity": "A3BBC3",
+    "loose division": "B6B09C",
+    "loose both": "CFC393",
+    "department-only": "9D958C",
+    "reverse": "00A0DF",
+    "unmatched": "F2F2F2",
+    "issue": "FFDD00",
 }
 TIER_MEANING = {
     "strict": "department, division, activity and task all agree",
@@ -666,8 +666,8 @@ def write_workbook(result: MatchResult, path: Path, *, period: str, as_of: str) 
     from cpa.pptx import brand
 
     header_fill = PatternFill("solid", fgColor=brand.color("dark_green").lstrip("#"))
-    header_font = Font(name="Calibri", bold=True, color="FFFFFF")
-    body_font = Font(name="Calibri")
+    header_font = Font(name="Arial", bold=True, color="FFFFFF")
+    body_font = Font(name="Arial")
     fills = {k: PatternFill("solid", fgColor=v) for k, v in TIER_FILLS.items()}
     wb = openpyxl.Workbook()
     wb.remove(wb.active)
@@ -755,6 +755,10 @@ def write_workbook(result: MatchResult, path: Path, *, period: str, as_of: str) 
     ws.column_dimensions["A"].width = 30
 
     path.parent.mkdir(parents=True, exist_ok=True)
+    from cpa.pptx import brand
+
+    for sheet in wb.worksheets:
+        brand.style_generated_sheet(sheet, role="reference" if sheet.title == "Legend" else "summary")
     fsutil.atomic_write(path, lambda tmp: wb.save(str(tmp)))
     wb.close()
     return figures
