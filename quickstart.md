@@ -14,14 +14,22 @@ rates and all business data in your approved workspace, not in a public reposito
    **Cowork**, then **Customize → Personal plugins**. In the newer unified experience there
    may be no Cowork selector; use the available **Customize / Plugins** controls. If the
    menus differ or access is restricted, ask Billy rather than changing accounts or permissions.
-2. Select **+ → Add marketplace**. Paste
-   `https://github.com/wromansky/cpa-cowork-plugin` and select **Sync**.
-3. Install the plugin named **cpa** and turn it on under Personal plugins.
-4. Start a **new Cowork conversation** with the plugin enabled. For this release, confirm the
-   mounted bundle reports **0.2.7**; an older copy may still be present after an update.
+2. Download Billy's reviewed **cpa-0.2.7.zip** from the
+   [release page](https://github.com/wromansky/cpa-cowork-plugin/releases/tag/v0.2.7), or use the
+   approved copy he sends you. Do not use GitHub's generic repository Download ZIP.
+3. For the switch from GitHub installation, finish active tasks first. Remove the old CPA
+   marketplace entry if desired, then check whether its CPA plugin remains enabled. Preserve
+   any custom changes and avoid two enabled CPA copies. Do not delete your workspace or caches.
+4. Use the **custom-plugin upload** option in Customize/Plugins to select the ZIP itself;
+   do not unzip it. Enable **cpa**. Menu labels vary; if the upload option is missing or a
+   duplicate is rejected, ask Billy before removing anything else.
+5. Start a **new conversation** with CPA enabled. During setup, confirm the mounted bundle
+   reports **0.2.7**; an older copy may still be present after an update.
 
-If the marketplace or **cpa** does not appear, stop and ask Billy for help. You should not need
-a terminal or a local software install.
+ZIP installs do not automatically receive later GitHub changes. Billy will provide a reviewed
+ZIP for each update. The public GitHub repository remains available for now, but publication
+there does not guarantee that a personal marketplace refreshes. No terminal or local software
+installation is required.
 
 ### Bundled branding
 
@@ -30,7 +38,7 @@ confirming the updated plugin loads its bundled `branding` skill, disable the st
 avoid competing copies. Your brand rules supersede earlier CPA styling, including workbooks;
 financial verification remains separate. Known source conflicts have documented resolutions;
 remaining template/layout mismatches must be flagged, not silently treated as compliant.
-Test actual files in Cowork after syncing: review fonts, header/tab colors, layout and artwork,
+Test actual files in Cowork after updating: review fonts, header/tab colors, layout and artwork,
 Source & Notes, and Verification. Automated tests are not visual acceptance.
 
 ### New to Cowork? Start with a short lesson

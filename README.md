@@ -8,6 +8,18 @@ and the self-contained Python runtime. No real exports, credentials, or analyst 
 are shipped. The public bundle intentionally leaves all JHM rates unfilled; supply them
 from approved sources in the analyst's private workspace. Never guess or publish them here.
 
+## ZIP installation available
+
+Personal GitHub-marketplace updates have not reliably propagated to the analyst. Use the
+reviewed [cpa-0.2.7.zip](https://github.com/wromansky/cpa-cowork-plugin/releases/download/v0.2.7/cpa-0.2.7.zip)
+with Claude's custom-plugin upload option; see [quickstart.md](quickstart.md). Do not unzip it
+or use GitHub's generic repository ZIP. Avoid two enabled CPA copies, and preserve your
+workspace and any custom changes when replacing an old installation. ZIP installs require
+an approved new ZIP for each update; they do not automatically follow GitHub pushes.
+
+This repository remains available while ZIP installation is tested. The release packager
+runs privately, sanitizes rates, and recomputes runtime integrity metadata before distribution.
+
 ## Version 0.2.7: new to Cowork?
 
 After enabling CPA, ask:
@@ -38,7 +50,7 @@ processing are made. Official Claude documentation is linked in the bundled less
 - Setup, supervised browser trials and feedback guidance match the shipped capabilities.
   The incorrect SAP JE draft remains disabled; corrected COGNOS formatting is not yet implemented.
 
-After syncing, start a fresh Cowork conversation and confirm the mounted bundle reports **0.2.7**.
+After updating, start a fresh Cowork conversation and confirm the mounted bundle reports **0.2.7**.
 Confirm the bundled **branding** skill loads before disabling the standalone brand skill.
 Use actual approved files for a supervised review: fonts, header/tab colors, protected formulas,
 source notes and Verification. Report concrete mismatches through **cpa-workflow-feedback**;
